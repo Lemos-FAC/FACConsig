@@ -6,7 +6,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/custom_code/actions/index.dart' as actions;
-import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'emprestimo_model.dart';
+import 'dart:async';
 export 'emprestimo_model.dart';
 
 class EmprestimoWidget extends StatefulWidget {
@@ -28,7 +28,7 @@ class EmprestimoWidget extends StatefulWidget {
 
 class _EmprestimoWidgetState extends State<EmprestimoWidget> {
   late EmprestimoModel _model;
-
+  Timer? _debounceTimer; 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -88,13 +88,13 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
           context: context,
           builder: (alertDialogContext) {
             return AlertDialog(
-              title: Text('Erro!'),
+              title: const Text('Erro!'),
               content: Text(
                   'API erro: ${(_model.dados?.statusCode ?? 200).toString()}'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(alertDialogContext),
-                  child: Text('Ok'),
+                  child: const Text('Ok'),
                 ),
               ],
             );
@@ -151,6 +151,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           child: Scaffold(
+            resizeToAvoidBottomInset: true,
             key: scaffoldKey,
             backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
             appBar: AppBar(
@@ -161,7 +162,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                 borderRadius: 30.0,
                 borderWidth: 1.0,
                 buttonSize: 60.0,
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back_rounded,
                   color: Colors.white,
                   size: 30.0,
@@ -187,24 +188,25 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                           FlutterFlowTheme.of(context).headlineMedium.fontStyle,
                     ),
               ),
-              actions: [],
+              actions: const [],
               centerTitle: false,
               elevation: 2.0,
             ),
             body: SafeArea(
               top: true,
+              child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Align(
-                    alignment: AlignmentDirectional(0.0, 0.0),
-                    child: Container(
+                    alignment: const AlignmentDirectional(0.0, 0.0),
+                    child: SizedBox(
                       width: double.infinity,
                       height: 700.0,
                       child: Stack(
                         children: [
                           Align(
-                            alignment: AlignmentDirectional(-0.71, -0.73),
+                            alignment: const AlignmentDirectional(-0.71, -0.73),
                             child: Text(
                               'Qual o valor desejado?',
                               style: FlutterFlowTheme.of(context)
@@ -229,15 +231,16 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 150.0, 0.0, 0.0),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               height: 70.0,
                               child: Stack(
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(0.0, 0.0),
                                     child: Slider(
                                       activeColor:
                                           FlutterFlowTheme.of(context).primary,
@@ -249,63 +252,51 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                         FFAppState().valorSlider,
                                         0.0,
                                       ),
-                                      value: _model.sliderValue ??= 0.0,
+                                      value: (_model.sliderValue ?? 0.0).clamp(
+                                        0.0,
+                                        valueOrDefault<double>(
+                                            FFAppState().valorSlider, 0.0),
+                                      ),
                                       onChanged: (newValue) async {
-                                        newValue = double.parse(
-                                            newValue.toStringAsFixed(2));
-                                        safeSetState(() =>
-                                            _model.sliderValue = newValue);
+                                      },
+                                      onChangeEnd: (newValue) async {
+                                        newValue = double.parse(newValue.toStringAsFixed(2));
+                                        safeSetState(() => _model.sliderValue = newValue);
                                         if (FFAppState().hasChanged == true) {
-                                          if (_model.sliderValue! >
-                                              FFAppState().prevSlider) {
+                                          if (_model.sliderValue! > FFAppState().prevSlider) {
                                             safeSetState(() {
-                                              _model.sliderValue =
-                                                  FFAppState().prevSlider;
+                                              _model.sliderValue = FFAppState().prevSlider;
                                             });
                                             safeSetState(() {
-                                              _model.totalTextController?.text =
-                                                  formatNumber(
+                                              _model.totalTextController?.text = formatNumber(
                                                 FFAppState().prevSlider,
                                                 formatType: FormatType.decimal,
-                                                decimalType:
-                                                    DecimalType.commaDecimal,
+                                                decimalType: DecimalType.commaDecimal,
                                                 currency: 'R\$',
                                               );
                                             });
-                                            _model.valor =
-                                                await SimulaEmprestimoCall.call(
+                                            _model.valor = await SimulaEmprestimoCall.call(
                                               contratante: '21220',
-                                              tipoSimulacao:
-                                                  'porValorSolicitado',
-                                              quantidadeParcelas:
-                                                  _model.dropDownValue,
-                                              valorEmprestimo: _model
-                                                  .sliderValue
-                                                  ?.toString(),
+                                              tipoSimulacao: 'porValorSolicitado',
+                                              quantidadeParcelas: _model.dropDownValue,
+                                              valorEmprestimo: _model.sliderValue?.toString(),
                                               valorParcelas: '0',
                                             );
-
-                                            if ((_model.valor?.succeeded ??
-                                                true)) {
-                                              FFAppState().valorParcela =
-                                                  getJsonField(
+                                            if ((_model.valor?.succeeded ?? true)) {
+                                              FFAppState().valorParcela = getJsonField(
                                                 (_model.valor?.jsonBody ?? ''),
                                                 r'''$..valorParcela''',
                                               ).toString();
-                                              FFAppState().totalParcela =
-                                                  getJsonField(
+                                              FFAppState().totalParcela = getJsonField(
                                                 (_model.valor?.jsonBody ?? ''),
                                                 r'''$..valorEmprestimoForma''',
                                               ).toString();
                                               safeSetState(() {});
                                               safeSetState(() {
-                                                _model.totalTextController
-                                                        ?.text =
-                                                    FFAppState().totalParcela;
+                                                _model.totalTextController?.text = FFAppState().totalParcela;
                                               });
                                               safeSetState(() {
-                                                _model.valorParcelasTextController
-                                                        ?.text =
+                                                _model.valorParcelasTextController?.text =
                                                     FFAppState().valorParcela;
                                               });
                                             } else {
@@ -315,12 +306,10 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                                   return AlertDialog(
                                                     title: Text('Erro!'),
                                                     content: Text(
-                                                        'API(valor) erro: ${(_model.valor?.statusCode ?? 200).toString()}${_model.valorParcelasTextController.text}'),
+                                                        'API erro: ${(_model.valor?.statusCode ?? 200).toString()}'),
                                                     actions: [
                                                       TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
+                                                        onPressed: () => Navigator.pop(alertDialogContext),
                                                         child: Text('Ok'),
                                                       ),
                                                     ],
@@ -329,45 +318,28 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                               );
                                             }
                                           } else {
-                                            _model.vlrSolicitadoMenor =
-                                                await SimulaEmprestimoCall.call(
+                                            _model.vlrSolicitadoMenor = await SimulaEmprestimoCall.call(
                                               contratante: '21220',
-                                              tipoSimulacao:
-                                                  'porValorSolicitado',
-                                              quantidadeParcelas:
-                                                  _model.dropDownValue,
-                                              valorEmprestimo: _model
-                                                  .sliderValue
-                                                  ?.toString(),
+                                              tipoSimulacao: 'porValorSolicitado',
+                                              quantidadeParcelas: _model.dropDownValue,
+                                              valorEmprestimo: _model.sliderValue?.toString(),
                                               valorParcelas: '0',
                                             );
-
-                                            if ((_model.vlrSolicitadoMenor
-                                                    ?.succeeded ??
-                                                true)) {
-                                              FFAppState().valorParcela =
-                                                  getJsonField(
-                                                (_model.vlrSolicitadoMenor
-                                                        ?.jsonBody ??
-                                                    ''),
+                                            if ((_model.vlrSolicitadoMenor?.succeeded ?? true)) {
+                                              FFAppState().valorParcela = getJsonField(
+                                                (_model.vlrSolicitadoMenor?.jsonBody ?? ''),
                                                 r'''$..valorParcela''',
                                               ).toString();
-                                              FFAppState().totalParcela =
-                                                  getJsonField(
-                                                (_model.vlrSolicitadoMenor
-                                                        ?.jsonBody ??
-                                                    ''),
+                                              FFAppState().totalParcela = getJsonField(
+                                                (_model.vlrSolicitadoMenor?.jsonBody ?? ''),
                                                 r'''$..valorEmprestimoForma''',
                                               ).toString();
                                               safeSetState(() {});
                                               safeSetState(() {
-                                                _model.totalTextController
-                                                        ?.text =
-                                                    FFAppState().totalParcela;
+                                                _model.totalTextController?.text = FFAppState().totalParcela;
                                               });
                                               safeSetState(() {
-                                                _model.valorParcelasTextController
-                                                        ?.text =
+                                                _model.valorParcelasTextController?.text =
                                                     FFAppState().valorParcela;
                                               });
                                             } else {
@@ -376,13 +348,11 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                                 builder: (alertDialogContext) {
                                                   return AlertDialog(
                                                     title: Text('Erro!'),
-                                                    content: Text(
-                                                        'API(vlrSolicitadoMenor) erro: ${(_model.vlrSolicitadoMenor?.statusCode ?? 200).toString()}'),
+                                                    content: Text((_model.vlrSolicitadoMenor?.statusCode ?? 200)
+                                                        .toString()),
                                                     actions: [
                                                       TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
+                                                        onPressed: () => Navigator.pop(alertDialogContext),
                                                         child: Text('Ok'),
                                                       ),
                                                     ],
@@ -392,40 +362,28 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                             }
                                           }
                                         } else {
-                                          _model.vlrSolicitado =
-                                              await SimulaEmprestimoCall.call(
+                                          _model.vlrSolicitado = await SimulaEmprestimoCall.call(
                                             contratante: '21220',
                                             tipoSimulacao: 'porValorSolicitado',
-                                            quantidadeParcelas:
-                                                FFAppState().parcela,
-                                            valorEmprestimo:
-                                                _model.sliderValue?.toString(),
+                                            quantidadeParcelas: FFAppState().parcela,
+                                            valorEmprestimo: _model.sliderValue?.toString(),
                                             valorParcelas: '0',
                                           );
-
-                                          if ((_model
-                                                  .vlrSolicitado?.succeeded ??
-                                              true)) {
-                                            FFAppState().valorParcela =
-                                                getJsonField(
-                                              (_model.vlrSolicitado?.jsonBody ??
-                                                  ''),
+                                          if ((_model.vlrSolicitado?.succeeded ?? true)) {
+                                            FFAppState().valorParcela = getJsonField(
+                                              (_model.vlrSolicitado?.jsonBody ?? ''),
                                               r'''$..valorParcela''',
                                             ).toString();
-                                            FFAppState().totalParcela =
-                                                getJsonField(
-                                              (_model.vlrSolicitado?.jsonBody ??
-                                                  ''),
+                                            FFAppState().totalParcela = getJsonField(
+                                              (_model.vlrSolicitado?.jsonBody ?? ''),
                                               r'''$..valorEmprestimoForma''',
                                             ).toString();
                                             safeSetState(() {});
                                             safeSetState(() {
-                                              _model.totalTextController?.text =
-                                                  FFAppState().totalParcela;
+                                              _model.totalTextController?.text = FFAppState().totalParcela;
                                             });
                                             safeSetState(() {
-                                              _model.valorParcelasTextController
-                                                      ?.text =
+                                              _model.valorParcelasTextController?.text =
                                                   FFAppState().valorParcela;
                                             });
                                           } else {
@@ -435,12 +393,10 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                                 return AlertDialog(
                                                   title: Text('Erro!'),
                                                   content: Text(
-                                                      'API(vlrSolicitado) erro: ${(_model.vlrSolicitado?.statusCode ?? 200).toString()}'),
+                                                      'API erro: ${(_model.vlrSolicitado?.statusCode ?? 200).toString()}'),
                                                   actions: [
                                                     TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
+                                                      onPressed: () => Navigator.pop(alertDialogContext),
                                                       child: Text('Ok'),
                                                     ),
                                                   ],
@@ -449,7 +405,6 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                             );
                                           }
                                         }
-
                                         safeSetState(() {});
                                       },
                                     ),
@@ -459,7 +414,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(-0.75, -0.41),
+                            alignment: const AlignmentDirectional(-0.75, -0.41),
                             child: Text(
                               'Parcelas',
                               style: FlutterFlowTheme.of(context)
@@ -484,7 +439,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(0.5, -0.4),
+                            alignment: const AlignmentDirectional(0.5, -0.4),
                             child: Text(
                               'Valor Parcleas',
                               style: FlutterFlowTheme.of(context)
@@ -509,8 +464,8 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(-0.08, -0.66),
-                            child: Container(
+                            alignment: const AlignmentDirectional(-0.08, -0.66),
+                            child: SizedBox(
                               width: 200.0,
                               child: TextFormField(
                                 controller: _model.totalTextController,
@@ -563,14 +518,14 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                             .fontStyle,
                                       ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0x00000000),
                                       width: 1.0,
                                     ),
@@ -622,220 +577,200 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(0.87, -0.33),
+                            alignment: const AlignmentDirectional(0.87, -0.33),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 10.0, 0.0, 0.0),
-                              child: Container(
-                                width: 160.0,
-                                child: TextFormField(
-                                  controller:
-                                      _model.valorParcelasTextController,
-                                  focusNode: _model.valorParcelasFocusNode,
-                                  onChanged: (_) => EasyDebounce.debounce(
-                                    '_model.valorParcelasTextController',
-                                    Duration(milliseconds: 2000),
-                                    () async {
-                                      if (functions.stringDoubleSFomart(_model
-                                              .valorParcelasTextController
-                                              .text)! >
-                                          functions
-                                              .stringDoubleSFomart(getJsonField(
-                                            (_model.dados?.jsonBody ?? ''),
-                                            r'''$..valorParcela''',
-                                          ).toString())!) {
+                                padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                            child: SizedBox(
+                              width: 160.0,
+                              child: TextFormField(
+                                controller: _model.valorParcelasTextController ,
+                                focusNode: _model.valorParcelasFocusNode,
+                                onChanged: (_) => EasyDebounce.debounce(
+                                  '_model.valorParcelasTextController',
+                                  const Duration(milliseconds: 2000),
+                                  () async {
+                                    if (functions.stringDoubleSFomart(_model
+                                            .valorParcelasTextController
+                                            .text)! >
+                                        functions
+                                            .stringDoubleSFomart(getJsonField(
+                                          (_model.dados?.jsonBody ?? ''),
+                                          r'''$..valorParcela''',
+                                        ).toString())!) {
+                                      await showDialog(
+                                        context: context,
+                                        builder: (alertDialogContext) {
+                                          return AlertDialog(
+                                            title: const Text('Atenção!'),
+                                            content: Text(
+                                                'Valor máximo permitido: ${getJsonField(
+                                              (_model.dados?.jsonBody ?? ''),
+                                              r'''$..valorParcela''',
+                                            ).toString()}'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    alertDialogContext),
+                                                child: const Text('Ok'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      safeSetState(() {
+                                        _model.valorParcelasTextController?.text = getJsonField(
+                                          (_model.dados?.jsonBody ?? ''),
+                                          r'''$..valorParcela''',
+                                        ).toString();
+                                      });
+                                    } else {
+                                      _model.valorParcela =
+                                          await SimulaEmprestimoCall.call(
+                                        contratante: '21220',
+                                        tipoSimulacao: 'porValorParcela',
+                                        quantidadeParcelas: (_model
+                                                .dropDownValue!) ??
+                                            getJsonField(
+                                              (_model.dados?.jsonBody ?? ''),
+                                              r'''$..parcelasMaximas''',
+                                            ).toString(),
+                                        valorEmprestimo: '0',
+                                        valorParcelas: functions
+                                            .stringDoubleSFomart(_model
+                                                .valorParcelasTextController
+                                                .text)
+                                            ?.toString(),
+                                      );
+
+                                      if ((_model.valorParcela?.succeeded ??
+                                          true)) {
+                                        safeSetState(() {
+                                          _model.totalTextController?.text =
+                                              getJsonField(
+                                            (_model.valorParcela?.jsonBody ??
+                                                ''),
+                                            r'''$..valorEmprestimoForma''',
+                                          ).toString();
+                                        });
+                                        safeSetState(() {
+                                          _model.sliderValue = functions
+                                              .stringDoubleSFomart(functions
+                                                  .stringDoubleSFomart(
+                                                      getJsonField(
+                                                    (_model.valorParcela
+                                                            ?.jsonBody ??
+                                                        ''),
+                                                    r'''$..valorEmprestimo''',
+                                                  ).toString())!
+                                                  .toString())!;
+                                        });
+                                      } else {
                                         await showDialog(
                                           context: context,
                                           builder: (alertDialogContext) {
                                             return AlertDialog(
-                                              title: Text('Atenção!'),
+                                              title: const Text('Erro!'),
                                               content: Text(
-                                                  'Valor máximo permitido: ${getJsonField(
-                                                (_model.dados?.jsonBody ?? ''),
-                                                r'''$..valorParcela''',
-                                              ).toString()}'),
+                                                  'API erro: ${(_model.valorParcela?.statusCode ?? 200).toString()}'),
                                               actions: [
                                                 TextButton(
                                                   onPressed: () =>
                                                       Navigator.pop(
                                                           alertDialogContext),
-                                                  child: Text('Ok'),
+                                                  child: const Text('Ok'),
                                                 ),
                                               ],
                                             );
                                           },
                                         );
-                                        safeSetState(() {
-                                          _model.valorParcelasTextController
-                                              ?.text = getJsonField(
-                                            (_model.dados?.jsonBody ?? ''),
-                                            r'''$..valorParcela''',
-                                          ).toString();
-                                        });
-                                      } else {
-                                        _model.valorParcela =
-                                            await SimulaEmprestimoCall.call(
-                                          contratante: '21220',
-                                          tipoSimulacao: 'porValorParcela',
-                                          quantidadeParcelas: (_model
-                                                  .dropDownValue!) ??
-                                              getJsonField(
-                                                (_model.dados?.jsonBody ?? ''),
-                                                r'''$..parcelasMaximas''',
-                                              ).toString(),
-                                          valorEmprestimo: '0',
-                                          valorParcelas: functions
-                                              .stringDoubleSFomart(_model
-                                                  .valorParcelasTextController
-                                                  .text)
-                                              ?.toString(),
-                                        );
-
-                                        if ((_model.valorParcela?.succeeded ??
-                                            true)) {
-                                          safeSetState(() {
-                                            _model.totalTextController?.text =
-                                                getJsonField(
-                                              (_model.valorParcela?.jsonBody ??
-                                                  ''),
-                                              r'''$..valorEmprestimoForma''',
-                                            ).toString();
-                                          });
-                                          safeSetState(() {
-                                            _model.sliderValue = functions
-                                                .stringDoubleSFomart(functions
-                                                    .stringDoubleSFomart(
-                                                        getJsonField(
-                                                      (_model.valorParcela
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                      r'''$..valorEmprestimo''',
-                                                    ).toString())!
-                                                    .toString())!;
-                                          });
-                                        } else {
-                                          await showDialog(
-                                            context: context,
-                                            builder: (alertDialogContext) {
-                                              return AlertDialog(
-                                                title: Text('Erro!'),
-                                                content: Text(
-                                                    'API erro: ${(_model.valorParcela?.statusCode ?? 200).toString()}'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                            alertDialogContext),
-                                                    child: Text('Ok'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        }
                                       }
+                                    }
 
-                                      safeSetState(() {});
-                                    },
-                                  ),
-                                  autofocus: false,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    labelStyle: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          font: GoogleFonts.inter(
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .fontStyle,
-                                          ),
-                                          letterSpacing: 0.0,
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontStyle,
-                                        ),
-                                    hintStyle: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          font: GoogleFonts.inter(
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .fontStyle,
-                                          ),
-                                          letterSpacing: 0.0,
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontStyle,
-                                        ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                  ),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
+                                    safeSetState(() {});
+                                  },
+                                ),
+                                autofocus: false,
+                                obscureText: false,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  labelStyle: FlutterFlowTheme.of(context)
+                                      .labelMedium
                                       .override(
                                         font: GoogleFonts.inter(
                                           fontWeight:
                                               FlutterFlowTheme.of(context)
-                                                  .bodyMedium
+                                                  .labelMedium
                                                   .fontWeight,
                                           fontStyle:
                                               FlutterFlowTheme.of(context)
-                                                  .bodyMedium
+                                                  .labelMedium
                                                   .fontStyle,
                                         ),
                                         letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .labelMedium
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .labelMedium
+                                            .fontStyle,
+                                      ),
+                                  hintStyle: FlutterFlowTheme.of(context)
+                                      .labelMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .labelMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .labelMedium
+                                                  .fontStyle,
+                                        ),
+                                        letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .labelMedium
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .labelMedium
+                                            .fontStyle,
+                                      ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Color(0x00000000),
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Color(0x00000000),
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: FlutterFlowTheme.of(context).error,
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: FlutterFlowTheme.of(context).error,
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  filled: true,
+                                  fillColor: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                ),
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      font: GoogleFonts.inter(
                                         fontWeight: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .fontWeight,
@@ -843,19 +778,26 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
-                                  keyboardType: TextInputType.number,
-                                  cursorColor:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                  enableInteractiveSelection: true,
-                                  validator: _model
-                                      .valorParcelasTextControllerValidator
-                                      .asValidator(context),
-                                ),
+                                      letterSpacing: 0.0,
+                                      fontWeight: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .fontWeight,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .fontStyle,
+                                    ),
+                                keyboardType: TextInputType.number,
+                                cursorColor:
+                                    FlutterFlowTheme.of(context).primaryText,
+                                enableInteractiveSelection: true,
+                                validator: _model
+                                    .valorParcelasTextControllerValidator
+                                    .asValidator(context),
                               ),
-                            ),
+                            )),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(-0.82, -0.32),
+                            alignment: const AlignmentDirectional(-0.82, -0.32),
                             child: FlutterFlowDropDown<String>(
                               controller: _model.dropDownValueController ??=
                                   FormFieldController<String>(null),
@@ -907,14 +849,14 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                     context: context,
                                     builder: (alertDialogContext) {
                                       return AlertDialog(
-                                        title: Text('Erro!'),
+                                        title: const Text('Erro!'),
                                         content: Text(
                                             'API erro: ${(_model.qtdParcelas?.statusCode ?? 200).toString()}'),
                                         actions: [
                                           TextButton(
                                             onPressed: () => Navigator.pop(
                                                 alertDialogContext),
-                                            child: Text('Ok'),
+                                            child: const Text('Ok'),
                                           ),
                                         ],
                                       );
@@ -958,7 +900,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                               borderColor: Colors.transparent,
                               borderWidth: 0.0,
                               borderRadius: 8.0,
-                              margin: EdgeInsetsDirectional.fromSTEB(
+                              margin: const EdgeInsetsDirectional.fromSTEB(
                                   12.0, 0.0, 12.0, 0.0),
                               hidesUnderline: true,
                               isOverButton: false,
@@ -967,7 +909,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(0.0, 0.0),
+                            alignment: const AlignmentDirectional(0.0, 0.0),
                             child: FFButtonWidget(
                               onPressed: () {
                                 print('Button pressed ...');
@@ -976,10 +918,11 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                               options: FFButtonOptions(
                                 width: MediaQuery.sizeOf(context).width * 0.8,
                                 height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 0.0, 16.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
+                                iconPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
                                 color: FlutterFlowTheme.of(context).primary,
                                 textStyle: FlutterFlowTheme.of(context)
                                     .titleSmall
@@ -1007,7 +950,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(-0.02, -0.11),
+                            alignment: const AlignmentDirectional(-0.02, -0.11),
                             child: Text(
                               'Taxa de 2,2% A.M',
                               style: FlutterFlowTheme.of(context)
@@ -1032,25 +975,11 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(-0.41, -0.12),
+                            alignment: const AlignmentDirectional(-0.41, -0.12),
                             child: Icon(
                               Icons.info,
                               color: FlutterFlowTheme.of(context).primary,
                               size: 24.0,
-                            ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(-0.02, 0.48),
-                            child: Container(
-                              width: 250.0,
-                              height: 100.0,
-                              child: custom_widgets.OnEndSlider(
-                                width: 250.0,
-                                height: 100.0,
-                                min: 0.0,
-                                max: 100.0,
-                                initialValue: 50.0,
-                              ),
                             ),
                           ),
                         ],
@@ -1058,7 +987,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                     ),
                   ),
                 ],
-              ),
+              )),
             ),
           ),
         );
