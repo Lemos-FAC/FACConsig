@@ -16,9 +16,22 @@ Future<void> generateNumberRangeAction(String start, String end) async {
   final range =
       List.generate(intEnd - intStart + 1, (i) => (intStart + i).toString());
 
-  FFAppState().update(() {
-    FFAppState().dropDownList = range;
-  });
+  // Avoid notifying listeners if list hasn't actually changed
+  final List<String> current = FFAppState().dropDownList;
+  bool same = current.length == range.length;
+  if (same) {
+    for (int i = 0; i < range.length; i++) {
+      if (current[i] != range[i]) {
+        same = false;
+        break;
+      }
+    }
+  }
+  if (!same) {
+    FFAppState().update(() {
+      FFAppState().dropDownList = range;
+    });
+  }
 }
 
 // Set your action name, define your arguments and return parameter,

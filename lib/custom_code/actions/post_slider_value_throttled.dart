@@ -35,12 +35,16 @@ Future<dynamic> postSliderValueThrottled(double value, String parcela,
         .timeout(const Duration(seconds: 10));
 
     completer.complete({
-      'status': response.statusCode,
+      'status': response.statusCode, // legacy
+      'statusCode': response.statusCode, // new
+      'headers': response.headers,
       'body': jsonDecode(response.body),
     });
   } catch (e) {
     completer.complete({
       'status': 500,
+      'statusCode': 500,
+      'headers': const <String, String>{},
       'body': 'Erro na requisição: $e',
     });
   }

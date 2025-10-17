@@ -149,12 +149,22 @@ class _OnEndSliderState extends State<OnEndSlider> {
         _globalNextAllowedAt = DateTime.now().add(const Duration(seconds: 2));
 
         _lastSentValue = finalValue;
-        FFAppState().update(() {
-          FFAppState().totalParcela =
-              response['body']?['dados']?['valorEmprestimoForma'];
-          FFAppState().valorParcela =
-              response['body']?['dados']?['valorParcela'];
-        });
+        final String nextTotalParcela =
+            (response['body']?['dados']?['valorEmprestimoForma'] ?? '')
+                .toString();
+        final String nextValorParcela =
+            (response['body']?['dados']?['valorParcela'] ?? '').toString();
+
+        // Only notify listeners when values actually change to avoid extra rebuilds
+        final bool shouldUpdate =
+            nextTotalParcela != FFAppState().totalParcela ||
+                nextValorParcela != FFAppState().valorParcela;
+        if (shouldUpdate) {
+          FFAppState().update(() {
+            FFAppState().totalParcela = nextTotalParcela;
+            FFAppState().valorParcela = nextValorParcela;
+          });
+        }
       } finally {
         _requestInFlight = false;
         if (_pendingValue != null) {
