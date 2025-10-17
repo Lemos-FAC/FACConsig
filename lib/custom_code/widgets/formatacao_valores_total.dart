@@ -166,7 +166,8 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
         FFAppState().update(() {
           FFAppState().totalParcela =
               response['body']?['dados']?['valorEmprestimoForma'];
-
+          FFAppState().valorParcela =
+              response['body']?['dados']?['valorParcela'];
           FFAppState().customSliderValue = valorEmprestimo;
         });
       } finally {
