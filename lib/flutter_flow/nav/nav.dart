@@ -70,9 +70,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : HomePageWidget(),
         ),
         FFRoute(
-          name: EmprestimoWidget.routeName,
-          path: EmprestimoWidget.routePath,
-          builder: (context, params) => EmprestimoWidget(),
+          name: TesteWidget.routeName,
+          path: TesteWidget.routePath,
+          builder: (context, params) => TesteWidget(),
         ),
         FFRoute(
           name: MensagemWidget.routeName,
@@ -86,6 +86,20 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: ContaWidget.routePath,
           builder: (context, params) =>
               params.isEmpty ? NavBarPage(initialPage: 'Conta') : ContaWidget(),
+        ),
+        FFRoute(
+          name: EmprestimoWidget.routeName,
+          path: EmprestimoWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Emprestimo')
+              : EmprestimoWidget(),
+        ),
+        FFRoute(
+          name: TesteEmprestimoWidget.routeName,
+          path: TesteEmprestimoWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'TESTE_EMPRESTIMO')
+              : TesteEmprestimoWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

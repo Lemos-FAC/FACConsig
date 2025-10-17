@@ -120,6 +120,8 @@ class _NavBarPageState extends State<NavBarPage> {
       'HomePage': HomePageWidget(),
       'Mensagem': MensagemWidget(),
       'Conta': ContaWidget(),
+      'Emprestimo': EmprestimoWidget(),
+      'TESTE_EMPRESTIMO': TesteEmprestimoWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
 
@@ -167,6 +169,22 @@ class _NavBarPageState extends State<NavBarPage> {
                 size: 24.0,
               ),
               label: 'Conta',
+              tooltip: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.onetwothree,
+                size: 24.0,
+              ),
+              label: 'Emprestimo',
+              tooltip: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home_outlined,
+                size: 24.0,
+              ),
+              label: 'Home',
               tooltip: '',
             )
           ],

@@ -5,6 +5,10 @@ import 'emprestimo_widget.dart' show EmprestimoWidget;
 import 'package:flutter/material.dart';
 
 class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
+  ///  Local state fields for this page.
+
+  DateTime? lastSliderRequestTime;
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - API (SimulaEmprestimo)] action in Emprestimo widget.
@@ -15,8 +19,8 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
   ApiCallResponse? valor;
   // Stores action output result for [Backend Call - API (SimulaEmprestimo)] action in Slider widget.
   ApiCallResponse? vlrSolicitadoMenor;
-  // Stores action output result for [Backend Call - API (SimulaEmprestimo)] action in Slider widget.
-  ApiCallResponse? vlrSolicitado;
+  // Stores action output result for [Custom Action - postSliderValueThrottled] action in Slider widget.
+  dynamic response;
   // State field(s) for total widget.
   FocusNode? totalFocusNode;
   TextEditingController? totalTextController;

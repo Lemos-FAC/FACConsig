@@ -9,10 +9,10 @@ import 'lat_lng.dart';
 import 'place.dart';
 import 'uploaded_file.dart';
 
-String? doubleParaString(double value) {
+String doubleParaString(double value) {
   final formatter = NumberFormat.currency(
     locale: 'pt_BR',
-    symbol: 'R\$',
+    symbol: 'R\$ ',
     decimalDigits: 2,
   );
   return formatter.format(value);
