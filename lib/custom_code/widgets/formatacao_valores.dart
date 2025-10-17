@@ -106,31 +106,31 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
   Widget build(BuildContext context) {
     context.watch<FFAppState>(); // react to preview/auth updates
 
-    final String preview = (FFAppState().valorParcelaAlterado ??
-            widget.initialText /* totalParcela */)
-        .toString();
+    // final String preview = (FFAppState().valorParcelaAlterado ??
+    //         widget.initialText /* totalParcela */)
+    //     .toString();
 
-    if (!_focusNode.hasFocus && _controller.text != preview) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _controller.value = _controller.value.copyWith(
-          text: preview,
-          selection: TextSelection.collapsed(offset: preview.length),
-          composing: TextRange.empty,
-        );
-      });
-    }
+    // if (!_focusNode.hasFocus && _controller.text != preview) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     if (!mounted) return;
+    //     _controller.value = _controller.value.copyWith(
+    //       text: preview,
+    //       selection: TextSelection.collapsed(offset: preview.length),
+    //       composing: TextRange.empty,
+    //     );
+    //   });
+    // }
     return TextField(
       controller: _controller,
-      onEditingComplete: () async {
-        final typed = (FFAppState().ValorFormatado as double?) ?? 0.0;
-        final capped = _capToCeiling(typed);
-        FFAppState().update(() {
-          FFAppState().customSliderValue =
-              capped; // slider will mirror via initialValue
-        });
-        FocusScope.of(context).unfocus();
-      },
+      // onEditingComplete: () async {
+      //   final typed = (FFAppState().ValorFormatado as double?) ?? 0.0;
+      //   final capped = _capToCeiling(typed);
+      //   FFAppState().update(() {
+      //     FFAppState().customSliderValue =
+      //         capped; // slider will mirror via initialValue
+      //   });
+      //   FocusScope.of(context).unfocus();
+      // },
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(widget.radius),

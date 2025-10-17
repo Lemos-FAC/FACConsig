@@ -37,15 +37,11 @@ Future<dynamic> postSliderValue(double value, String parcela,
 
     completer.complete({
       'status': response.statusCode,
-      'statusCode': response.statusCode,
-      'headers': response.headers,
       'body': jsonDecode(response.body),
     });
   } catch (e) {
     completer.complete({
       'status': 500,
-      'statusCode': 500,
-      'headers': const <String, String>{},
       'body': 'Erro na requisição: $e',
     });
   }

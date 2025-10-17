@@ -224,15 +224,21 @@ class _OnEndSliderState extends State<OnEndSlider> {
               max: widget.max ?? 0.0,
               value: capped,
               onChanged: (v) {
+                // final f = NumberFormat("#,##0.00", "pt_BR");
+                // setState(() => _currentValue = _capValueToMax(v));
+                // FFAppState().update(() {
+                //   FFAppState().totalParcela = f.format(v);
+                // });
                 final ui = _capValueToMax(v);
                 setState(() => _currentValue = ui);
 
-                // Update AppState fields without notifying listeners to avoid rebuild storms
                 final f = NumberFormat.currency(
                     locale: 'pt_BR', symbol: 'R\$ ', decimalDigits: 2);
-                FFAppState().ValorFormatado = ui; // numeric draft
-                FFAppState().valorParcelaAlterado =
-                    f.format(ui); // display-only draft
+                FFAppState().update(() {
+                  FFAppState().ValorFormatado = ui; // numeric
+                  FFAppState().valorParcelaAlterado =
+                      f.format(ui); // display-only
+                });
               },
               onChangeEnd: (v) => _handleSliderChange(
                   _capValueToMax(v)), // API logic (debounced/guarded)

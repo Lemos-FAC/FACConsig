@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import '/custom_code/ApiGate.dart';
 
 class DynamicDropdownFF extends StatefulWidget {
   const DynamicDropdownFF(
@@ -136,18 +135,13 @@ class _DynamicDropdownFFState extends State<DynamicDropdownFF> {
               // Call the FlutterFlow action with the new value
               // await widget.onOptionSelected(newValue);
 
-              // 2. Call the API with global gating/backoff
-              final response = await ApiGate.run(() => postSliderValue(
-                    FFAppState().customSliderValue,
-                    _selectedValue ?? '0',
-                    'porQtdeParcelas',
-                    '21220',
-                    '',
-                  ));
-              if ((response['statusCode'] as int?) == 429) {
-                ApiGate.backoffFromHeaders(response['headers'] as Map?);
-                return;
-              }
+              // 2. Call the API
+              final response = await postSliderValue(
+                  FFAppState().customSliderValue,
+                  _selectedValue ?? '0',
+                  'porQtdeParcelas',
+                  '21220',
+                  '');
               // 3. Update App State
               FFAppState().update(() {
                 FFAppState().maxAllowedValue = double.tryParse(
