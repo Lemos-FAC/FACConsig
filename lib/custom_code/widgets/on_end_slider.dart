@@ -232,13 +232,13 @@ class _OnEndSliderState extends State<OnEndSlider> {
                 final ui = _capValueToMax(v);
                 setState(() => _currentValue = ui);
 
-                final f = NumberFormat.currency(
-                    locale: 'pt_BR', symbol: 'R\$ ', decimalDigits: 2);
-                FFAppState().update(() {
-                  FFAppState().ValorFormatado = ui; // numeric
-                  FFAppState().valorParcelaAlterado =
-                      f.format(ui); // display-only
-                });
+                // final f = NumberFormat.currency(
+                //     locale: 'pt_BR', symbol: 'R\$ ', decimalDigits: 2);
+                // FFAppState().update(() {
+                //   FFAppState().ValorFormatado = ui; // numeric
+                //   FFAppState().valorParcelaAlterado =
+                //       f.format(ui); // display-only
+                // });
               },
               onChangeEnd: (v) => _handleSliderChange(
                   _capValueToMax(v)), // API logic (debounced/guarded)
