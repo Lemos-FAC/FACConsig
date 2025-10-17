@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import '/custom_code/ApiGate.dart';
 
 class DynamicDropdownFF extends StatefulWidget {
   const DynamicDropdownFF(
@@ -135,29 +136,45 @@ class _DynamicDropdownFFState extends State<DynamicDropdownFF> {
               // Call the FlutterFlow action with the new value
               // await widget.onOptionSelected(newValue);
 
-              // 2. Call the API
-              final response = await postSliderValue(
-                  FFAppState().customSliderValue,
-                  _selectedValue ?? '0',
-                  'porQtdeParcelas',
-                  '21220',
-                  '');
-              // 3. Update App State
-              FFAppState().update(() {
-                FFAppState().maxAllowedValue = double.tryParse(
-                        response['body']?['dados']?['valorEmprestimo']) ??
-                    0.0;
-                FFAppState().parcela = newValue;
-                // // FIX: Safely parse the String into a Double for FFAppState().customSliderValue
-                FFAppState().customSliderValue = double.tryParse(
-                        response['body']?['dados']?['valorEmprestimo']) ??
-                    0.0;
+              // 2. Call the API with global gate and handle 429
+              final response = await ApiGate.run(() => postSliderValue(
+                    FFAppState().customSliderValue,
+                    _selectedValue ?? '0',
+                    'porQtdeParcelas',
+                    '21220',
+                    '',
+                  ));
 
-                FFAppState().totalParcela =
-                    response['body']?['dados']?['valorEmprestimoForma'];
-                FFAppState().valorParcela =
-                    response['body']?['dados']?['valorParcela'];
-              });
+              if ((response['statusCode'] as int?) == 429) {
+                ApiGate.backoffFromHeaders(response['headers'] as Map?);
+                return; // defer retry to gate cooldown
+              }
+
+              // 3. Update App State only on real changes
+              final String nextTotalParcela =
+                  (response['body']?['dados']?['valorEmprestimoForma'] ?? '')
+                      .toString();
+              final String nextValorParcela =
+                  (response['body']?['dados']?['valorParcela'] ?? '').toString();
+              final double nextValorEmprestimo = double.tryParse(
+                      (response['body']?['dados']?['valorEmprestimo'] ?? '0')
+                          .toString()) ??
+                  0.0;
+
+              final bool shouldUpdate =
+                  nextTotalParcela != FFAppState().totalParcela ||
+                      nextValorParcela != FFAppState().valorParcela ||
+                      nextValorEmprestimo != FFAppState().customSliderValue ||
+                      newValue != FFAppState().parcela;
+              if (shouldUpdate) {
+                FFAppState().update(() {
+                  FFAppState().maxAllowedValue = nextValorEmprestimo;
+                  FFAppState().parcela = newValue;
+                  FFAppState().customSliderValue = nextValorEmprestimo;
+                  FFAppState().totalParcela = nextTotalParcela;
+                  FFAppState().valorParcela = nextValorParcela;
+                });
+              }
             }
           },
           items: widget.options.map<DropdownMenuItem<String>>((String value) {

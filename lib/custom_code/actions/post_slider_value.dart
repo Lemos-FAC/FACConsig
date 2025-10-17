@@ -11,37 +11,47 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-Future<dynamic> postSliderValue(double value, String parcela,
-    String tipoSimulacao, String contratante, String valorParcela) async {
+Future<dynamic> postSliderValue(
+  double value,
+  String parcela,
+  String tipoSimulacao,
+  String contratante,
+  String valorParcela,
+) async {
   final completer = Completer<Map<String, dynamic>>();
   try {
     final uri = Uri.parse('https://api.facsistemas.com.br/simulaEmprestimo');
 
-    final headers = {
+    final headers = <String, String>{
       'Content-Type': 'application/json',
       'Authorization':
           'Basic ZmFjQ29udHJhdGFudGU6ODhiMzMyODNiOTEzYjY1Mzc3NGMyODZjNzkxN2Y1ZmQ=',
     };
 
-    final body = jsonEncode({
+    final body = jsonEncode(<String, dynamic>{
       'contratante': contratante,
       'tipoSimulacao': tipoSimulacao,
       'quantidadeParcelas': parcela,
       'valorEmprestimo': value,
-      'valorParcelas': valorParcela
+      'valorParcelas': valorParcela,
     });
 
     final response = await http
         .post(uri, headers: headers, body: body)
         .timeout(const Duration(seconds: 10));
 
+    // Return a shape compatible with both legacy and new consumers
     completer.complete({
-      'status': response.statusCode,
+      'status': response.statusCode, // legacy callers
+      'statusCode': response.statusCode, // new callers
+      'headers': response.headers,
       'body': jsonDecode(response.body),
     });
   } catch (e) {
     completer.complete({
       'status': 500,
+      'statusCode': 500,
+      'headers': const <String, String>{},
       'body': 'Erro na requisição: $e',
     });
   }

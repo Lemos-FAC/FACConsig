@@ -163,12 +163,19 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
         final dynamic rawValor = response['body']?['dados']?['valorEmprestimo'];
         final double valorEmprestimo = parseFlexibleDouble(rawValor);
 
-        FFAppState().update(() {
-          FFAppState().totalParcela =
-              response['body']?['dados']?['valorEmprestimoForma'];
+        final String nextTotalParcela =
+            (response['body']?['dados']?['valorEmprestimoForma'] ?? '')
+                .toString();
+        final double nextSliderValue = valorEmprestimo;
 
-          FFAppState().customSliderValue = valorEmprestimo;
-        });
+        final bool shouldUpdate = nextTotalParcela != FFAppState().totalParcela ||
+            nextSliderValue != FFAppState().customSliderValue;
+        if (shouldUpdate) {
+          FFAppState().update(() {
+            FFAppState().totalParcela = nextTotalParcela;
+            FFAppState().customSliderValue = nextSliderValue;
+          });
+        }
       } finally {
         _requestInFlight = false;
 
