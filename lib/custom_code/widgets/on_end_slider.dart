@@ -149,12 +149,21 @@ class _OnEndSliderState extends State<OnEndSlider> {
         _globalNextAllowedAt = DateTime.now().add(const Duration(seconds: 2));
 
         _lastSentValue = finalValue;
-        FFAppState().update(() {
-          FFAppState().totalParcela =
-              response['body']?['dados']?['valorEmprestimoForma'];
-          FFAppState().valorParcela =
-              response['body']?['dados']?['valorParcela'];
-        });
+        // Avoid global rebuilds: assign directly without notifyListeners
+        final String? totalForma =
+            response['body']?['dados']?['valorEmprestimoForma']?.toString();
+        final String? valorParcela =
+            response['body']?['dados']?['valorParcela']?.toString();
+        if (totalForma != null) {
+          FFAppState().totalParcela = totalForma;
+        }
+        if (valorParcela != null) {
+          FFAppState().valorParcela = valorParcela;
+        }
+        // Notify host optionally without forcing app-wide update
+        if (widget.onApiSuccess != null && valorParcela != null) {
+          await widget.onApiSuccess!(valorParcela);
+        }
       } finally {
         _requestInFlight = false;
         if (_pendingValue != null) {
@@ -232,13 +241,14 @@ class _OnEndSliderState extends State<OnEndSlider> {
                 final ui = _capValueToMax(v);
                 setState(() => _currentValue = ui);
 
+                // Avoid notifying listeners during drag to prevent page rebuilds
+                // that could trigger repeated API calls in generated widgets.
+                // Update local app state fields without notify.
                 final f = NumberFormat.currency(
                     locale: 'pt_BR', symbol: 'R\$ ', decimalDigits: 2);
-                FFAppState().update(() {
-                  FFAppState().ValorFormatado = ui; // numeric
-                  FFAppState().valorParcelaAlterado =
-                      f.format(ui); // display-only
-                });
+                FFAppState().ValorFormatado = ui; // numeric (no notify)
+                FFAppState().valorParcelaAlterado =
+                    f.format(ui); // display-only (no notify)
               },
               onChangeEnd: (v) => _handleSliderChange(
                   _capValueToMax(v)), // API logic (debounced/guarded)
