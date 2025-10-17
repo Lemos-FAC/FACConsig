@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+import '/custom_code/live_preview_bus.dart';
 
 class FormatacaoValores extends StatefulWidget {
   const FormatacaoValores({
@@ -120,7 +121,22 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
         );
       });
     }
-    return TextField(
+    return AnimatedBuilder(
+      animation: LivePreviewBus.I,
+      builder: (context, _) {
+        // Prefer live draft if user is dragging
+        final String display = LivePreviewBus.I.formattedDraft ?? preview;
+        if (!_focusNode.hasFocus && _controller.text != display) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            _controller.value = _controller.value.copyWith(
+              text: display,
+              selection: TextSelection.collapsed(offset: display.length),
+              composing: TextRange.empty,
+            );
+          });
+        }
+        return TextField(
       controller: _controller,
       onEditingComplete: () async {
         final typed = (FFAppState().ValorFormatado as double?) ?? 0.0;
@@ -185,7 +201,8 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
                 ? full.length
                 : full.length - selectionIndexFromTheRight;
             final int safeOffset = (desiredOffset.clamp(0, full.length)) as int;
-            // _scheduleDebouncedCommit(finalValue);
+            // Update draft so other viewers reflect local typing too
+            LivePreviewBus.I.setDraft(finalValue, full);
 
             return TextEditingValue(
               text: full,
@@ -196,6 +213,8 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
           }
         })
       ],
+        );
+      },
     );
   }
 }

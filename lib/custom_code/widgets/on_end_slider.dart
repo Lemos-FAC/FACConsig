@@ -17,6 +17,7 @@ import '/custom_code/widgets/formatacao_valores_total.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:math' as math;
+import '/custom_code/live_preview_bus.dart';
 
 class OnEndSlider extends StatefulWidget {
   const OnEndSlider(
@@ -155,6 +156,8 @@ class _OnEndSliderState extends State<OnEndSlider> {
           FFAppState().valorParcela =
               response['body']?['dados']?['valorParcela'];
         });
+        // Clear live draft after committing API result
+        LivePreviewBus.I.clear();
       } finally {
         _requestInFlight = false;
         if (_pendingValue != null) {
@@ -227,12 +230,10 @@ class _OnEndSliderState extends State<OnEndSlider> {
                 final ui = _capValueToMax(v);
                 setState(() => _currentValue = ui);
 
-                // Update AppState fields without notifying listeners to avoid rebuild storms
+                // Publish live preview without triggering global rebuilds
                 final f = NumberFormat.currency(
                     locale: 'pt_BR', symbol: 'R\$ ', decimalDigits: 2);
-                FFAppState().ValorFormatado = ui; // numeric draft
-                FFAppState().valorParcelaAlterado =
-                    f.format(ui); // display-only draft
+                LivePreviewBus.I.setDraft(ui, f.format(ui));
               },
               onChangeEnd: (v) => _handleSliderChange(
                   _capValueToMax(v)), // API logic (debounced/guarded)

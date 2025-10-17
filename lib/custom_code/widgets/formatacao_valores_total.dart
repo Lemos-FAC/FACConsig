@@ -14,6 +14,7 @@ import 'dart:async';
 import '/custom_code/ApiGate.dart';
 import '/custom_code/actions/post_slider_value.dart';
 import 'dart:math' as math;
+import '/custom_code/live_preview_bus.dart';
 
 class FormatacaoValoresTotal extends StatefulWidget {
   const FormatacaoValoresTotal({
@@ -211,7 +212,21 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return AnimatedBuilder(
+      animation: LivePreviewBus.I,
+      builder: (context, _) {
+        final String display = LivePreviewBus.I.formattedDraft ?? _controller.text;
+        if (_controller.text != display) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            _controller.value = _controller.value.copyWith(
+              text: display,
+              selection: TextSelection.collapsed(offset: display.length),
+              composing: TextRange.empty,
+            );
+          });
+        }
+        return TextField(
       controller: _controller,
       onEditingComplete: () {
         final double v = (FFAppState().ValorFormatado as double?) ?? 0.0;
@@ -256,9 +271,9 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
           final f = NumberFormat("#,##0.00", "pt_BR");
           final String finalFormattedText = 'R\$ ${f.format(cappedValue)}';
 
-          // Update state and trigger debounced API
+          // Update draft and numeric state for other components
           FFAppState().ValorFormatado = cappedValue;
-          // _handleSliderChange(cappedValue); // pass double, not String
+          LivePreviewBus.I.setDraft(cappedValue, finalFormattedText);
 
           // Restore caret relative to end, clamped to bounds
           final int newOffset =
@@ -270,6 +285,8 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
           );
         })
       ],
+        );
+      },
     );
   }
 }
