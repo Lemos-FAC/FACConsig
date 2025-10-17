@@ -25,6 +25,7 @@ class TesteWidget extends StatefulWidget {
 
 class _TesteWidgetState extends State<TesteWidget> {
   late TesteModel _model;
+  late Future<ApiCallResponse> _initialFuture;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -33,15 +34,18 @@ class _TesteWidgetState extends State<TesteWidget> {
     super.initState();
     _model = createModel(context, () => TesteModel());
 
+    // Cache the initial API call to avoid refetching on every rebuild
+    _initialFuture = SimulaEmprestimoCall.call(
+      contratante: '21220',
+      tipoSimulacao: 'processaSimulacao',
+      quantidadeParcelas: '0',
+      valorEmprestimo: '0',
+      valorParcelas: '0',
+    );
+
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.dados = await SimulaEmprestimoCall.call(
-        contratante: '21220',
-        tipoSimulacao: 'processaSimulacao',
-        quantidadeParcelas: '0',
-        valorEmprestimo: '0',
-        valorParcelas: '0',
-      );
+      _model.dados = await _initialFuture;
 
       if ((_model.dados?.succeeded ?? true)) {
         FFAppState().valorParcela = getJsonField(
@@ -104,7 +108,7 @@ class _TesteWidgetState extends State<TesteWidget> {
     context.watch<FFAppState>();
 
     return FutureBuilder<ApiCallResponse>(
-      future: SimulaEmprestimoCall.call(),
+      future: _initialFuture,
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {

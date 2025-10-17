@@ -27,6 +27,7 @@ class EmprestimoWidget extends StatefulWidget {
 
 class _EmprestimoWidgetState extends State<EmprestimoWidget> {
   late EmprestimoModel _model;
+  late Future<ApiCallResponse> _initialFuture;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -35,15 +36,18 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
     super.initState();
     _model = createModel(context, () => EmprestimoModel());
 
+    // Cache the initial API call so rebuilds don't refetch on every change
+    _initialFuture = SimulaEmprestimoCall.call(
+      contratante: '21220',
+      tipoSimulacao: 'processaSimulacao',
+      quantidadeParcelas: '0',
+      valorEmprestimo: '0',
+      valorParcelas: '0',
+    );
+
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.dados = await SimulaEmprestimoCall.call(
-        contratante: '21220',
-        tipoSimulacao: 'processaSimulacao',
-        quantidadeParcelas: '0',
-        valorEmprestimo: '0',
-        valorParcelas: '0',
-      );
+      _model.dados = await _initialFuture;
 
       if ((_model.dados?.succeeded ?? true)) {
         FFAppState().totalParcela = getJsonField(
@@ -130,7 +134,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
     context.watch<FFAppState>();
 
     return FutureBuilder<ApiCallResponse>(
-      future: SimulaEmprestimoCall.call(),
+      future: _initialFuture,
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {

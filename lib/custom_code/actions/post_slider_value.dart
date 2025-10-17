@@ -36,12 +36,17 @@ Future<dynamic> postSliderValue(double value, String parcela,
         .timeout(const Duration(seconds: 10));
 
     completer.complete({
+      // Maintain both fields for downstream consumers
       'status': response.statusCode,
+      'statusCode': response.statusCode,
+      'headers': response.headers,
       'body': jsonDecode(response.body),
     });
   } catch (e) {
     completer.complete({
       'status': 500,
+      'statusCode': 500,
+      'headers': const <String, String>{},
       'body': 'Erro na requisição: $e',
     });
   }
