@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 // export '../../pages/emprestimo/emprestimo_model.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'dart:async';
 
 class FormatacaoValores extends StatefulWidget {
   const FormatacaoValores({
@@ -38,32 +40,59 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
   Color cor = Colors.black;
   final formatter = NumberFormat("#,##0.00", "pt_BR");
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _controller.text = widget.initialText;
-    _controller.addListener(() {
-      final text = _controller.text;
-      _controller.value = _controller.value.copyWith(
-        text: text,
-        selection: TextSelection.collapsed(offset: text.length),
-        composing: TextRange.empty,
-      );
+  }
+
+  Timer? _debounceCommit;
+  double? _lastCommitted;
+  static const int commitDebounceMs = 900;
+
+  double _capToCeiling(double v) {
+    final f = NumberFormat("#,##0.00", "pt_BR");
+    final s = (FFAppState().totalParcela ?? 'R\$ 0,00')
+        .toString()
+        .replaceAll('R\$ ', '');
+    final ceiling = f.parse(s).toDouble();
+    final capped = (ceiling > 0 && v > ceiling) ? ceiling : v;
+    return double.parse(capped.toStringAsFixed(2));
+  }
+
+  void _scheduleDebouncedCommit(double value) {
+    _debounceCommit?.cancel();
+    _debounceCommit = Timer(const Duration(milliseconds: commitDebounceMs), () {
+      final v = _capToCeiling(value);
+      if (_lastCommitted != null && (v - _lastCommitted!).abs() < 0.01) return;
+      _lastCommitted = v;
+      FFAppState().update(() {
+        FFAppState().customSliderValue = v;
+      });
     });
+  }
+
+  @override
+  void dispose() {
+    _debounceCommit?.cancel();
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant FormatacaoValores oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-// 1. Check if the value coming from the parent (via App State/Slider) has actually changed
+    // 1. Check if the value coming from the parent (via App State/Slider) has actually changed
     if (oldWidget.initialText != widget.initialText) {
-// 2. Check if the controller's current text is different from the new App State value.
-// This prevents a loop if the user typed the same value the slider just sent.
+      // 2. Check if the controller's current text is different from the new App State value.
+      // This prevents a loop if the user typed the same value the slider just sent.
       if (_controller.text != widget.initialText) {
-// 3. Set the controller's text to the new value from the slider (via App State).
-// Use the copyWith method to place the cursor at the end.
+        // 3. Set the controller's text to the new value from the slider (via App State).
+        // Use the copyWith method to place the cursor at the end.
         _controller.value = _controller.value.copyWith(
           text: widget.initialText,
           selection: TextSelection.collapsed(offset: widget.initialText.length),
@@ -75,8 +104,33 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>(); // react to preview/auth updates
+
+    final String preview = (FFAppState().valorParcelaAlterado ??
+            widget.initialText /* totalParcela */)
+        .toString();
+
+    if (!_focusNode.hasFocus && _controller.text != preview) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _controller.value = _controller.value.copyWith(
+          text: preview,
+          selection: TextSelection.collapsed(offset: preview.length),
+          composing: TextRange.empty,
+        );
+      });
+    }
     return TextField(
       controller: _controller,
+      onEditingComplete: () async {
+        final typed = (FFAppState().ValorFormatado as double?) ?? 0.0;
+        final capped = _capToCeiling(typed);
+        FFAppState().update(() {
+          FFAppState().customSliderValue =
+              capped; // slider will mirror via initialValue
+        });
+        FocusScope.of(context).unfocus();
+      },
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(widget.radius),
@@ -96,58 +150,51 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
         TextInputFormatter.withFunction((oldValue, newValue) {
           if (newValue.text.isEmpty) {
             return newValue.copyWith(text: '');
-          } else if (newValue.text.compareTo(oldValue.text) != 0) {
+          } else if (newValue.text != oldValue.text) {
             final f = NumberFormat("#,##0.00", "pt_BR");
 
-            // --- 1. CLEAN AND PARSE USER INPUT ---
-            final String cleanDigits =
-                newValue.text.replaceAll(RegExp(r'\D'), '');
-            final int rawNumber = int.tryParse(cleanDigits) ?? 0;
-            double rawDoubleValue = rawNumber / 100;
+            // 1) Parse digits -> double
+            final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+            final int rawNumber = int.tryParse(digitsOnly) ?? 0;
+            final double rawDoubleValue = rawNumber / 100.0;
 
-            // --- 2. CLEAN AND PARSE CEILING VALUE (totalParcela) ---
-            final String totalParcelaString =
-                FFAppState().totalParcela ?? 'R\$ 0,00';
-
-            // Use NumberFormat.parse to safely handle the "R$ 0.000,00" format
+            // 2) Ceiling from totalParcela
+            final totalParcelaString =
+                (FFAppState().totalParcela ?? 'R\$ 0,00').toString();
             final double ceilingValue =
                 f.parse(totalParcelaString.replaceAll('R\$ ', '')).toDouble();
 
-            // --- 3. DETERMINE FINAL VALUE (CAP IT) ---
+            // 3) Cap
             double finalValue = rawDoubleValue;
             bool wasCapped = false;
-
-            if (ceilingValue > 0.0 && rawDoubleValue > ceilingValue) {
+            if (ceilingValue > 0.0 && finalValue > ceilingValue) {
               finalValue = ceilingValue;
               wasCapped = true;
             }
 
-            // --- 4. UPDATE APP STATE ---
-            FFAppState().update(() {
-              FFAppState().customSliderValue = finalValue;
-            });
+            // 4) Stage only + debounce commit
             FFAppState().ValorFormatado = finalValue;
 
-            // --- 5. FORMAT AND RETURN ---
+            // 5) Format + caret
             final newString = f.format(finalValue);
+            final full = 'R\$ ' + newString;
 
-            // Handle cursor position
-            final int selectionIndexFromTheRight =
+            final selectionIndexFromTheRight =
                 newValue.text.length - newValue.selection.extentOffset;
-
-            // If the value was capped, place the cursor at the end for a clean reset
-            final int cursorOffset = wasCapped
-                ? ('R\$ ' + newString).length
-                : ('R\$ ' + newString).length - selectionIndexFromTheRight;
+            final desiredOffset = wasCapped
+                ? full.length
+                : full.length - selectionIndexFromTheRight;
+            final int safeOffset = (desiredOffset.clamp(0, full.length)) as int;
+            // _scheduleDebouncedCommit(finalValue);
 
             return TextEditingValue(
-              text: 'R\$ ' + newString,
-              selection: TextSelection.collapsed(offset: cursorOffset),
+              text: full,
+              selection: TextSelection.collapsed(offset: safeOffset),
             );
           } else {
             return newValue;
           }
-        }),
+        })
       ],
     );
   }

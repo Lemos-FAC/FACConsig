@@ -11,6 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import '/custom_code/ApiGate.dart';
+import '/custom_code/actions/post_slider_value.dart';
+import 'dart:math' as math;
 
 class FormatacaoValoresTotal extends StatefulWidget {
   const FormatacaoValoresTotal({
@@ -37,11 +40,6 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
   Color cor = Colors.black;
   final formatter = NumberFormat("#,##0.00", "pt_BR");
   final TextEditingController _controller = TextEditingController();
-  // NEW: Debounce Timer
-  Timer? _debounce;
-  bool _isTypingLocally = false;
-  // Define the duration of inactivity (e.g., 500 milliseconds)
-  final Duration _debounceDuration = const Duration(milliseconds: 1000);
 
   @override
   void initState() {
@@ -49,12 +47,151 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
     _controller.text = widget.initialText;
   }
 
+  double _allowedMaxFromValorParcela() {
+    final dynamic raw = FFAppState().valorParcela;
+    if (raw is num) return raw.toDouble();
+
+    // If it's a string like "R$ 1.234,56"
+    final s = raw?.toString() ?? '0';
+    final cleaned = s.replaceAll(RegExp(r'[^0-9,\.]'), '');
+    final normalized = cleaned.replaceAll('.', '').replaceAll(',', '.');
+    return double.tryParse(normalized) ?? 0.0;
+  }
+
+  double _capToValorParcela(double value) {
+    final maxAllowed = _allowedMaxFromValorParcela();
+    final capped = value > maxAllowed ? maxAllowed : value;
+    return double.parse(capped.toStringAsFixed(2));
+  }
+
+  double parseFlexibleDouble(dynamic raw) {
+    if (raw == null) return 0.0;
+    if (raw is num) return raw.toDouble();
+    final s0 = raw.toString().trim();
+    if (s0.isEmpty) return 0.0;
+
+    // Remove currency/symbols; handle pt_BR and dot-decimal
+    final s = s0.replaceAll(RegExp(r'[^0-9,.\-]'), '');
+    if (s.contains(',') && s.contains('.')) {
+      // assume "1.234,56" -> "1234.56"
+      return double.tryParse(s.replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
+    }
+    if (s.contains(',')) {
+      return double.tryParse(s.replaceAll(',', '.')) ?? 0.0;
+    }
+    return double.tryParse(s) ?? 0.0;
+  }
+
+  Timer? _debounce;
+
+// Add these fields
+  bool _requestInFlight = false;
+  double? _pendingValue;
+  double? _lastSentValue;
+  int _latestRequestId = 0;
+  DateTime? _lastCallAt;
+  static const int minIntervalMs = 2500; // floor between requests
+  final int debounceDurationMs = 2000; // comment should say "2 seconds"
+
+  void _handleSliderChange(double value) {
+    _debounce?.cancel();
+    _debounce = Timer(Duration(milliseconds: debounceDurationMs), () async {
+      final double finalValue = _capToValorParcela(value);
+      final String parcelaStr = finalValue.toStringAsFixed(2);
+
+      // distinct-until-changed (0.01)
+      if (_lastSentValue != null &&
+          (finalValue - _lastSentValue!).abs() < 0.01) {
+        return;
+      }
+
+      // min interval guard
+      final now = DateTime.now();
+      final elapsedMs = now
+          .difference(_lastCallAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+          .inMilliseconds;
+      if (elapsedMs < minIntervalMs) {
+        final waitMs = minIntervalMs - elapsedMs;
+        _debounce = Timer(Duration(milliseconds: waitMs), () {
+          _handleSliderChange(finalValue);
+        });
+        return;
+      }
+
+      // one-in-flight + last-value-wins
+      if (_requestInFlight) {
+        _pendingValue = finalValue;
+        return;
+      }
+      _requestInFlight = true;
+      _lastCallAt = now;
+      final int reqId = ++_latestRequestId;
+
+      try {
+        final response = await ApiGate.run(() => postSliderValue(
+              FFAppState().customSliderValue, // current loan amount
+              FFAppState().parcela, // dropdown selection
+              'porValorParcela',
+              '21220',
+              parcelaStr, // parcela value typed (capped)
+            ));
+
+        if ((response['statusCode'] as int?) == 429) {
+          ApiGate.backoffFromHeaders(response['headers'] as Map?);
+          return; // gate will delay the next attempt globally
+        }
+
+        // ignore stale responses
+        if (reqId != _latestRequestId) return;
+
+        // 429 backoff
+        final status = response['statusCode'] as int?;
+        if (status == 429) {
+          final headers = (response['headers'] ?? {}) as Map?;
+          final retryAfterRaw = headers?['retry-after']?.toString() ??
+              headers?['Retry-After']?.toString();
+          final retryAfter = int.tryParse(retryAfterRaw ?? '') ?? 3;
+          await Future.delayed(Duration(seconds: retryAfter));
+          _requestInFlight = false; // allow retry
+          _handleSliderChange(finalValue); // retry
+          return;
+        }
+
+        _lastSentValue = finalValue;
+
+        // authoritative updates from API
+        final dynamic rawValor = response['body']?['dados']?['valorEmprestimo'];
+        final double valorEmprestimo = parseFlexibleDouble(rawValor);
+
+        FFAppState().update(() {
+          FFAppState().totalParcela =
+              response['body']?['dados']?['valorEmprestimoForma'];
+
+          FFAppState().customSliderValue = valorEmprestimo;
+        });
+      } finally {
+        _requestInFlight = false;
+
+        // send only the latest queued value
+        if (_pendingValue != null) {
+          final double v = _pendingValue!;
+          _pendingValue = null;
+          _handleSliderChange(v);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   void didUpdateWidget(covariant FormatacaoValoresTotal oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (_isTypingLocally) {
-      return;
-    }
     // 1. Check if the value coming from the parent (via App State/Slider) has actually changed
     if (oldWidget.initialText != widget.initialText) {
       // 2. Check if the controller's current text is different from the new App State value.
@@ -75,6 +212,11 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
   Widget build(BuildContext context) {
     return TextField(
       controller: _controller,
+      onEditingComplete: () {
+        final double v = (FFAppState().ValorFormatado as double?) ?? 0.0;
+        _handleSliderChange(v); // single call after user finishes typing
+        FocusScope.of(context).unfocus();
+      },
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(widget.radius),
@@ -94,27 +236,38 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
         TextInputFormatter.withFunction((oldValue, newValue) {
           if (newValue.text.isEmpty) {
             return newValue.copyWith(text: '');
-          } else if (newValue.text.compareTo(oldValue.text) != 0) {
-            final int selectionIndexFromTheRight =
-                newValue.text.length - newValue.selection.extentOffset;
-            final f = NumberFormat("#,##0.00", "pt_BR");
-            final number =
-                int.parse(newValue.text.replaceAll(f.symbols.GROUP_SEP, ''));
-            final newString = f.format(number / 100);
-            String finalFormattedText = 'R\$ ' + newString;
-            FFAppState().ValorFormatado = number / 100; // Moved this line here
-            return TextEditingValue(
-              text: finalFormattedText,
-              selection: TextSelection.collapsed(
-                  // FIX: The offset must be relative to the full string length (finalFormattedText).
-                  // The length of finalFormattedText includes "R$ " (3 chars) and all separators.
-                  offset:
-                      finalFormattedText.length - selectionIndexFromTheRight),
-            );
-          } else {
-            return newValue;
           }
-        }),
+
+          // Keep caret position relative to the end of the string
+          final int selectionIndexFromTheRight =
+              newValue.text.length - newValue.selection.extentOffset;
+
+          // Parse digits -> value (pt_BR)
+          final digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+          final double rawValue =
+              (double.tryParse(digitsOnly.isEmpty ? '0' : digitsOnly) ?? 0) /
+                  100.0;
+
+          // Cap to your allowed max (using your cap helper)
+          final double cappedValue = _capToValorParcela(rawValue);
+
+          // Format and build final text
+          final f = NumberFormat("#,##0.00", "pt_BR");
+          final String finalFormattedText = 'R\$ ${f.format(cappedValue)}';
+
+          // Update state and trigger debounced API
+          FFAppState().ValorFormatado = cappedValue;
+          // _handleSliderChange(cappedValue); // pass double, not String
+
+          // Restore caret relative to end, clamped to bounds
+          final int newOffset =
+              ((finalFormattedText.length - selectionIndexFromTheRight)
+                  .clamp(0, finalFormattedText.length) as int);
+          return TextEditingValue(
+            text: finalFormattedText,
+            selection: TextSelection.collapsed(offset: newOffset),
+          );
+        })
       ],
     );
   }

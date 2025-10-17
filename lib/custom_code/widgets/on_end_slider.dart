@@ -11,10 +11,12 @@ import 'package:flutter/material.dart';
 // import '../../pages/emprestimo/emprestimo_model.dart';
 // export '../../pages/emprestimo/emprestimo_model.dart';
 import '/custom_code/actions/post_slider_value.dart';
+import '/custom_code/ApiGate.dart';
 import '/custom_code/widgets/formatacao_valores.dart';
 import '/custom_code/widgets/formatacao_valores_total.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'dart:math' as math;
 
 class OnEndSlider extends StatefulWidget {
   const OnEndSlider(
@@ -32,7 +34,7 @@ class OnEndSlider extends StatefulWidget {
   final double? min;
   final double? max;
   final double? initialValue;
-  final Future<dynamic> Function(dynamic apiResponse)? onApiSuccess;
+  final Future<dynamic> Function(String apiResponse)? onApiSuccess;
 
   @override
   State<OnEndSlider> createState() => _OnEndSliderState();
@@ -57,40 +59,109 @@ class _OnEndSliderState extends State<OnEndSlider> {
   }
 
   Timer? _debounce;
-  final int debounceDurationMs = 2000; // 0.5 seconds
 
-// This function handles both the text update and the debounced API call
-  void _handleSliderChange(double value) async {
-    // 1. Cancel any existing timer to prevent a prior call from firing
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
+// Add these fields
+  bool _requestInFlight = false;
+  double? _pendingValue;
+  double? _lastSentValue;
+  int _latestRequestId = 0;
+  DateTime? _lastCallAt;
 
-    // 2. Set a new timer to fire the API logic after the debounce delay
+  static DateTime? _globalNextAllowedAt;
+  static int _globalBackoffSec = 0;
+// raise the floor (server-friendly)
+  static const int minIntervalMs = 5000; // was 2500
+  final int debounceDurationMs =
+      1200; // send sooner after stop, but fewer per minute
+
+  void _retryLater(double v, Duration d) {
+    _debounce?.cancel();
+    _debounce = Timer(d, () => _handleSliderChange(v));
+  }
+
+  void _handleSliderChange(double value) {
+    _debounce?.cancel();
     _debounce = Timer(Duration(milliseconds: debounceDurationMs), () async {
-      double finalValue = _capValueToMax(value);
-      double previousLoanValue = FFAppState().customSliderValue;
+      final double finalValue = _capValueToMax(value);
 
-      // // Check if the value has genuinely changed before making the API call
-      // // The previous check you had is good, but we ensure it's on the debounced value.
-      // if (finalValue != previousLoanValue) {
-      //   // 3. API Call (will run only after the user stops for 500ms)
-      final response = await postSliderValue(
-          finalValue, FFAppState().parcela, 'porValorSolicitado', '21220', '');
+      // respect global cooldown (shared across instances/widgets)
+      final now = DateTime.now();
+      if (_globalNextAllowedAt != null && now.isBefore(_globalNextAllowedAt!)) {
+        _retryLater(finalValue, _globalNextAllowedAt!.difference(now));
+        return;
+      }
 
-      //   // 4. Final App State Update
-      //   FFAppState().update(() {
-      //     FFAppState().customSliderValue = finalValue;
-      //     FFAppState().valorParcela =
-      //         response['body']?['dados']?['valorParcela'];
-      //     FFAppState().totalParcela =
-      //         response['body']?['dados']?['valorEmprestimoForma'];
-      //   });
-      // }
-      // final response = await postSliderValue(...);
+      if (_lastSentValue != null && (finalValue - _lastSentValue!).abs() < 0.01)
+        return;
 
-      // 2. PASS RESPONSE OUT using a new Action parameter
-      if (widget.onApiSuccess != null) {
-        // Assume you created this
-        widget.onApiSuccess!(response);
+      final elapsedMs = now
+          .difference(_lastCallAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+          .inMilliseconds;
+      if (elapsedMs < minIntervalMs) {
+        _retryLater(
+            finalValue, Duration(milliseconds: minIntervalMs - elapsedMs));
+        return;
+      }
+
+      if (_requestInFlight) {
+        _pendingValue = finalValue;
+        return;
+      }
+      _requestInFlight = true;
+      _lastCallAt = now;
+      final int reqId = ++_latestRequestId;
+
+      try {
+        final response = await ApiGate.run(() => postSliderValue(
+              finalValue,
+              FFAppState().parcela,
+              'porValorSolicitado',
+              '21220',
+              '',
+            ));
+        if ((response['statusCode'] as int?) == 429) {
+          ApiGate.backoffFromHeaders(response['headers'] as Map?);
+          return; // gate will delay the next attempt globally
+        }
+
+        if (reqId != _latestRequestId) return;
+
+        final status = response['statusCode'] as int?;
+        if (status == 429) {
+          final headers = (response['headers'] ?? {}) as Map?;
+          final raw = headers?['retry-after']?.toString() ??
+              headers?['Retry-After']?.toString();
+          final int? headerSec = int.tryParse(raw ?? '');
+          final int waitSec = headerSec ??
+              (_globalBackoffSec == 0
+                  ? 4
+                  : (_globalBackoffSec * 2).clamp(4, 60));
+          _globalBackoffSec = waitSec;
+          _globalNextAllowedAt = DateTime.now().add(Duration(seconds: waitSec));
+          _requestInFlight = false;
+          _retryLater(
+              finalValue, Duration(seconds: waitSec)); // schedule, don't hammer
+          return;
+        }
+
+        // success => reset backoff and set a gentle floor before next send
+        _globalBackoffSec = 0;
+        _globalNextAllowedAt = DateTime.now().add(const Duration(seconds: 2));
+
+        _lastSentValue = finalValue;
+        FFAppState().update(() {
+          FFAppState().totalParcela =
+              response['body']?['dados']?['valorEmprestimoForma'];
+          FFAppState().valorParcela =
+              response['body']?['dados']?['valorParcela'];
+        });
+      } finally {
+        _requestInFlight = false;
+        if (_pendingValue != null) {
+          final double v = _pendingValue!;
+          _pendingValue = null;
+          _handleSliderChange(v);
+        }
       }
     });
   }
@@ -137,33 +208,57 @@ class _OnEndSliderState extends State<OnEndSlider> {
     // Final rounding
     final double finalSliderValue =
         double.parse(safeCurrentValue.toStringAsFixed(2));
+    final double capped = _capValueToMax(_currentValue);
     return SizedBox(
       width: widget.width,
       height: widget.height,
-      child: Slider(
-        activeColor: FlutterFlowTheme.of(context).primary,
-        inactiveColor: const Color(0xFF97bba7),
-        min: widget.min ?? 0.0,
-        max: widget.max ?? 0.0,
-        value: finalSliderValue,
-        onChanged: (value) async {
-          final formatter = NumberFormat.currency(
-            locale:
-                'pt_BR', // Brazilian locale for separators (comma as decimal, dot as thousands)
-            symbol: 'R\$ ', // Currency symbol with a space
-            decimalDigits: 2, // Rounds to two decimal places
-          );
-          setState(() {
-            _currentValue = _capValueToMax(value);
-          });
-          FFAppState().update(() {
-            // FFAppState().totalParcela = formatter.format(value);
-            // FFAppState().displayValue = formatter.format(value);
-          });
-        },
-        onChangeEnd: (newValue) async {
-          _handleSliderChange(newValue);
-        },
+      child: Stack(
+        children: [
+          IgnorePointer(
+            ignoring:
+                _requestInFlight, // optional: prevent new drags while sending
+            child: Slider(
+              activeColor: FlutterFlowTheme.of(context).primary,
+              inactiveColor: const Color(0xFF97bba7),
+              min: widget.min ?? 0.0,
+              max: widget.max ?? 0.0,
+              value: capped,
+              onChanged: (v) {
+                // final f = NumberFormat("#,##0.00", "pt_BR");
+                // setState(() => _currentValue = _capValueToMax(v));
+                // FFAppState().update(() {
+                //   FFAppState().totalParcela = f.format(v);
+                // });
+                final ui = _capValueToMax(v);
+                setState(() => _currentValue = ui);
+
+                final f = NumberFormat.currency(
+                    locale: 'pt_BR', symbol: 'R\$ ', decimalDigits: 2);
+                FFAppState().update(() {
+                  FFAppState().ValorFormatado = ui; // numeric
+                  FFAppState().valorParcelaAlterado =
+                      f.format(ui); // display-only
+                });
+              },
+              onChangeEnd: (v) => _handleSliderChange(
+                  _capValueToMax(v)), // API logic (debounced/guarded)
+            ),
+          ),
+          if (_requestInFlight) // optional: subtle busy hint
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Container(
+                  color: Colors.black.withOpacity(0.03),
+                  alignment: Alignment.center,
+                  child: const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

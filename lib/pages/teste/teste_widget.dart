@@ -346,8 +346,9 @@ class _TesteWidgetState extends State<TesteWidget> {
                                 max: FFAppState().valorSlider,
                                 initialValue: FFAppState().customSliderValue,
                                 onApiSuccess: (apiResponse) async {
-                                  FFAppState().totalParcela =
-                                      apiResponse.toString();
+                                  FFAppState().valorParcelaAlterado =
+                                      apiResponse;
+                                  safeSetState(() {});
                                 },
                               ),
                             ),
