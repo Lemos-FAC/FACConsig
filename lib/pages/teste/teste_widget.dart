@@ -61,6 +61,22 @@ class _TesteWidgetState extends State<TesteWidget> {
           (_model.dados?.jsonBody ?? ''),
           r'''$..valorEmprestimoForma''',
         ).toString();
+        await actions.initializeSliderState(
+          functions.stringDoubleSFomart(getJsonField(
+            (_model.dados?.jsonBody ?? ''),
+            r'''$..valorEmprestimo''',
+          ).toString())!,
+        );
+        await actions.initializeAmountState(
+          functions.stringDoubleSFomart(getJsonField(
+            (_model.dados?.jsonBody ?? ''),
+            r'''$..valorEmprestimo''',
+          ).toString())!,
+          functions.stringDoubleSFomart(getJsonField(
+            (_model.dados?.jsonBody ?? ''),
+            r'''$..valorEmprestimo''',
+          ).toString())!,
+        );
         await actions.generateNumberRangeAction(
           getJsonField(
             (_model.dados?.jsonBody ?? ''),
@@ -346,8 +362,7 @@ class _TesteWidgetState extends State<TesteWidget> {
                                 max: FFAppState().valorSlider,
                                 initialValue: FFAppState().customSliderValue,
                                 onApiSuccess: (apiResponse) async {
-                                  FFAppState().valorParcelaAlterado =
-                                      apiResponse;
+                                  _model.displayParcelaValue = apiResponse;
                                   safeSetState(() {});
                                 },
                               ),

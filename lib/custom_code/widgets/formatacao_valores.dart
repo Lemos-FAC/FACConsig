@@ -8,11 +8,10 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-// import '../../pages/emprestimo/emprestimo_model.dart';
-// export '../../pages/emprestimo/emprestimo_model.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '/custom_code/AmountController.dart';
 import 'dart:async';
 
 class FormatacaoValores extends StatefulWidget {
@@ -87,16 +86,29 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
     super.didUpdateWidget(oldWidget);
 
     // 1. Check if the value coming from the parent (via App State/Slider) has actually changed
-    if (oldWidget.initialText != widget.initialText) {
-      // 2. Check if the controller's current text is different from the new App State value.
-      // This prevents a loop if the user typed the same value the slider just sent.
-      if (_controller.text != widget.initialText) {
-        // 3. Set the controller's text to the new value from the slider (via App State).
-        // Use the copyWith method to place the cursor at the end.
+    // if (oldWidget.initialText != widget.initialText) {
+    //   // 2. Check if the controller's current text is different from the new App State value.
+    //   // This prevents a loop if the user typed the same value the slider just sent.
+    //   if (_controller.text != widget.initialText) {
+    //     // 3. Set the controller's text to the new value from the slider (via App State).
+    //     // Use the copyWith method to place the cursor at the end.
+    //     _controller.value = _controller.value.copyWith(
+    //       text: widget.initialText,
+    //       selection: TextSelection.collapsed(offset: widget.initialText.length),
+    //       composing: TextRange.empty,
+    //     );
+    //   }
+    // }
+    final double newValue = amountController.amountValue.value;
+    final f = NumberFormat("#,##0.00", "pt_BR");
+    final newText = 'R\$ ' + f.format(newValue);
+
+    // Only update if the user isn't typing (is not focused)
+    if (!FocusScope.of(context).hasFocus) {
+      if (_controller.text != newText) {
         _controller.value = _controller.value.copyWith(
-          text: widget.initialText,
-          selection: TextSelection.collapsed(offset: widget.initialText.length),
-          composing: TextRange.empty,
+          text: newText,
+          selection: TextSelection.collapsed(offset: newText.length),
         );
       }
     }
@@ -120,83 +132,109 @@ class _FormatacaoValoresState extends State<FormatacaoValores> {
     //     );
     //   });
     // }
-    return TextField(
-      controller: _controller,
-      // onEditingComplete: () async {
-      //   final typed = (FFAppState().ValorFormatado as double?) ?? 0.0;
-      //   final capped = _capToCeiling(typed);
-      //   FFAppState().update(() {
-      //     FFAppState().customSliderValue =
-      //         capped; // slider will mirror via initialValue
-      //   });
-      //   FocusScope.of(context).unfocus();
-      // },
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(widget.radius),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(widget.radius),
-          borderSide: BorderSide(color: widget.cor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(widget.radius),
-          borderSide: BorderSide(color: widget.cor),
-        ),
-      ),
-      keyboardType: TextInputType.number,
-      inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-        TextInputFormatter.withFunction((oldValue, newValue) {
-          if (newValue.text.isEmpty) {
-            return newValue.copyWith(text: '');
-          } else if (newValue.text != oldValue.text) {
-            final f = NumberFormat("#,##0.00", "pt_BR");
+    final f = NumberFormat("#,##0.00", "pt_BR");
+    return ValueListenableBuilder<double>(
+        valueListenable: amountController.amountValue,
+        builder: (context, value, child) {
+          // final newText = 'R\$ ' + f.format(value);
 
-            // 1) Parse digits -> double
-            final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
-            final int rawNumber = int.tryParse(digitsOnly) ?? 0;
-            final double rawDoubleValue = rawNumber / 100.0;
+          // // 2. Determine if the user is currently focused/typing
+          // final isFocused = FocusScope.of(context).hasFocus;
 
-            // 2) Ceiling from totalParcela
-            final totalParcelaString =
-                (FFAppState().totalParcela ?? 'R\$ 0,00').toString();
-            final double ceilingValue =
-                f.parse(totalParcelaString.replaceAll('R\$ ', '')).toDouble();
+          // // 3. Conditional Update (The Persistence/No-Jump Fix)
+          // if (_controller.text != newText && !isFocused) {
+          //   // If the central state changed AND the user is NOT typing,
+          //   // then force the text field to sync with the slider value.
+          //   // We use .value.copyWith to update the text without moving the cursor,
+          //   // which is smoother than simply setting .text.
+          //   _controller.value = _controller.value.copyWith(
+          //     text: newText,
+          //     // Set selection to the end to prevent cursor jump if this field gets focus later
+          //     selection: TextSelection.collapsed(offset: newText.length),
+          //   );
+          // }
+          return TextField(
+            // controller: _controller,
+            controller: TextEditingController(text: 'R\$ ' + f.format(value)),
+            onEditingComplete: () async {
+              final typed = (FFAppState().ValorFormatado as double?) ?? 0.0;
+              final capped = _capToCeiling(typed);
+              amountController.updateValue(capped);
+              FFAppState().update(() {
+                FFAppState().customSliderValue =
+                    capped; // slider will mirror via initialValue
+              });
+              FocusScope.of(context).unfocus();
+            },
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(widget.radius),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(widget.radius),
+                borderSide: BorderSide(color: widget.cor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(widget.radius),
+                borderSide: BorderSide(color: widget.cor),
+              ),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              TextInputFormatter.withFunction((oldValue, newValue) {
+                if (newValue.text.isEmpty) {
+                  return newValue.copyWith(text: '');
+                } else if (newValue.text != oldValue.text) {
+                  final f = NumberFormat("#,##0.00", "pt_BR");
 
-            // 3) Cap
-            double finalValue = rawDoubleValue;
-            bool wasCapped = false;
-            if (ceilingValue > 0.0 && finalValue > ceilingValue) {
-              finalValue = ceilingValue;
-              wasCapped = true;
-            }
+                  // 1) Parse digits -> double
+                  final digitsOnly =
+                      newValue.text.replaceAll(RegExp(r'\D'), '');
+                  final int rawNumber = int.tryParse(digitsOnly) ?? 0;
+                  final double rawDoubleValue = rawNumber / 100.0;
 
-            // 4) Stage only + debounce commit
-            FFAppState().ValorFormatado = finalValue;
+                  // 2) Ceiling from totalParcela
+                  final totalParcelaString =
+                      (FFAppState().totalParcela ?? 'R\$ 0,00').toString();
+                  final double ceilingValue = f
+                      .parse(totalParcelaString.replaceAll('R\$ ', ''))
+                      .toDouble();
 
-            // 5) Format + caret
-            final newString = f.format(finalValue);
-            final full = 'R\$ ' + newString;
+                  // 3) Cap
+                  double finalValue = rawDoubleValue;
+                  bool wasCapped = false;
+                  if (ceilingValue > 0.0 && finalValue > ceilingValue) {
+                    finalValue = ceilingValue;
+                    wasCapped = true;
+                  }
 
-            final selectionIndexFromTheRight =
-                newValue.text.length - newValue.selection.extentOffset;
-            final desiredOffset = wasCapped
-                ? full.length
-                : full.length - selectionIndexFromTheRight;
-            final int safeOffset = (desiredOffset.clamp(0, full.length)) as int;
-            // _scheduleDebouncedCommit(finalValue);
+                  // 4) Stage only + debounce commit
+                  FFAppState().ValorFormatado = finalValue;
 
-            return TextEditingValue(
-              text: full,
-              selection: TextSelection.collapsed(offset: safeOffset),
-            );
-          } else {
-            return newValue;
-          }
-        })
-      ],
-    );
+                  // 5) Format + caret
+                  final newString = f.format(finalValue);
+                  final full = 'R\$ ' + newString;
+
+                  final selectionIndexFromTheRight =
+                      newValue.text.length - newValue.selection.extentOffset;
+                  final desiredOffset = wasCapped
+                      ? full.length
+                      : full.length - selectionIndexFromTheRight;
+                  final int safeOffset =
+                      (desiredOffset.clamp(0, full.length)) as int;
+
+                  return TextEditingValue(
+                    text: full,
+                    selection: TextSelection.collapsed(offset: safeOffset),
+                  );
+                } else {
+                  return newValue;
+                }
+              })
+            ],
+          );
+        });
   }
 }
 

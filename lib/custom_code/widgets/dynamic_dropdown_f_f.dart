@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import '/custom_code/SliderController.dart';
+import '/custom_code/AmountController.dart';
 
 class DynamicDropdownFF extends StatefulWidget {
   const DynamicDropdownFF(
@@ -153,9 +155,16 @@ class _DynamicDropdownFFState extends State<DynamicDropdownFF> {
                         response['body']?['dados']?['valorEmprestimo']) ??
                     0.0;
 
-                FFAppState().totalParcela =
-                    response['body']?['dados']?['valorEmprestimoForma'];
+                // FFAppState().totalParcela =
+                //     response['body']?['dados']?['valorEmprestimoForma'];
+                final dynamic resp = double.tryParse(
+                    response['body']?['dados']?['valorEmprestimo']);
+                sliderController.updateValue(resp);
+                amountController.updateValue(resp);
+                amountController.setCeiling(resp);
                 FFAppState().valorParcela =
+                    response['body']?['dados']?['valorParcela'];
+                FFAppState().valorParcelaAlterado =
                     response['body']?['dados']?['valorParcela'];
               });
             }

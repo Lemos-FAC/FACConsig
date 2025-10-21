@@ -8,12 +8,10 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-// import '../../pages/emprestimo/emprestimo_model.dart';
-// export '../../pages/emprestimo/emprestimo_model.dart';
 import '/custom_code/actions/post_slider_value.dart';
 import '/custom_code/ApiGate.dart';
-import '/custom_code/widgets/formatacao_valores.dart';
-import '/custom_code/widgets/formatacao_valores_total.dart';
+import '/custom_code/SliderController.dart';
+import '/custom_code/AmountController.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:math' as math;
@@ -70,9 +68,9 @@ class _OnEndSliderState extends State<OnEndSlider> {
   static DateTime? _globalNextAllowedAt;
   static int _globalBackoffSec = 0;
 // raise the floor (server-friendly)
-  static const int minIntervalMs = 5000; // was 2500
+  static const int minIntervalMs = 1500; // was 2500
   final int debounceDurationMs =
-      1200; // send sooner after stop, but fewer per minute
+      1000; // send sooner after stop, but fewer per minute
 
   void _retryLater(double v, Duration d) {
     _debounce?.cancel();
@@ -209,58 +207,63 @@ class _OnEndSliderState extends State<OnEndSlider> {
     final double finalSliderValue =
         double.parse(safeCurrentValue.toStringAsFixed(2));
     final double capped = _capValueToMax(_currentValue);
-    return SizedBox(
-      width: widget.width,
-      height: widget.height,
-      child: Stack(
-        children: [
-          IgnorePointer(
-            ignoring:
-                _requestInFlight, // optional: prevent new drags while sending
-            child: Slider(
-              activeColor: FlutterFlowTheme.of(context).primary,
-              inactiveColor: const Color(0xFF97bba7),
-              min: widget.min ?? 0.0,
-              max: widget.max ?? 0.0,
-              value: capped,
-              onChanged: (v) {
-                // final f = NumberFormat("#,##0.00", "pt_BR");
-                // setState(() => _currentValue = _capValueToMax(v));
-                // FFAppState().update(() {
-                //   FFAppState().totalParcela = f.format(v);
-                // });
-                final ui = _capValueToMax(v);
-                setState(() => _currentValue = ui);
-
-                // final f = NumberFormat.currency(
-                //     locale: 'pt_BR', symbol: 'R\$ ', decimalDigits: 2);
-                // FFAppState().update(() {
-                //   FFAppState().ValorFormatado = ui; // numeric
-                //   FFAppState().valorParcelaAlterado =
-                //       f.format(ui); // display-only
-                // });
-              },
-              onChangeEnd: (v) => _handleSliderChange(
-                  _capValueToMax(v)), // API logic (debounced/guarded)
-            ),
-          ),
-          if (_requestInFlight) // optional: subtle busy hint
-            Positioned.fill(
-              child: IgnorePointer(
-                child: Container(
-                  color: Colors.black.withOpacity(0.03),
-                  alignment: Alignment.center,
-                  child: const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+    return ValueListenableBuilder<double>(
+        valueListenable: amountController.amountValue,
+        builder: (context, currentValue, child) {
+          return SizedBox(
+            width: widget.width,
+            height: widget.height,
+            child: Stack(
+              children: [
+                IgnorePointer(
+                  ignoring:
+                      _requestInFlight, // optional: prevent new drags while sending
+                  child: Slider(
+                    activeColor: FlutterFlowTheme.of(context).primary,
+                    inactiveColor: const Color(0xFF97bba7),
+                    min: widget.min ?? 0.0,
+                    max: widget.max ?? 0.0,
+                    value: currentValue,
+                    onChanged: (v) {
+                      final f = NumberFormat("#,##0.00", "pt_BR");
+                      // setState(() => _currentValue = _capValueToMax(v));
+                      // FFAppState().update(() {
+                      //   FFAppState().totalParcela = f.format(v);
+                      // });
+                      sliderController.updateValue(v);
+                      amountController.updateValue(v);
+                      // final ui = _capValueToMax(v);
+                      // setState(() => _currentValue = ui);
+                      // final f = NumberFormat.currency(
+                      //     locale: 'pt_BR', symbol: 'R\$ ', decimalDigits: 2);
+                      // FFAppState().update(() {
+                      //   FFAppState().ValorFormatado = ui; // numeric
+                      //   FFAppState().valorParcelaAlterado =
+                      //       f.format(ui); // display-only
+                      // });
+                    },
+                    onChangeEnd: (v) => _handleSliderChange(
+                        _capValueToMax(v)), // API logic (debounced/guarded)
                   ),
                 ),
-              ),
+                if (_requestInFlight) // optional: subtle busy hint
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.03),
+                        alignment: Alignment.center,
+                        child: const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-        ],
-      ),
-    );
+          );
+        });
   }
 }
 

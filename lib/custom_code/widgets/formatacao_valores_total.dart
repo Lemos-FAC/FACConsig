@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import '/custom_code/ApiGate.dart';
+import '/custom_code/SliderController.dart';
 import '/custom_code/actions/post_slider_value.dart';
 import 'dart:math' as math;
 
@@ -90,8 +91,8 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
   double? _lastSentValue;
   int _latestRequestId = 0;
   DateTime? _lastCallAt;
-  static const int minIntervalMs = 2500; // floor between requests
-  final int debounceDurationMs = 2000; // comment should say "2 seconds"
+  static const int minIntervalMs = 1500; // floor between requests
+  final int debounceDurationMs = 1000; // comment should say "2 seconds"
 
   void _handleSliderChange(double value) {
     _debounce?.cancel();
@@ -162,6 +163,7 @@ class _FormatacaoValoresTotalState extends State<FormatacaoValoresTotal> {
         // authoritative updates from API
         final dynamic rawValor = response['body']?['dados']?['valorEmprestimo'];
         final double valorEmprestimo = parseFlexibleDouble(rawValor);
+        sliderController.updateValue(valorEmprestimo);
 
         FFAppState().update(() {
           FFAppState().totalParcela =
