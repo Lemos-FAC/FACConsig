@@ -1,6 +1,7 @@
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/index.dart';
 import 'emprestimo_widget.dart' show EmprestimoWidget;
 import 'package:flutter/material.dart';
 
@@ -11,31 +12,29 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
 
   ///  State fields for stateful widgets in this page.
 
-  // Stores action output result for [Backend Call - API (SimulaEmprestimo)] action in Emprestimo widget.
-  ApiCallResponse? dados;
-  // State field(s) for Slider widget.
-  double? sliderValue;
-  // Stores action output result for [Backend Call - API (SimulaEmprestimo)] action in Slider widget.
-  ApiCallResponse? valor;
-  // Stores action output result for [Backend Call - API (SimulaEmprestimo)] action in Slider widget.
-  ApiCallResponse? vlrSolicitadoMenor;
-  // Stores action output result for [Custom Action - postSliderValueThrottled] action in Slider widget.
-  dynamic response;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in Emprestimo widget.
+  ApiCallResponse? home;
   // State field(s) for total widget.
   FocusNode? totalFocusNode;
   TextEditingController? totalTextController;
   String? Function(BuildContext, String?)? totalTextControllerValidator;
-  // State field(s) for valorParcelas widget.
-  FocusNode? valorParcelasFocusNode;
-  TextEditingController? valorParcelasTextController;
-  String? Function(BuildContext, String?)? valorParcelasTextControllerValidator;
-  // Stores action output result for [Backend Call - API (SimulaEmprestimo)] action in valorParcelas widget.
-  ApiCallResponse? valorParcela;
-  // State field(s) for DropDown widget.
-  String? dropDownValue;
-  FormFieldController<String>? dropDownValueController;
-  // Stores action output result for [Backend Call - API (SimulaEmprestimo)] action in DropDown widget.
-  ApiCallResponse? qtdParcelas;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in total widget.
+  ApiCallResponse? apiResultl9cCopy;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in total widget.
+  ApiCallResponse? total2Copy;
+  // State field(s) for valorParcela widget.
+  FocusNode? valorParcelaFocusNode;
+  TextEditingController? valorParcelaTextController;
+  String? Function(BuildContext, String?)? valorParcelaTextControllerValidator;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in valorParcela widget.
+  ApiCallResponse? apiResultrqrCopy;
+  // State field(s) for parcelas widget.
+  String? parcelasValue;
+  FormFieldController<String>? parcelasValueController;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in parcelas widget.
+  ApiCallResponse? parcela;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in parcelas widget.
+  ApiCallResponse? parcela2;
 
   @override
   void initState(BuildContext context) {}
@@ -45,7 +44,7 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
     totalFocusNode?.dispose();
     totalTextController?.dispose();
 
-    valorParcelasFocusNode?.dispose();
-    valorParcelasTextController?.dispose();
+    valorParcelaFocusNode?.dispose();
+    valorParcelaTextController?.dispose();
   }
 }

@@ -6,10 +6,13 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/custom_code/actions/index.dart' as actions;
+import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
+import '/index.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'emprestimo_model.dart';
@@ -37,85 +40,241 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.dados = await SimulaEmprestimoCall.call(
-        contratante: '21220',
+      _model.home = await FACConsigGroup.simulaEmprestimoConsigCall.call(
+        contratante: FFAppState().codigoContratante,
         tipoSimulacao: 'processaSimulacao',
         quantidadeParcelas: '0',
         valorEmprestimo: '0',
         valorParcelas: '0',
       );
 
-      if ((_model.dados?.succeeded ?? true)) {
+      if (getJsonField(
+        (_model.home?.jsonBody ?? ''),
+        r'''$..status''',
+      )) {
         FFAppState().totalParcela = getJsonField(
-          (_model.dados?.jsonBody ?? ''),
+          (_model.home?.jsonBody ?? ''),
           r'''$..valorEmprestimoForma''',
         ).toString();
         FFAppState().valorParcela = getJsonField(
-          (_model.dados?.jsonBody ?? ''),
+          (_model.home?.jsonBody ?? ''),
           r'''$..valorParcela''',
         ).toString();
         FFAppState().parcela = getJsonField(
-          (_model.dados?.jsonBody ?? ''),
+          (_model.home?.jsonBody ?? ''),
           r'''$..parcelasMaximas''',
         ).toString();
-        FFAppState().valorSlider = functions.stringDoubleSFomart(getJsonField(
-          (_model.dados?.jsonBody ?? ''),
-          r'''$..valorEmprestimo''',
-        ).toString())!;
-        FFAppState().customSliderValue =
-            functions.stringDoubleSFomart(getJsonField(
-          (_model.dados?.jsonBody ?? ''),
-          r'''$..valorEmprestimo''',
-        ).toString())!;
+        FFAppState().reajuste = getJsonField(
+          (_model.home?.jsonBody ?? ''),
+          r'''$..valorTotalEmprestimo''',
+        ).toString();
+        FFAppState().hasChanged = false;
         safeSetState(() {});
-        FFAppState().lastSliderRequestTime = DateTime.now();
-        safeSetState(() {});
+        safeSetState(() {
+          _model.valorParcelaTextController?.text = FFAppState().valorParcela;
+        });
         safeSetState(() {
           _model.totalTextController?.text = FFAppState().totalParcela;
         });
-        safeSetState(() {
-          _model.valorParcelasTextController?.text = FFAppState().valorParcela;
-        });
-        safeSetState(() {
-          _model.sliderValue = FFAppState().valorSlider;
-        });
         await actions.generateNumberRangeAction(
           getJsonField(
-            (_model.dados?.jsonBody ?? ''),
+            (_model.home?.jsonBody ?? ''),
             r'''$..parcelasMinimas''',
           ).toString(),
           getJsonField(
-            (_model.dados?.jsonBody ?? ''),
+            (_model.home?.jsonBody ?? ''),
             r'''$..parcelasMaximas''',
           ).toString(),
-        );
-      } else {
-        await showDialog(
-          context: context,
-          builder: (alertDialogContext) {
-            return AlertDialog(
-              title: Text('Erro!'),
-              content: Text(
-                  'API erro: ${(_model.dados?.statusCode ?? 200).toString()}'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(alertDialogContext),
-                  child: Text('Ok'),
-                ),
-              ],
-            );
-          },
         );
       }
     });
 
-    _model.totalTextController ??= TextEditingController();
+    _model.totalTextController ??=
+        TextEditingController(text: FFAppState().totalParcela);
     _model.totalFocusNode ??= FocusNode();
+    _model.totalFocusNode!.addListener(
+      () async {
+        FFAppState().hasChanged = true;
+        safeSetState(() {});
+        _model.apiResultl9cCopy =
+            await FACConsigGroup.simulaEmprestimoConsigCall.call(
+          contratante: FFAppState().codigoContratante,
+          tipoSimulacao: 'porValorSolicitado',
+          quantidadeParcelas: FFAppState().parcela,
+          valorEmprestimo: functions
+              .stringDoubleSFomart(_model.totalTextController.text)
+              ?.toString(),
+          valorParcelas: '0',
+        );
 
-    _model.valorParcelasTextController ??= TextEditingController();
-    _model.valorParcelasFocusNode ??= FocusNode();
+        if ((_model.apiResultl9cCopy?.succeeded ?? true)) {
+          if ((String var1) {
+            return var1 != "";
+          }(getJsonField(
+            (_model.apiResultl9cCopy?.jsonBody ?? ''),
+            r'''$..alerta''',
+          ).toString())) {
+            await showDialog(
+              context: context,
+              builder: (alertDialogContext) {
+                return AlertDialog(
+                  title: Text('Atenção!'),
+                  content: Text(getJsonField(
+                    (_model.apiResultl9cCopy?.jsonBody ?? ''),
+                    r'''$..alerta''',
+                  ).toString()),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(alertDialogContext),
+                      child: Text('Ok'),
+                    ),
+                  ],
+                );
+              },
+            );
+            FFAppState().totalParcela = getJsonField(
+              (_model.apiResultl9cCopy?.jsonBody ?? ''),
+              r'''$..valorEmprestimoForma''',
+            ).toString();
+            FFAppState().hasChanged = false;
+            safeSetState(() {});
+            safeSetState(() {
+              _model.totalTextController?.text = FFAppState().totalParcela;
+            });
+            FFAppState().hasChanged = true;
+            safeSetState(() {});
+            _model.total2Copy =
+                await FACConsigGroup.simulaEmprestimoConsigCall.call(
+              contratante: FFAppState().codigoContratante,
+              tipoSimulacao: 'porValorSolicitado',
+              quantidadeParcelas: _model.parcelasValue,
+              valorEmprestimo: functions
+                  .stringDoubleSFomart(_model.totalTextController.text)
+                  ?.toString(),
+              valorParcelas: '0',
+            );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+            if ((_model.total2Copy?.succeeded ?? true)) {
+              FFAppState().valorParcela = getJsonField(
+                (_model.total2Copy?.jsonBody ?? ''),
+                r'''$..valorParcela''',
+              ).toString();
+              FFAppState().reajuste = getJsonField(
+                (_model.total2Copy?.jsonBody ?? ''),
+                r'''$..valorTotalEmprestimo''',
+              ).toString();
+              safeSetState(() {});
+              safeSetState(() {
+                _model.valorParcelaTextController?.text =
+                    FFAppState().valorParcela;
+              });
+            }
+            FFAppState().hasChanged = false;
+            safeSetState(() {});
+          } else {
+            FFAppState().valorParcela = getJsonField(
+              (_model.apiResultl9cCopy?.jsonBody ?? ''),
+              r'''$..valorParcela''',
+            ).toString();
+            FFAppState().reajuste = getJsonField(
+              (_model.apiResultl9cCopy?.jsonBody ?? ''),
+              r'''$..valorTotalEmprestimo''',
+            ).toString();
+            safeSetState(() {});
+            safeSetState(() {
+              _model.valorParcelaTextController?.text =
+                  FFAppState().valorParcela;
+            });
+          }
+
+          FFAppState().hasChanged = false;
+          safeSetState(() {});
+        }
+
+        safeSetState(() {});
+      },
+    );
+    _model.valorParcelaTextController ??=
+        TextEditingController(text: FFAppState().valorParcela);
+    _model.valorParcelaFocusNode ??= FocusNode();
+    _model.valorParcelaFocusNode!.addListener(
+      () async {
+        FFAppState().hasChanged = true;
+        safeSetState(() {});
+        _model.apiResultrqrCopy =
+            await FACConsigGroup.simulaEmprestimoConsigCall.call(
+          contratante: FFAppState().codigoContratante,
+          tipoSimulacao: 'porValorParcela',
+          quantidadeParcelas: FFAppState().parcela,
+          valorEmprestimo: '0',
+          valorParcelas: functions
+              .stringDoubleSFomart(_model.valorParcelaTextController.text)
+              ?.toString(),
+        );
+
+        if ((_model.apiResultrqrCopy?.succeeded ?? true)) {
+          if ((String var1) {
+            return var1 != "";
+          }(getJsonField(
+            (_model.apiResultrqrCopy?.jsonBody ?? ''),
+            r'''$..alerta''',
+          ).toString())) {
+            await showDialog(
+              context: context,
+              builder: (alertDialogContext) {
+                return AlertDialog(
+                  title: Text('Atenção!'),
+                  content: Text(getJsonField(
+                    (_model.apiResultrqrCopy?.jsonBody ?? ''),
+                    r'''$..alerta''',
+                  ).toString()),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(alertDialogContext),
+                      child: Text('Ok'),
+                    ),
+                  ],
+                );
+              },
+            );
+            FFAppState().valorParcela = getJsonField(
+              (_model.home?.jsonBody ?? ''),
+              r'''$..valorParcela''',
+            ).toString();
+            FFAppState().reajuste = getJsonField(
+              (_model.apiResultrqrCopy?.jsonBody ?? ''),
+              r'''$..valorTotalEmprestimo''',
+            ).toString();
+            FFAppState().hasChanged = false;
+            safeSetState(() {});
+            safeSetState(() {
+              _model.valorParcelaTextController?.text =
+                  FFAppState().valorParcela;
+            });
+          } else {
+            FFAppState().totalParcela = getJsonField(
+              (_model.apiResultrqrCopy?.jsonBody ?? ''),
+              r'''$..valorEmprestimoForma''',
+            ).toString();
+            FFAppState().reajuste = getJsonField(
+              (_model.apiResultrqrCopy?.jsonBody ?? ''),
+              r'''$..valorTotalEmprestimo''',
+            ).toString();
+            safeSetState(() {});
+            safeSetState(() {
+              _model.totalTextController?.text = FFAppState().totalParcela;
+            });
+          }
+
+          FFAppState().hasChanged = false;
+          safeSetState(() {});
+        }
+        FFAppState().hasChanged = false;
+        safeSetState(() {});
+
+        safeSetState(() {});
+      },
+    );
   }
 
   @override
@@ -130,12 +289,18 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
     context.watch<FFAppState>();
 
     return FutureBuilder<ApiCallResponse>(
-      future: SimulaEmprestimoCall.call(),
+      future: SimulaEmprestimoCall.call(
+        contratante: '21220',
+        tipoSimulacao: 'processaSimulacao',
+        quantidadeParcelas: '0',
+        valorEmprestimo: '0',
+        valorParcelas: '0',
+      ),
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Scaffold(
-            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
             body: Center(
               child: SizedBox(
                 width: 50.0,
@@ -158,7 +323,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
           },
           child: Scaffold(
             key: scaffoldKey,
-            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
             appBar: AppBar(
               backgroundColor: FlutterFlowTheme.of(context).primary,
               automaticallyImplyLeading: false,
@@ -173,7 +338,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                   size: 30.0,
                 ),
                 onPressed: () async {
-                  context.pop();
+                  context.safePop();
                 },
               ),
               title: Text(
@@ -199,652 +364,917 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
             ),
             body: SafeArea(
               top: true,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Align(
-                    alignment: AlignmentDirectional(0.0, 0.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 700.0,
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: AlignmentDirectional(-0.71, -0.73),
-                            child: Text(
-                              'Qual o valor desejado?',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    font: GoogleFonts.inter(
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: AlignmentDirectional(0.0, 0.0),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    20.0, 30.0, 20.0, 0.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 567.5,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF3F5F7),
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(20.0),
+                                      bottomRight: Radius.circular(20.0),
+                                      topLeft: Radius.circular(20.0),
+                                      topRight: Radius.circular(20.0),
                                     ),
-                                    letterSpacing: 0.0,
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
+                                    border: Border.all(
+                                      color: Color(0xFFE6E6E6),
+                                    ),
                                   ),
+                                ),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 145.0, 0.0, 0.0),
-                            child: Container(
-                              width: double.infinity,
-                              height: 70.0,
-                              child: Stack(
+                            Align(
+                              alignment: AlignmentDirectional(-0.55, -0.88),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    20.0, 45.0, 0.0, 0.0),
+                                child: Text(
+                                  'Simule e solicite seu crédito',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight: FontWeight.bold,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
+                                        ),
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.bold,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 110.0, 0.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                    child: Slider(
-                                      activeColor:
-                                          FlutterFlowTheme.of(context).primary,
-                                      inactiveColor: Color(0xFF97BBA7),
-                                      min: 0.0,
-                                      max: valueOrDefault<double>(
-                                        FFAppState().valorSlider,
-                                        0.0,
-                                      ),
-                                      value: _model.sliderValue ??=
-                                          FFAppState().valorSlider,
-                                      onChanged: (newValue) {
-                                        newValue = double.parse(
-                                            newValue.toStringAsFixed(2));
-                                        safeSetState(() =>
-                                            _model.sliderValue = newValue);
-                                      },
-                                      onChangeEnd: (newValue) async {
-                                        newValue = double.parse(
-                                            newValue.toStringAsFixed(2));
-                                        safeSetState(() =>
-                                            _model.sliderValue = newValue);
-                                        if (FFAppState().hasChanged == true) {
-                                          if (_model.sliderValue! >
-                                              FFAppState().prevSlider) {
-                                            safeSetState(() {
-                                              _model.sliderValue =
-                                                  FFAppState().prevSlider;
-                                            });
-                                            safeSetState(() {
-                                              _model.totalTextController?.text =
-                                                  formatNumber(
-                                                FFAppState().prevSlider,
-                                                formatType: FormatType.decimal,
-                                                decimalType:
-                                                    DecimalType.commaDecimal,
-                                                currency: 'R\$',
-                                              );
-                                            });
-                                            _model.valor =
-                                                await SimulaEmprestimoCall.call(
-                                              contratante: '21220',
-                                              tipoSimulacao:
-                                                  'porValorSolicitado',
-                                              quantidadeParcelas:
-                                                  _model.dropDownValue,
-                                              valorEmprestimo: _model
-                                                  .sliderValue
-                                                  ?.toString(),
-                                              valorParcelas: '0',
-                                            );
-
-                                            if ((_model.valor?.succeeded ??
-                                                true)) {
-                                              FFAppState().valorParcela =
-                                                  getJsonField(
-                                                (_model.valor?.jsonBody ?? ''),
-                                                r'''$..valorParcela''',
-                                              ).toString();
-                                              FFAppState().totalParcela =
-                                                  getJsonField(
-                                                (_model.valor?.jsonBody ?? ''),
-                                                r'''$..valorEmprestimoForma''',
-                                              ).toString();
+                                    alignment:
+                                        AlignmentDirectional(-0.7, -0.75),
+                                    child: Text(
+                                      'Qual o valor desejado?',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            font: GoogleFonts.inter(
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.bold,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontStyle,
+                                          ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, -0.66),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          29.0, 0.0, 30.0, 0.0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        child: TextFormField(
+                                          controller:
+                                              _model.totalTextController,
+                                          focusNode: _model.totalFocusNode,
+                                          onChanged: (_) =>
+                                              EasyDebounce.debounce(
+                                            '_model.totalTextController',
+                                            Duration(milliseconds: 2000),
+                                            () async {
+                                              FFAppState().hasChanged = false;
                                               safeSetState(() {});
-                                              safeSetState(() {
-                                                _model.totalTextController
-                                                        ?.text =
-                                                    FFAppState().totalParcela;
-                                              });
-                                              safeSetState(() {
-                                                _model.valorParcelasTextController
-                                                        ?.text =
-                                                    FFAppState().valorParcela;
-                                              });
-                                            } else {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (alertDialogContext) {
-                                                  return AlertDialog(
-                                                    title: Text('Erro!'),
-                                                    content: Text(
-                                                        'API(valor) erro: ${(_model.valor?.statusCode ?? 200).toString()}${_model.valorParcelasTextController.text}'),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
-                                                        child: Text('Ok'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          } else {
-                                            _model.vlrSolicitadoMenor =
-                                                await SimulaEmprestimoCall.call(
-                                              contratante: '21220',
-                                              tipoSimulacao:
-                                                  'porValorSolicitado',
-                                              quantidadeParcelas:
-                                                  _model.dropDownValue,
-                                              valorEmprestimo: _model
-                                                  .sliderValue
-                                                  ?.toString(),
-                                              valorParcelas: '0',
-                                            );
-
-                                            if ((_model.vlrSolicitadoMenor
-                                                    ?.succeeded ??
-                                                true)) {
-                                              FFAppState().valorParcela =
-                                                  getJsonField(
-                                                (_model.vlrSolicitadoMenor
-                                                        ?.jsonBody ??
-                                                    ''),
-                                                r'''$..valorParcela''',
-                                              ).toString();
-                                              FFAppState().totalParcela =
-                                                  getJsonField(
-                                                (_model.vlrSolicitadoMenor
-                                                        ?.jsonBody ??
-                                                    ''),
-                                                r'''$..valorEmprestimoForma''',
-                                              ).toString();
-                                              safeSetState(() {});
-                                              safeSetState(() {
-                                                _model.totalTextController
-                                                        ?.text =
-                                                    FFAppState().totalParcela;
-                                              });
-                                              safeSetState(() {
-                                                _model.valorParcelasTextController
-                                                        ?.text =
-                                                    FFAppState().valorParcela;
-                                              });
-                                            } else {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (alertDialogContext) {
-                                                  return AlertDialog(
-                                                    title: Text('Erro!'),
-                                                    content: Text(
-                                                        'API(vlrSolicitadoMenor) erro: ${(_model.vlrSolicitadoMenor?.statusCode ?? 200).toString()}'),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
-                                                        child: Text('Ok'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          }
-                                        } else {
-                                          _model.response = await actions
-                                              .postSliderValueThrottled(
-                                            _model.sliderValue!,
-                                            FFAppState().parcela,
-                                            'porValorSolicitado',
-                                            '21220',
-                                          );
-                                          if (functions.stringDoubleSFomart(
-                                                  getJsonField(
-                                                _model.response,
-                                                r'''$.status''',
-                                              ).toString()) ==
-                                              200.0) {
-                                            FFAppState().lastSliderRequestTime =
-                                                DateTime.now();
-                                            safeSetState(() {});
-                                            FFAppState().valorParcela =
-                                                getJsonField(
-                                              _model.response,
-                                              r'''$.body.dados.valorParcela''',
-                                            ).toString();
-                                            FFAppState().totalParcela =
-                                                getJsonField(
-                                              _model.response,
-                                              r'''$.body.dados.valorEmprestimoForma''',
-                                            ).toString();
-                                            safeSetState(() {});
-                                            safeSetState(() {
                                               _model.totalTextController?.text =
-                                                  FFAppState().totalParcela;
-                                            });
-                                            safeSetState(() {
-                                              _model.valorParcelasTextController
-                                                      ?.text =
-                                                  FFAppState().valorParcela;
-                                            });
-                                          } else {
-                                            await showDialog(
-                                              context: context,
-                                              builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(_model.response!
-                                                      .toString()),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
+                                                  functions.real(_model
+                                                      .totalTextController
+                                                      .text)!;
+                                            },
+                                          ),
+                                          autofocus: false,
+                                          enabled: true,
+                                          obscureText: false,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            labelStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .labelMedium
+                                                    .override(
+                                                      font: GoogleFonts.inter(
+                                                        fontWeight:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMedium
+                                                                .fontWeight,
+                                                        fontStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMedium
+                                                                .fontStyle,
+                                                      ),
+                                                      letterSpacing: 0.0,
+                                                      fontWeight:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .labelMedium
+                                                              .fontWeight,
+                                                      fontStyle:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .labelMedium
+                                                              .fontStyle,
                                                     ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
-                                        }
-
-                                        safeSetState(() {});
-                                      },
+                                            hintStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .labelMedium
+                                                    .override(
+                                                      font: GoogleFonts.inter(
+                                                        fontWeight:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMedium
+                                                                .fontWeight,
+                                                        fontStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMedium
+                                                                .fontStyle,
+                                                      ),
+                                                      letterSpacing: 0.0,
+                                                      fontWeight:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .labelMedium
+                                                              .fontWeight,
+                                                      fontStyle:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .labelMedium
+                                                              .fontStyle,
+                                                    ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0xFFE6E6E6),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            filled: true,
+                                            fillColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondaryBackground,
+                                            hoverColor: Colors.transparent,
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                font: GoogleFonts.inter(
+                                                  fontWeight:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontWeight,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontStyle,
+                                                ),
+                                                letterSpacing: 0.0,
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                          textAlign: TextAlign.center,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(decimal: true),
+                                          cursorColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .primaryText,
+                                          enableInteractiveSelection: true,
+                                          validator: _model
+                                              .totalTextControllerValidator
+                                              .asValidator(context),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(-0.75, -0.41),
-                            child: Text(
-                              'Parcelas',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    font: GoogleFonts.inter(
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                    letterSpacing: 0.0,
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
+                            Align(
+                              alignment: AlignmentDirectional(-0.03, 0.65),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    30.0, 500.0, 30.0, 0.0),
+                                child: FFButtonWidget(
+                                  onPressed: () async {
+                                    context.pushNamed(
+                                      ConfirmarEmprestimoWidget.routeName,
+                                      queryParameters: {
+                                        'valorSolicitado': serializeParam(
+                                          _model.totalTextController.text,
+                                          ParamType.String,
+                                        ),
+                                        'parcelas': serializeParam(
+                                          FFAppState().parcela,
+                                          ParamType.String,
+                                        ),
+                                        'taxaJuros': serializeParam(
+                                          getJsonField(
+                                            (_model.home?.jsonBody ?? ''),
+                                            r'''$..taxaEfetiva''',
+                                          ).toString(),
+                                          ParamType.String,
+                                        ),
+                                        'valorPagar': serializeParam(
+                                          FFAppState().reajuste,
+                                          ParamType.String,
+                                        ),
+                                        'valor': serializeParam(
+                                          _model
+                                              .valorParcelaTextController.text,
+                                          ParamType.String,
+                                        ),
+                                        'fileOutputs': serializeParam(
+                                          [],
+                                          ParamType.String,
+                                          isList: true,
+                                        ),
+                                      }.withoutNulls,
+                                    );
+                                  },
+                                  text: 'Solicitar Crédito',
+                                  options: FFButtonOptions(
+                                    width:
+                                        MediaQuery.sizeOf(context).width * 1.0,
+                                    height: 40.0,
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        16.0, 0.0, 16.0, 0.0),
+                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .override(
+                                          font: GoogleFonts.interTight(
+                                            fontWeight:
+                                                FlutterFlowTheme.of(context)
+                                                    .titleSmall
+                                                    .fontWeight,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .titleSmall
+                                                    .fontStyle,
+                                          ),
+                                          color: Colors.white,
+                                          letterSpacing: 0.0,
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .fontStyle,
+                                        ),
+                                    elevation: 0.0,
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
+                                ),
+                              ),
                             ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(0.5, -0.4),
-                            child: Text(
-                              'Valor Parcleas',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    font: GoogleFonts.inter(
-                                      fontWeight: FlutterFlowTheme.of(context)
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  40.0, 190.0, 0.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(0.32, 0.0),
+                                    child: Text(
+                                      'Valor da parcela',
+                                      style: FlutterFlowTheme.of(context)
                                           .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
+                                          .override(
+                                            font: GoogleFonts.inter(
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            fontSize: 12.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.bold,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontStyle,
+                                          ),
                                     ),
-                                    letterSpacing: 0.0,
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
                                   ),
+                                  Align(
+                                    alignment: AlignmentDirectional(0.86, -0.4),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0.0, 0.0, 20.0, 0.0),
+                                      child: Container(
+                                        width: 155.0,
+                                        child: TextFormField(
+                                          controller:
+                                              _model.valorParcelaTextController,
+                                          focusNode:
+                                              _model.valorParcelaFocusNode,
+                                          onChanged: (_) =>
+                                              EasyDebounce.debounce(
+                                            '_model.valorParcelaTextController',
+                                            Duration(milliseconds: 2000),
+                                            () async {
+                                              FFAppState().hasChanged = false;
+                                              safeSetState(() {});
+                                              _model.valorParcelaTextController
+                                                      ?.text =
+                                                  functions.real(_model
+                                                      .valorParcelaTextController
+                                                      .text)!;
+                                            },
+                                          ),
+                                          autofocus: false,
+                                          enabled: true,
+                                          obscureText: false,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            labelStyle: FlutterFlowTheme.of(
+                                                    context)
+                                                .bodyMedium
+                                                .override(
+                                                  font: GoogleFonts.inter(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .fontStyle,
+                                                  ),
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontStyle,
+                                                ),
+                                            alignLabelWithHint: false,
+                                            hintStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .labelMedium
+                                                    .override(
+                                                      font: GoogleFonts.inter(
+                                                        fontWeight:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMedium
+                                                                .fontWeight,
+                                                        fontStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMedium
+                                                                .fontStyle,
+                                                      ),
+                                                      letterSpacing: 0.0,
+                                                      fontWeight:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .labelMedium
+                                                              .fontWeight,
+                                                      fontStyle:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .labelMedium
+                                                              .fontStyle,
+                                                    ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0xFFE6E6E6),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0x00000000),
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .error,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            filled: true,
+                                            fillColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondaryBackground,
+                                            hoverColor: Colors.transparent,
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                font: GoogleFonts.inter(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontStyle,
+                                                ),
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.bold,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                          textAlign: TextAlign.start,
+                                          keyboardType: TextInputType.number,
+                                          cursorColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .primaryText,
+                                          enableInteractiveSelection: true,
+                                          validator: _model
+                                              .valorParcelaTextControllerValidator
+                                              .asValidator(context),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(-0.08, -0.66),
-                            child: Container(
-                              width: 200.0,
-                              child: TextFormField(
-                                controller: _model.totalTextController,
-                                focusNode: _model.totalFocusNode,
-                                onChanged: (_) => EasyDebounce.debounce(
-                                  '_model.totalTextController',
-                                  Duration(milliseconds: 2000),
-                                  () async {
-                                    FFAppState().valorSlider =
-                                        functions.stringDoubleSFomart(
-                                            _model.totalTextController.text)!;
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 190.0, 60.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Align(
+                                    alignment:
+                                        AlignmentDirectional(-0.7, -0.33),
+                                    child: Text(
+                                      'Em quantas parcelas?',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            font: GoogleFonts.inter(
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            fontSize: 12.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.bold,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontStyle,
+                                          ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment:
+                                        AlignmentDirectional(-0.85, -0.4),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          20.0, 0.0, 15.0, 0.0),
+                                      child: FlutterFlowDropDown<String>(
+                                        controller: _model
+                                                .parcelasValueController ??=
+                                            FormFieldController<String>(null),
+                                        options: FFAppState().dropDownList,
+                                        onChanged: (val) async {
+                                          safeSetState(
+                                              () => _model.parcelasValue = val);
+                                          FFAppState().parcela =
+                                              _model.parcelasValue!;
+                                          FFAppState().hasChanged = true;
+                                          safeSetState(() {});
+                                          await Future.delayed(
+                                            Duration(
+                                              milliseconds: 2000,
+                                            ),
+                                          );
+                                          _model.parcela = await FACConsigGroup
+                                              .simulaEmprestimoConsigCall
+                                              .call(
+                                            contratante:
+                                                FFAppState().codigoContratante,
+                                            tipoSimulacao: 'porQtdeParcelas',
+                                            quantidadeParcelas:
+                                                _model.parcelasValue,
+                                            valorEmprestimo: functions
+                                                .stringDoubleSFomart(_model
+                                                    .totalTextController.text)
+                                                ?.toString(),
+                                            valorParcelas: '0',
+                                          );
+
+                                          if ((_model.parcela?.succeeded ??
+                                              true)) {
+                                            if ((String var1) {
+                                              return var1 != "";
+                                            }(getJsonField(
+                                              (_model.parcela?.jsonBody ?? ''),
+                                              r'''$..alerta''',
+                                            ).toString())) {
+                                              await showDialog(
+                                                context: context,
+                                                builder: (alertDialogContext) {
+                                                  return AlertDialog(
+                                                    title: Text('Atenção!'),
+                                                    content: Text(getJsonField(
+                                                      (_model.parcela
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$..alerta''',
+                                                    ).toString()),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                              FFAppState().totalParcela =
+                                                  getJsonField(
+                                                (_model.parcela?.jsonBody ??
+                                                    ''),
+                                                r'''$..valorEmprestimoForma''',
+                                              ).toString();
+                                              safeSetState(() {});
+                                              safeSetState(() {
+                                                _model.totalTextController
+                                                        ?.text =
+                                                    FFAppState().totalParcela;
+                                              });
+                                              _model.parcela2 =
+                                                  await FACConsigGroup
+                                                      .simulaEmprestimoConsigCall
+                                                      .call(
+                                                contratante: FFAppState()
+                                                    .codigoContratante,
+                                                tipoSimulacao:
+                                                    'porQtdeParcelas',
+                                                quantidadeParcelas:
+                                                    getJsonField(
+                                                  (_model.parcela?.jsonBody ??
+                                                      ''),
+                                                  r'''$..qtdParcelaEmprestimo''',
+                                                ).toString(),
+                                                valorEmprestimo: getJsonField(
+                                                  (_model.parcela?.jsonBody ??
+                                                      ''),
+                                                  r'''$..valorEmprestimo''',
+                                                ).toString(),
+                                              );
+
+                                              if ((_model.parcela2?.succeeded ??
+                                                  true)) {
+                                                FFAppState().valorParcela =
+                                                    getJsonField(
+                                                  (_model.parcela2?.jsonBody ??
+                                                      ''),
+                                                  r'''$..valorParcela''',
+                                                ).toString();
+                                                FFAppState().reajuste =
+                                                    getJsonField(
+                                                  (_model.parcela2?.jsonBody ??
+                                                      ''),
+                                                  r'''$..valorTotalEmprestimo''',
+                                                ).toString();
+                                                safeSetState(() {});
+                                                safeSetState(() {
+                                                  _model.valorParcelaTextController
+                                                          ?.text =
+                                                      FFAppState().valorParcela;
+                                                });
+                                              }
+                                            } else {
+                                              FFAppState().valorParcela =
+                                                  getJsonField(
+                                                (_model.parcela?.jsonBody ??
+                                                    ''),
+                                                r'''$..valorParcela''',
+                                              ).toString();
+                                              FFAppState().reajuste =
+                                                  getJsonField(
+                                                (_model.parcela?.jsonBody ??
+                                                    ''),
+                                                r'''$..valorTotalEmprestimo''',
+                                              ).toString();
+                                              safeSetState(() {});
+                                              safeSetState(() {
+                                                _model.valorParcelaTextController
+                                                        ?.text =
+                                                    FFAppState().valorParcela;
+                                              });
+                                            }
+
+                                            FFAppState().hasChanged = false;
+                                            safeSetState(() {});
+                                          }
+
+                                          safeSetState(() {});
+                                        },
+                                        width: 155.0,
+                                        height: 50.0,
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              font: GoogleFonts.inter(
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                              letterSpacing: 0.0,
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                        hintText: FFAppState().parcela,
+                                        icon: Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                          size: 24.0,
+                                        ),
+                                        fillColor: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                        elevation: 2.0,
+                                        borderColor: Color(0xFFE6E6E6),
+                                        borderWidth: 1.0,
+                                        borderRadius: 8.0,
+                                        margin: EdgeInsetsDirectional.fromSTEB(
+                                            12.0, 0.0, 12.0, 0.0),
+                                        hidesUnderline: true,
+                                        isOverButton: false,
+                                        isSearchable: false,
+                                        isMultiSelect: false,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(0.0, 0.77),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 563.0, 0.0, 0.0),
+                                child: Text(
+                                  'Valores podem variar após analise. Sujeito à aprovação.',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight: FontWeight.normal,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
+                                        ),
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryText,
+                                        fontSize: 10.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(0.9, -0.9),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 45.0, 0.0, 0.0),
+                                child: FlutterFlowIconButton(
+                                  borderRadius: 8.0,
+                                  buttonSize: 40.0,
+                                  icon: Icon(
+                                    Icons.restart_alt_rounded,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 24.0,
+                                  ),
+                                  onPressed: () async {
+                                    FFAppState().parcela = getJsonField(
+                                      (_model.home?.jsonBody ?? ''),
+                                      r'''$..parcelasMaximas''',
+                                    ).toString();
+                                    FFAppState().valorParcela = getJsonField(
+                                      (_model.home?.jsonBody ?? ''),
+                                      r'''$..valorParcela''',
+                                    ).toString();
+                                    FFAppState().totalParcela = getJsonField(
+                                      (_model.home?.jsonBody ?? ''),
+                                      r'''$..valorEmprestimoForma''',
+                                    ).toString();
+                                    FFAppState().reajuste = getJsonField(
+                                      (_model.home?.jsonBody ?? ''),
+                                      r'''$..valorTotalEmprestimo''',
+                                    ).toString();
                                     safeSetState(() {});
                                     safeSetState(() {
-                                      _model.sliderValue =
-                                          FFAppState().valorSlider;
+                                      _model.totalTextController?.text =
+                                          FFAppState().totalParcela;
+                                    });
+                                    safeSetState(() {
+                                      _model.valorParcelaTextController?.text =
+                                          FFAppState().valorParcela;
+                                    });
+                                    safeSetState(() {
+                                      _model.parcelasValueController?.value =
+                                          FFAppState().parcela;
                                     });
                                   },
                                 ),
-                                autofocus: false,
-                                obscureText: false,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  labelStyle: FlutterFlowTheme.of(context)
-                                      .labelMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .labelMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .labelMedium
-                                            .fontStyle,
-                                      ),
-                                  hintStyle: FlutterFlowTheme.of(context)
-                                      .labelMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .labelMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .labelMedium
-                                            .fontStyle,
-                                      ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: FlutterFlowTheme.of(context).error,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: FlutterFlowTheme.of(context).error,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  filled: true,
-                                  fillColor: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                ),
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.inter(
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                cursorColor:
-                                    FlutterFlowTheme.of(context).primaryText,
-                                enableInteractiveSelection: true,
-                                validator: _model.totalTextControllerValidator
-                                    .asValidator(context),
                               ),
                             ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(0.87, -0.33),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 10.0, 0.0, 0.0),
-                              child: Container(
-                                width: 160.0,
-                                child: TextFormField(
-                                  controller:
-                                      _model.valorParcelasTextController,
-                                  focusNode: _model.valorParcelasFocusNode,
-                                  onChanged: (_) => EasyDebounce.debounce(
-                                    '_model.valorParcelasTextController',
-                                    Duration(milliseconds: 2000),
-                                    () async {
-                                      if (functions.stringDoubleSFomart(_model
-                                              .valorParcelasTextController
-                                              .text)! >
-                                          functions
-                                              .stringDoubleSFomart(getJsonField(
-                                            (_model.dados?.jsonBody ?? ''),
-                                            r'''$..valorParcela''',
-                                          ).toString())!) {
-                                        await showDialog(
-                                          context: context,
-                                          builder: (alertDialogContext) {
-                                            return AlertDialog(
-                                              title: Text('Atenção!'),
-                                              content: Text(
-                                                  'Valor máximo permitido: ${getJsonField(
-                                                (_model.dados?.jsonBody ?? ''),
-                                                r'''$..valorParcela''',
-                                              ).toString()}'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          alertDialogContext),
-                                                  child: Text('Ok'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                        safeSetState(() {
-                                          _model.valorParcelasTextController
-                                              ?.text = getJsonField(
-                                            (_model.dados?.jsonBody ?? ''),
-                                            r'''$..valorParcela''',
-                                          ).toString();
-                                        });
-                                      } else {
-                                        _model.valorParcela =
-                                            await SimulaEmprestimoCall.call(
-                                          contratante: '21220',
-                                          tipoSimulacao: 'porValorParcela',
-                                          quantidadeParcelas: (_model
-                                                  .dropDownValue!) ??
-                                              getJsonField(
-                                                (_model.dados?.jsonBody ?? ''),
-                                                r'''$..parcelasMaximas''',
-                                              ).toString(),
-                                          valorEmprestimo: '0',
-                                          valorParcelas: functions
-                                              .stringDoubleSFomart(_model
-                                                  .valorParcelasTextController
-                                                  .text)
-                                              ?.toString(),
-                                        );
-
-                                        if ((_model.valorParcela?.succeeded ??
-                                            true)) {
-                                          safeSetState(() {
-                                            _model.totalTextController?.text =
-                                                getJsonField(
-                                              (_model.valorParcela?.jsonBody ??
-                                                  ''),
-                                              r'''$..valorEmprestimoForma''',
-                                            ).toString();
-                                          });
-                                          safeSetState(() {
-                                            _model.sliderValue = functions
-                                                .stringDoubleSFomart(functions
-                                                    .stringDoubleSFomart(
-                                                        getJsonField(
-                                                      (_model.valorParcela
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                      r'''$..valorEmprestimo''',
-                                                    ).toString())!
-                                                    .toString())!;
-                                          });
-                                        } else {
-                                          await showDialog(
-                                            context: context,
-                                            builder: (alertDialogContext) {
-                                              return AlertDialog(
-                                                title: Text('Erro!'),
-                                                content: Text(
-                                                    'API erro: ${(_model.valorParcela?.statusCode ?? 200).toString()}'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                            alertDialogContext),
-                                                    child: Text('Ok'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        }
-                                      }
-
-                                      safeSetState(() {});
-                                    },
-                                  ),
-                                  autofocus: false,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    labelStyle: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          font: GoogleFonts.inter(
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .fontStyle,
-                                          ),
-                                          letterSpacing: 0.0,
+                            Align(
+                              alignment: AlignmentDirectional(-0.37, 0.45),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 470.0, 20.0, 0.0),
+                                child: Text(
+                                  'Simulação segura e sem compromisso',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
                                           fontWeight:
                                               FlutterFlowTheme.of(context)
-                                                  .labelMedium
+                                                  .bodyMedium
                                                   .fontWeight,
                                           fontStyle:
                                               FlutterFlowTheme.of(context)
-                                                  .labelMedium
+                                                  .bodyMedium
                                                   .fontStyle,
                                         ),
-                                    hintStyle: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          font: GoogleFonts.inter(
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .fontStyle,
-                                          ),
-                                          letterSpacing: 0.0,
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium
-                                                  .fontStyle,
-                                        ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1.0,
+                                        fontSize: 12.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Color(0x00000000),
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: FlutterFlowTheme.of(context)
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(-0.79, 0.45),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 470.0, 105.0, 0.0),
+                                child: Icon(
+                                  Icons.card_travel,
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  size: 15.0,
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(0.0, 0.0),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    30.0, 300.0, 30.0, 100.0),
+                                child: Container(
+                                  width: MediaQuery.sizeOf(context).width * 1.0,
+                                  height: 146.1,
+                                  decoration: BoxDecoration(
+                                    color: FlutterFlowTheme.of(context)
                                         .secondaryBackground,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(20.0),
+                                      bottomRight: Radius.circular(20.0),
+                                      topLeft: Radius.circular(20.0),
+                                      topRight: Radius.circular(20.0),
+                                    ),
+                                    border: Border.all(
+                                      color: Color(0xFFE6E6E6),
+                                    ),
                                   ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(-0.83, -0.02),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    30.0, 366.0, 30.0, 100.0),
+                                child: Text(
+                                  'Taxa',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
@@ -866,207 +1296,202 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
-                                  keyboardType: TextInputType.number,
-                                  cursorColor:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                  enableInteractiveSelection: true,
-                                  validator: _model
-                                      .valorParcelasTextControllerValidator
-                                      .asValidator(context),
                                 ),
                               ),
                             ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(-0.82, -0.32),
-                            child: FlutterFlowDropDown<String>(
-                              controller: _model.dropDownValueController ??=
-                                  FormFieldController<String>(null),
-                              options: FFAppState().dropDownList,
-                              onChanged: (val) async {
-                                safeSetState(() => _model.dropDownValue = val);
-                                _model.qtdParcelas =
-                                    await SimulaEmprestimoCall.call(
-                                  contratante: '21220',
-                                  tipoSimulacao: 'porQtdeParcelas',
-                                  quantidadeParcelas: _model.dropDownValue,
-                                  valorEmprestimo:
-                                      _model.sliderValue?.toString(),
-                                  valorParcelas: '0',
-                                );
-
-                                if ((_model.qtdParcelas?.succeeded ?? true)) {
-                                  safeSetState(() {
-                                    _model.totalTextController?.text =
-                                        getJsonField(
-                                      (_model.qtdParcelas?.jsonBody ?? ''),
-                                      r'''$..valorEmprestimoForma''',
-                                    ).toString();
-                                  });
-                                  safeSetState(() {
-                                    _model.sliderValue = functions
-                                        .stringDoubleSFomart(getJsonField(
-                                      (_model.qtdParcelas?.jsonBody ?? ''),
-                                      r'''$..valorEmprestimo''',
-                                    ).toString())!;
-                                  });
-                                  safeSetState(() {
-                                    _model.valorParcelasTextController?.text =
-                                        getJsonField(
-                                      (_model.qtdParcelas?.jsonBody ?? ''),
-                                      r'''$..valorParcela''',
-                                    ).toString();
-                                  });
-                                  FFAppState().hasChanged = true;
-                                  safeSetState(() {});
-                                  FFAppState().prevSlider = functions
-                                      .stringDoubleSFomart(getJsonField(
-                                    (_model.qtdParcelas?.jsonBody ?? ''),
-                                    r'''$..valorEmprestimo''',
-                                  ).toString())!;
-                                  safeSetState(() {});
-                                } else {
-                                  await showDialog(
-                                    context: context,
-                                    builder: (alertDialogContext) {
-                                      return AlertDialog(
-                                        title: Text('Erro!'),
-                                        content: Text(
-                                            'API erro: ${(_model.qtdParcelas?.statusCode ?? 200).toString()}'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(
-                                                alertDialogContext),
-                                            child: Text('Ok'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }
-
-                                safeSetState(() {});
-                              },
-                              width: 121.65,
-                              height: 40.0,
-                              textStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    font: GoogleFonts.inter(
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                    letterSpacing: 0.0,
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
-                                  ),
-                              hintText: FFAppState().parcela,
-                              icon: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color:
-                                    FlutterFlowTheme.of(context).secondaryText,
-                                size: 24.0,
-                              ),
-                              fillColor: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                              elevation: 2.0,
-                              borderColor: Colors.transparent,
-                              borderWidth: 0.0,
-                              borderRadius: 8.0,
-                              margin: EdgeInsetsDirectional.fromSTEB(
-                                  12.0, 0.0, 12.0, 0.0),
-                              hidesUnderline: true,
-                              isOverButton: false,
-                              isSearchable: false,
-                              isMultiSelect: false,
-                            ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(0.0, 0.0),
-                            child: FFButtonWidget(
-                              onPressed: () {
-                                print('Button pressed ...');
-                              },
-                              text: 'Quero Empréstimo',
-                              options: FFButtonOptions(
-                                width: MediaQuery.sizeOf(context).width * 0.8,
-                                height: 40.0,
+                            Align(
+                              alignment: AlignmentDirectional(-0.76, -0.13),
+                              child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 0.0, 16.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
-                                color: FlutterFlowTheme.of(context).primary,
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .override(
-                                      font: GoogleFonts.interTight(
+                                    30.0, 330.0, 30.0, 100.0),
+                                child: Text(
+                                  'Valor total com juros',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
+                                        ),
+                                        letterSpacing: 0.0,
                                         fontWeight: FlutterFlowTheme.of(context)
-                                            .titleSmall
+                                            .bodyMedium
                                             .fontWeight,
                                         fontStyle: FlutterFlowTheme.of(context)
-                                            .titleSmall
+                                            .bodyMedium
                                             .fontStyle,
                                       ),
-                                      color: Colors.white,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .titleSmall
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .titleSmall
-                                          .fontStyle,
-                                    ),
-                                elevation: 0.0,
-                                borderRadius: BorderRadius.circular(8.0),
+                                ),
                               ),
                             ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(-0.02, -0.11),
-                            child: Text(
-                              'Taxa de 2,2% A.M',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    font: GoogleFonts.inter(
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
+                            Align(
+                              alignment: AlignmentDirectional(-0.8, 0.11),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    30.0, 400.0, 30.0, 100.0),
+                                child: Text(
+                                  'CET estimado',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
+                                        ),
+                                        letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(0.81, -0.13),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 330.0, 30.0, 100.0),
+                                child: Text(
+                                  FFAppState().reajuste,
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight: FontWeight.bold,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
+                                        ),
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.bold,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(0.83, -0.02),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    15.0, 366.0, 30.0, 100.0),
+                                child: Text(
+                                  '${getJsonField(
+                                    (_model.home?.jsonBody ?? ''),
+                                    r'''$..taxaEfetiva''',
+                                  ).toString()}.',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
+                                        ),
+                                        letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(0.8, 0.11),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    40.0, 400.0, 30.0, 100.0),
+                                child: Text(
+                                  '${getJsonField(
+                                    (_model.home?.jsonBody ?? ''),
+                                    r'''$..taxaEfetivaAnual''',
+                                  ).toString()}a.a.',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
+                                        ),
+                                        letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(-0.88, -0.88),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    7.0, 45.0, 0.0, 0.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.creditCard,
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  size: 19.0,
+                                ),
+                              ),
+                            ),
+                            if (valueOrDefault<bool>(
+                              FFAppState().hasChanged == true,
+                              true,
+                            ))
+                              Align(
+                                alignment: AlignmentDirectional(0.03, -0.07),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 250.0, 0.0, 0.0),
+                                  child: Container(
+                                    width: 100.0,
+                                    height: 100.0,
+                                    child: custom_widgets.LoadingIndicator(
+                                      width: 100.0,
+                                      height: 100.0,
                                     ),
-                                    letterSpacing: 0.0,
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
                                   ),
-                            ),
-                          ),
-                          Align(
-                            alignment: AlignmentDirectional(-0.41, -0.12),
-                            child: Icon(
-                              Icons.info,
-                              color: FlutterFlowTheme.of(context).primary,
-                              size: 24.0,
-                            ),
-                          ),
-                        ],
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

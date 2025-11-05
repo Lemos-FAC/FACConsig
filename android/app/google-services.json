@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "190077840547",
+    "project_id": "f-a-c-consig-tsru4z",
+    "storage_bucket": "f-a-c-consig-tsru4z.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190077840547:android:e004480441d6e6496ee316",
+        "android_client_info": {
+          "package_name": "com.mycompany.facconsig"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjvmjX_3YurdqK7uQQvo4SKbZVeHwYNCY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
