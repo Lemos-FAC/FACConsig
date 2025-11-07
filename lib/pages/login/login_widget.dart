@@ -808,7 +808,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             if (MediaQuery.sizeOf(context)
                                                     .width >=
                                                 430.0) {
-                                              return 20.0;
+                                              return 10.0;
                                             } else if (MediaQuery.sizeOf(
                                                         context)
                                                     .width >
@@ -818,7 +818,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                         context)
                                                     .width >=
                                                 448.0) {
-                                              return 30.0;
+                                              return 20.0;
                                             } else {
                                               return 0.0;
                                             }
@@ -836,7 +836,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                           CrossAxisAlignment.stretch,
                                       children: [
                                         Row(
-                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
@@ -914,7 +914,12 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                         ),
                                               ),
                                             ),
-                                          ],
+                                          ].addToStart(SizedBox(
+                                              width: MediaQuery.sizeOf(context)
+                                                          .width >=
+                                                      1440.0
+                                                  ? 420.0
+                                                  : 0.0)),
                                         ),
                                         Row(
                                           mainAxisSize: MainAxisSize.max,
@@ -1022,9 +1027,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                         ),
                                               ),
                                             ),
-                                          ],
+                                          ].addToStart(SizedBox(
+                                              width: MediaQuery.sizeOf(context)
+                                                          .width >=
+                                                      1440.0
+                                                  ? 420.0
+                                                  : 0.0)),
                                         ),
-                                      ].divide(SizedBox(height: 30.0)),
+                                      ].divide(SizedBox(height: 10.0)),
                                     ),
                                   ),
                                 ),
