@@ -87,21 +87,6 @@ String? maskCpf(String cpf) {
   return '$firstTwo*.***.***-$lastTwo';
 }
 
-String? newCustomFunction(String? input) {
-  // remova todos os caracteres não numéricos, deixando apenas os númericos  e formantando como moeda brasileira (R$)
-  if (input == null || input.isEmpty) return "R\$ 0,00";
-
-  // Remove all non-numeric characters
-  String cleanedInput = input.replaceAll(RegExp(r'[^\d]'), '');
-
-  // Convert to double
-  double value = double.tryParse(cleanedInput) ?? 0.0;
-
-  // Format as Brazilian currency
-  final formatter = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$ ');
-  return formatter.format(value);
-}
-
 String convertDateFormat(String dateString) {
 // Check for empty or null input
   if (dateString.isEmpty) {
@@ -163,49 +148,24 @@ int? cleanAndConvertToInt(String? inputString) {
   return int.tryParse(cleanedString) ?? 0;
 }
 
-String buildDocumentsJsonArray(
-  List<String> fileNames,
-  List<int> fileCodes,
-  List<String> base64Strings,
+String? converterParaMoeda(
+  String? texto,
+  bool prefixoRS,
 ) {
-  if (base64Strings.length != fileCodes.length ||
-      base64Strings.length != fileNames.length) {
-    return '{"arquivos": []}';
+  if (texto == null) return null;
+  final apenasNumeros = texto.replaceAll(RegExp(r'[^0-9]'), '');
+  final numero = int.parse(apenasNumeros);
+  final formatador = NumberFormat.simpleCurrency(locale: 'pt_BR');
+  String valorFormatado = formatador.format(numero / 100);
+  if (!prefixoRS) {
+    valorFormatado = valorFormatado.replaceFirst(r'R$', '');
   }
-
-  List<Map<String, dynamic>> arquivosList = [];
-
-  for (int i = 0; i < base64Strings.length; i++) {
-    final base64File = base64Strings[i];
-    final codigoArquivo = fileCodes[i];
-    final fullFileName = fileNames[i]; // E.g., "documento.pdf"
-
-    // Simulação da extração de nome e extensão
-    // FlutterFlow fornece o nome completo, então dividimos aqui:
-    String name = fullFileName.contains('.')
-        ? fullFileName.substring(0, fullFileName.lastIndexOf('.'))
-        : fullFileName;
-
-    String extension = fullFileName.contains('.')
-        ? fullFileName.substring(fullFileName.lastIndexOf('.') + 1)
-        : '';
-
-    // Constrói o objeto do arquivo
-    arquivosList.add({
-      "arquivo": base64File,
-      "codigoArquivo": codigoArquivo,
-      "nomeArquivo": name,
-      "extensaoArquivo": extension,
-    });
-  }
-
-  // Constrói o mapa JSON final
-  Map<String, dynamic> finalJson = {"arquivos": arquivosList};
-  return jsonEncode(finalJson);
+  return valorFormatado;
 }
 
-List<int> getSafeBytes(List<int>? nullableBytes) {
-  // If the input is null (which is often the underlying issue with the binding),
-  // return a safe, empty list. Otherwise, return the list itself.
-  return nullableBytes ?? [];
+String? cpf(String input) {
+  // criar função que receba uma string de números e retorne essa string formatada da seguinte forma 136.440.146-04
+
+  if (input.length != 11) return null; // Ensure the input has 11 digits
+  return '${input.substring(0, 3)}.${input.substring(3, 6)}.${input.substring(6, 9)}-${input.substring(9)}';
 }

@@ -57,6 +57,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
       ),
       child: SingleChildScrollView(
         primary: false,
+        controller: _model.columnController,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,

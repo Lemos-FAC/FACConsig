@@ -32,6 +32,8 @@ class FACConsigGroup {
   static DocumentosPendentesCall documentosPendentesCall =
       DocumentosPendentesCall();
   static EnviaDocumentoCall enviaDocumentoCall = EnviaDocumentoCall();
+  static ContratoCall contratoCall = ContratoCall();
+  static RegistraSimulacaoCall registraSimulacaoCall = RegistraSimulacaoCall();
 }
 
 class SimulaEmprestimoConsigCall {
@@ -412,14 +414,82 @@ class EnviaDocumentoCall {
 
     final ffApiRequestBody = '''
 {
-  "arquivo": "${escapeStringForJson(arquivo)}",
-  "codigoArquivo": ${codigoArquivo},
-  "nomeArquivo": "${escapeStringForJson(nomeArquivo)}",
-  "extensaoArquivo": "${escapeStringForJson(extensaoArquivo)}"
+  "arquivos": [
+    {
+      "arquivo": "${escapeStringForJson(arquivo)}",
+      "codigoArquivo": ${codigoArquivo},
+      "nomeArquivo": "${escapeStringForJson(nomeArquivo)}",
+      "extensaoArquivo": "${escapeStringForJson(extensaoArquivo)}"
+    }
+  ]
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'enviaDocumento',
       apiUrl: '${baseUrl}enviaDocumento',
+      callType: ApiCallType.POST,
+      headers: {
+        'Authorization':
+            'Basic ZmFjQ29udHJhdGFudGU6ODhiMzMyODNiOTEzYjY1Mzc3NGMyODZjNzkxN2Y1ZmQ=',
+      },
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class ContratoCall {
+  Future<ApiCallResponse> call({
+    int? codigoContrato,
+  }) async {
+    final baseUrl = FACConsigGroup.getBaseUrl();
+
+    return ApiManager.instance.makeApiCall(
+      callName: 'contrato',
+      apiUrl: '${baseUrl}contrato/${codigoContrato}',
+      callType: ApiCallType.GET,
+      headers: {
+        'Authorization':
+            'Basic ZmFjQ29udHJhdGFudGU6ODhiMzMyODNiOTEzYjY1Mzc3NGMyODZjNzkxN2Y1ZmQ=',
+      },
+      params: {},
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class RegistraSimulacaoCall {
+  Future<ApiCallResponse> call({
+    int? contratante,
+    double? valorParcelas,
+    double? valorEmprestimo,
+    int? qtdeParcelas,
+    String? origem = 'Contratante',
+  }) async {
+    final baseUrl = FACConsigGroup.getBaseUrl();
+
+    final ffApiRequestBody = '''
+{
+  "contratante": ${contratante},
+  "valorParcelas": ${valorParcelas},
+  "valorEmprestimo": ${valorEmprestimo},
+  "qtdeParcelas": ${qtdeParcelas},
+  "origem": "${escapeStringForJson(origem)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'registraSimulacao',
+      apiUrl: '${baseUrl}registraSimulacao',
       callType: ApiCallType.POST,
       headers: {
         'Authorization':

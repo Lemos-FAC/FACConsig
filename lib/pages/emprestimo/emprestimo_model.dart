@@ -14,6 +14,8 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
 
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in Emprestimo widget.
   ApiCallResponse? home;
+  // State field(s) for Column widget.
+  ScrollController? columnController;
   // State field(s) for total widget.
   FocusNode? totalFocusNode;
   TextEditingController? totalTextController;
@@ -22,12 +24,6 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
   ApiCallResponse? apiResultl9cCopy;
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in total widget.
   ApiCallResponse? total2Copy;
-  // State field(s) for valorParcela widget.
-  FocusNode? valorParcelaFocusNode;
-  TextEditingController? valorParcelaTextController;
-  String? Function(BuildContext, String?)? valorParcelaTextControllerValidator;
-  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in valorParcela widget.
-  ApiCallResponse? apiResultrqrCopy;
   // State field(s) for parcelas widget.
   String? parcelasValue;
   FormFieldController<String>? parcelasValueController;
@@ -35,12 +31,21 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
   ApiCallResponse? parcela;
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in parcelas widget.
   ApiCallResponse? parcela2;
+  // State field(s) for valorParcela widget.
+  FocusNode? valorParcelaFocusNode;
+  TextEditingController? valorParcelaTextController;
+  String? Function(BuildContext, String?)? valorParcelaTextControllerValidator;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in valorParcela widget.
+  ApiCallResponse? apiResultrqrCopy;
 
   @override
-  void initState(BuildContext context) {}
+  void initState(BuildContext context) {
+    columnController = ScrollController();
+  }
 
   @override
   void dispose() {
+    columnController?.dispose();
     totalFocusNode?.dispose();
     totalTextController?.dispose();
 

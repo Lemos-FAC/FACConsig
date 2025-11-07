@@ -177,10 +177,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               'valor',
               ParamType.String,
             ),
-            fileOutputs: params.getParam<String>(
-              'fileOutputs',
+          ),
+        ),
+        FFRoute(
+          name: PdfWidget.routeName,
+          path: PdfWidget.routePath,
+          builder: (context, params) => PdfWidget(
+            doc: params.getParam(
+              'doc',
+              ParamType.FFUploadedFile,
+            ),
+            nomeDoc: params.getParam(
+              'nomeDoc',
               ParamType.String,
-              isList: true,
             ),
           ),
         )

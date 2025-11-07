@@ -14,6 +14,10 @@ class CadastraSenhaModel extends FlutterFlowModel<CadastraSenhaWidget> {
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();
+  // State field(s) for Column widget.
+  ScrollController? columnController1;
+  // State field(s) for Column widget.
+  ScrollController? columnController2;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode1;
   TextEditingController? textController1;
@@ -47,6 +51,8 @@ class CadastraSenhaModel extends FlutterFlowModel<CadastraSenhaWidget> {
 
   @override
   void initState(BuildContext context) {
+    columnController1 = ScrollController();
+    columnController2 = ScrollController();
     passwordVisibility1 = false;
     textController1Validator = _textController1Validator;
     passwordVisibility2 = false;
@@ -55,6 +61,8 @@ class CadastraSenhaModel extends FlutterFlowModel<CadastraSenhaWidget> {
 
   @override
   void dispose() {
+    columnController1?.dispose();
+    columnController2?.dispose();
     textFieldFocusNode1?.dispose();
     textController1?.dispose();
 

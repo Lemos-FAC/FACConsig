@@ -47,6 +47,10 @@ class AlterarDadosModel extends FlutterFlowModel<AlterarDadosWidget> {
   ApiCallResponse? banco;
   // Stores action output result for [Backend Call - API (buscaBancos)] action in AlterarDados widget.
   ApiCallResponse? bancoRetorno;
+  // State field(s) for Column widget.
+  ScrollController? columnController1;
+  // State field(s) for Column widget.
+  ScrollController? columnController2;
   // State field(s) for UF widget.
   String? ufValue;
   FormFieldController<String>? ufValueController;
@@ -103,10 +107,15 @@ class AlterarDadosModel extends FlutterFlowModel<AlterarDadosWidget> {
   ApiCallResponse? dadosAtualizados;
 
   @override
-  void initState(BuildContext context) {}
+  void initState(BuildContext context) {
+    columnController1 = ScrollController();
+    columnController2 = ScrollController();
+  }
 
   @override
   void dispose() {
+    columnController1?.dispose();
+    columnController2?.dispose();
     cidadeFocusNode?.dispose();
     cidadeTextController?.dispose();
 

@@ -3,7 +3,9 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
+import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -273,13 +275,35 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryText,
+                                    color: () {
+                                      if ((String var1) {
+                                        return var1 == "Em Análise";
+                                      }(getJsonField(
+                                        emprestimosItem,
+                                        r'''$.StatusContrato''',
+                                      ).toString())) {
+                                        return Color(0xFF007BFF);
+                                      } else if ((String var1) {
+                                        return var1 == "Finalizado";
+                                      }(getJsonField(
+                                        emprestimosItem,
+                                        r'''$.StatusContrato''',
+                                      ).toString())) {
+                                        return FlutterFlowTheme.of(context)
+                                            .secondaryText;
+                                      } else {
+                                        return FlutterFlowTheme.of(context)
+                                            .primary;
+                                      }
+                                    }(),
                                     borderRadius: BorderRadius.only(
                                       bottomLeft: Radius.circular(10.0),
                                       bottomRight: Radius.circular(10.0),
                                       topLeft: Radius.circular(10.0),
                                       topRight: Radius.circular(10.0),
+                                    ),
+                                    border: Border.all(
+                                      color: Color(0xFFE6E6E6),
                                     ),
                                   ),
                                   child: Padding(
@@ -509,8 +533,47 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                 Align(
                                   alignment: AlignmentDirectional(0.0, 0.0),
                                   child: FFButtonWidget(
-                                    onPressed: () {
-                                      print('Button pressed ...');
+                                    onPressed: () async {
+                                      _model.contratoPDF = await FACConsigGroup
+                                          .contratoCall
+                                          .call(
+                                        codigoContrato: getJsonField(
+                                          emprestimosItem,
+                                          r'''$..CodigoContrato''',
+                                        ),
+                                      );
+
+                                      if ((_model.contratoPDF?.succeeded ??
+                                          true)) {
+                                        _model.pdf =
+                                            await actions.base64UploadedFile(
+                                          getJsonField(
+                                            (_model.contratoPDF?.jsonBody ??
+                                                ''),
+                                            r'''$..Contrato''',
+                                          ).toString(),
+                                          'pdf',
+                                        );
+
+                                        context.pushNamed(
+                                          PdfWidget.routeName,
+                                          queryParameters: {
+                                            'doc': serializeParam(
+                                              _model.pdf,
+                                              ParamType.FFUploadedFile,
+                                            ),
+                                            'nomeDoc': serializeParam(
+                                              getJsonField(
+                                                emprestimosItem,
+                                                r'''$.CodigoContrato''',
+                                              ).toString(),
+                                              ParamType.String,
+                                            ),
+                                          }.withoutNulls,
+                                        );
+                                      }
+
+                                      safeSetState(() {});
                                     },
                                     text: 'Acessar documento do contrato',
                                     icon: Icon(

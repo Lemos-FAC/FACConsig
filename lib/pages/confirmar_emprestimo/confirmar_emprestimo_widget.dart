@@ -16,7 +16,6 @@ class ConfirmarEmprestimoWidget extends StatefulWidget {
     String? taxaJuros,
     String? valorPagar,
     String? valor,
-    required this.fileOutputs,
   })  : this.valorSolicitado = valorSolicitado ?? '-',
         this.parcelas = parcelas ?? '-',
         this.taxaJuros = taxaJuros ?? '-',
@@ -28,7 +27,6 @@ class ConfirmarEmprestimoWidget extends StatefulWidget {
   final String taxaJuros;
   final String valorPagar;
   final String valor;
-  final List<String>? fileOutputs;
 
   static String routeName = 'ConfirmarEmprestimo';
   static String routePath = '/confirmarEmprestimo';
@@ -123,6 +121,7 @@ class _ConfirmarEmprestimoWidgetState extends State<ConfirmarEmprestimoWidget> {
                   padding:
                       EdgeInsetsDirectional.fromSTEB(20.0, 40.0, 20.0, 0.0),
                   child: SingleChildScrollView(
+                    controller: _model.columnController,
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,

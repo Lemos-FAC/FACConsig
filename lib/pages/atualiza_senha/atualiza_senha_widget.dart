@@ -78,6 +78,7 @@ class _AtualizaSenhaWidgetState extends State<AtualizaSenhaWidget> {
         body: SafeArea(
           top: true,
           child: SingleChildScrollView(
+            controller: _model.columnController1,
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -108,6 +109,7 @@ class _AtualizaSenhaWidgetState extends State<AtualizaSenhaWidget> {
                               30.0, 40.0, 30.0, 20.0),
                           child: SingleChildScrollView(
                             primary: false,
+                            controller: _model.columnController2,
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,

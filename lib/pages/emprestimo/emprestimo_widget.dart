@@ -89,8 +89,14 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
       }
     });
 
-    _model.totalTextController ??=
-        TextEditingController(text: FFAppState().totalParcela);
+    _model.totalTextController ??= TextEditingController(
+        text: formatNumber(
+      functions.stringDoubleSFomart(FFAppState().totalParcela),
+      formatType: FormatType.custom,
+      currency: 'R\$',
+      format: '#,##0.00',
+      locale: 'pt_BR',
+    ));
     _model.totalFocusNode ??= FocusNode();
     _model.totalFocusNode!.addListener(
       () async {
@@ -194,8 +200,14 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
         safeSetState(() {});
       },
     );
-    _model.valorParcelaTextController ??=
-        TextEditingController(text: FFAppState().valorParcela);
+    _model.valorParcelaTextController ??= TextEditingController(
+        text: formatNumber(
+      functions.stringDoubleSFomart(FFAppState().valorParcela),
+      formatType: FormatType.custom,
+      currency: 'R\$',
+      format: '#,##0.00',
+      locale: 'pt_BR',
+    ));
     _model.valorParcelaFocusNode ??= FocusNode();
     _model.valorParcelaFocusNode!.addListener(
       () async {
@@ -367,6 +379,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
                 child: SingleChildScrollView(
+                  controller: _model.columnController,
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -468,14 +481,26 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                           onChanged: (_) =>
                                               EasyDebounce.debounce(
                                             '_model.totalTextController',
-                                            Duration(milliseconds: 2000),
+                                            Duration(milliseconds: 0),
                                             () async {
-                                              FFAppState().hasChanged = false;
-                                              safeSetState(() {});
                                               _model.totalTextController?.text =
-                                                  functions.real(_model
-                                                      .totalTextController
-                                                      .text)!;
+                                                  functions.converterParaMoeda(
+                                                      _model.totalTextController
+                                                          .text,
+                                                      true)!;
+                                              _model.totalFocusNode
+                                                  ?.requestFocus();
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback((_) {
+                                                _model.totalTextController
+                                                        ?.selection =
+                                                    TextSelection.collapsed(
+                                                  offset: _model
+                                                      .totalTextController!
+                                                      .text
+                                                      .length,
+                                                );
+                                              });
                                             },
                                           ),
                                           autofocus: false,
@@ -658,11 +683,6 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                               .valorParcelaTextController.text,
                                           ParamType.String,
                                         ),
-                                        'fileOutputs': serializeParam(
-                                          [],
-                                          ParamType.String,
-                                          isList: true,
-                                        ),
                                       }.withoutNulls,
                                     );
                                   },
@@ -706,70 +726,27 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  40.0, 190.0, 0.0, 0.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Align(
-                                    alignment: AlignmentDirectional(0.32, 0.0),
-                                    child: Text(
-                                      'Valor da parcela',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight: FontWeight.bold,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
-                                            ),
-                                            fontSize: 12.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: AlignmentDirectional(0.86, -0.4),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 0.0, 20.0, 0.0),
-                                      child: Container(
-                                        width: 155.0,
-                                        child: TextFormField(
-                                          controller:
-                                              _model.valorParcelaTextController,
-                                          focusNode:
-                                              _model.valorParcelaFocusNode,
-                                          onChanged: (_) =>
-                                              EasyDebounce.debounce(
-                                            '_model.valorParcelaTextController',
-                                            Duration(milliseconds: 2000),
-                                            () async {
-                                              FFAppState().hasChanged = false;
-                                              safeSetState(() {});
-                                              _model.valorParcelaTextController
-                                                      ?.text =
-                                                  functions.real(_model
-                                                      .valorParcelaTextController
-                                                      .text)!;
-                                            },
-                                          ),
-                                          autofocus: false,
-                                          enabled: true,
-                                          obscureText: false,
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            labelStyle: FlutterFlowTheme.of(
-                                                    context)
+                            Align(
+                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    30.0, 200.0, 30.0, 0.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Align(
+                                          alignment:
+                                              AlignmentDirectional(-0.7, -0.33),
+                                          child: Text(
+                                            'Em quantas parcelas?',
+                                            style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
                                                   font: GoogleFonts.inter(
@@ -780,6 +757,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                                             .bodyMedium
                                                             .fontStyle,
                                                   ),
+                                                  fontSize: 12.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.bold,
                                                   fontStyle:
@@ -788,224 +766,30 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                            alignLabelWithHint: false,
-                                            hintStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .override(
-                                                      font: GoogleFonts.inter(
-                                                        fontWeight:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium
-                                                                .fontWeight,
-                                                        fontStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium
-                                                                .fontStyle,
-                                                      ),
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .labelMedium
-                                                              .fontWeight,
-                                                      fontStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .labelMedium
-                                                              .fontStyle,
-                                                    ),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0xFFE6E6E6),
-                                                width: 1.0,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0x00000000),
-                                                width: 1.0,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                            errorBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .error,
-                                                width: 1.0,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .error,
-                                                width: 1.0,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                            filled: true,
-                                            fillColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
-                                            hoverColor: Colors.transparent,
                                           ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                font: GoogleFonts.inter(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .fontStyle,
-                                                ),
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.bold,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontStyle,
-                                              ),
-                                          textAlign: TextAlign.start,
-                                          keyboardType: TextInputType.number,
-                                          cursorColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primaryText,
-                                          enableInteractiveSelection: true,
-                                          validator: _model
-                                              .valorParcelaTextControllerValidator
-                                              .asValidator(context),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 190.0, 60.0, 0.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Align(
-                                    alignment:
-                                        AlignmentDirectional(-0.7, -0.33),
-                                    child: Text(
-                                      'Em quantas parcelas?',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight: FontWeight.bold,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
-                                            ),
-                                            fontSize: 12.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment:
-                                        AlignmentDirectional(-0.85, -0.4),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          20.0, 0.0, 15.0, 0.0),
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .parcelasValueController ??=
-                                            FormFieldController<String>(null),
-                                        options: FFAppState().dropDownList,
-                                        onChanged: (val) async {
-                                          safeSetState(
-                                              () => _model.parcelasValue = val);
-                                          FFAppState().parcela =
-                                              _model.parcelasValue!;
-                                          FFAppState().hasChanged = true;
-                                          safeSetState(() {});
-                                          await Future.delayed(
-                                            Duration(
-                                              milliseconds: 2000,
-                                            ),
-                                          );
-                                          _model.parcela = await FACConsigGroup
-                                              .simulaEmprestimoConsigCall
-                                              .call(
-                                            contratante:
-                                                FFAppState().codigoContratante,
-                                            tipoSimulacao: 'porQtdeParcelas',
-                                            quantidadeParcelas:
-                                                _model.parcelasValue,
-                                            valorEmprestimo: functions
-                                                .stringDoubleSFomart(_model
-                                                    .totalTextController.text)
-                                                ?.toString(),
-                                            valorParcelas: '0',
-                                          );
-
-                                          if ((_model.parcela?.succeeded ??
-                                              true)) {
-                                            if ((String var1) {
-                                              return var1 != "";
-                                            }(getJsonField(
-                                              (_model.parcela?.jsonBody ?? ''),
-                                              r'''$..alerta''',
-                                            ).toString())) {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (alertDialogContext) {
-                                                  return AlertDialog(
-                                                    title: Text('Atenção!'),
-                                                    content: Text(getJsonField(
-                                                      (_model.parcela
-                                                              ?.jsonBody ??
-                                                          ''),
-                                                      r'''$..alerta''',
-                                                    ).toString()),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                alertDialogContext),
-                                                        child: Text('Ok'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                              FFAppState().totalParcela =
-                                                  getJsonField(
-                                                (_model.parcela?.jsonBody ??
-                                                    ''),
-                                                r'''$..valorEmprestimoForma''',
-                                              ).toString();
+                                        Align(
+                                          alignment:
+                                              AlignmentDirectional(-0.85, -0.4),
+                                          child: FlutterFlowDropDown<String>(
+                                            controller: _model
+                                                    .parcelasValueController ??=
+                                                FormFieldController<String>(
+                                                    null),
+                                            options: FFAppState().dropDownList,
+                                            onChanged: (val) async {
+                                              safeSetState(() =>
+                                                  _model.parcelasValue = val);
+                                              FFAppState().parcela =
+                                                  _model.parcelasValue!;
+                                              FFAppState().hasChanged = true;
                                               safeSetState(() {});
-                                              safeSetState(() {
-                                                _model.totalTextController
-                                                        ?.text =
-                                                    FFAppState().totalParcela;
-                                              });
-                                              _model.parcela2 =
+                                              await Future.delayed(
+                                                Duration(
+                                                  milliseconds: 2000,
+                                                ),
+                                              );
+                                              _model.parcela =
                                                   await FACConsigGroup
                                                       .simulaEmprestimoConsigCall
                                                       .call(
@@ -1014,114 +798,414 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                                 tipoSimulacao:
                                                     'porQtdeParcelas',
                                                 quantidadeParcelas:
-                                                    getJsonField(
-                                                  (_model.parcela?.jsonBody ??
-                                                      ''),
-                                                  r'''$..qtdParcelaEmprestimo''',
-                                                ).toString(),
-                                                valorEmprestimo: getJsonField(
-                                                  (_model.parcela?.jsonBody ??
-                                                      ''),
-                                                  r'''$..valorEmprestimo''',
-                                                ).toString(),
+                                                    _model.parcelasValue,
+                                                valorEmprestimo: functions
+                                                    .stringDoubleSFomart(_model
+                                                        .totalTextController
+                                                        .text)
+                                                    ?.toString(),
+                                                valorParcelas: '0',
                                               );
 
-                                              if ((_model.parcela2?.succeeded ??
+                                              if ((_model.parcela?.succeeded ??
                                                   true)) {
-                                                FFAppState().valorParcela =
-                                                    getJsonField(
-                                                  (_model.parcela2?.jsonBody ??
+                                                if ((String var1) {
+                                                  return var1 != "";
+                                                }(getJsonField(
+                                                  (_model.parcela?.jsonBody ??
                                                       ''),
-                                                  r'''$..valorParcela''',
-                                                ).toString();
-                                                FFAppState().reajuste =
-                                                    getJsonField(
-                                                  (_model.parcela2?.jsonBody ??
-                                                      ''),
-                                                  r'''$..valorTotalEmprestimo''',
-                                                ).toString();
+                                                  r'''$..alerta''',
+                                                ).toString())) {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        title: Text('Atenção!'),
+                                                        content:
+                                                            Text(getJsonField(
+                                                          (_model.parcela
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$..alerta''',
+                                                        ).toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: Text('Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                  FFAppState().totalParcela =
+                                                      getJsonField(
+                                                    (_model.parcela?.jsonBody ??
+                                                        ''),
+                                                    r'''$..valorEmprestimoForma''',
+                                                  ).toString();
+                                                  safeSetState(() {});
+                                                  safeSetState(() {
+                                                    _model.totalTextController
+                                                            ?.text =
+                                                        FFAppState()
+                                                            .totalParcela;
+                                                  });
+                                                  _model.parcela2 =
+                                                      await FACConsigGroup
+                                                          .simulaEmprestimoConsigCall
+                                                          .call(
+                                                    contratante: FFAppState()
+                                                        .codigoContratante,
+                                                    tipoSimulacao:
+                                                        'porQtdeParcelas',
+                                                    quantidadeParcelas:
+                                                        getJsonField(
+                                                      (_model.parcela
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$..qtdParcelaEmprestimo''',
+                                                    ).toString(),
+                                                    valorEmprestimo:
+                                                        getJsonField(
+                                                      (_model.parcela
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$..valorEmprestimo''',
+                                                    ).toString(),
+                                                  );
+
+                                                  if ((_model.parcela2
+                                                          ?.succeeded ??
+                                                      true)) {
+                                                    FFAppState().valorParcela =
+                                                        getJsonField(
+                                                      (_model.parcela2
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$..valorParcela''',
+                                                    ).toString();
+                                                    FFAppState().reajuste =
+                                                        getJsonField(
+                                                      (_model.parcela2
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$..valorTotalEmprestimo''',
+                                                    ).toString();
+                                                    safeSetState(() {});
+                                                    safeSetState(() {
+                                                      _model.valorParcelaTextController
+                                                              ?.text =
+                                                          FFAppState()
+                                                              .valorParcela;
+                                                    });
+                                                  }
+                                                } else {
+                                                  FFAppState().valorParcela =
+                                                      getJsonField(
+                                                    (_model.parcela?.jsonBody ??
+                                                        ''),
+                                                    r'''$..valorParcela''',
+                                                  ).toString();
+                                                  FFAppState().reajuste =
+                                                      getJsonField(
+                                                    (_model.parcela?.jsonBody ??
+                                                        ''),
+                                                    r'''$..valorTotalEmprestimo''',
+                                                  ).toString();
+                                                  safeSetState(() {});
+                                                  safeSetState(() {
+                                                    _model.valorParcelaTextController
+                                                            ?.text =
+                                                        FFAppState()
+                                                            .valorParcela;
+                                                  });
+                                                }
+
+                                                FFAppState().hasChanged = false;
                                                 safeSetState(() {});
-                                                safeSetState(() {
-                                                  _model.valorParcelaTextController
-                                                          ?.text =
-                                                      FFAppState().valorParcela;
-                                                });
                                               }
-                                            } else {
-                                              FFAppState().valorParcela =
-                                                  getJsonField(
-                                                (_model.parcela?.jsonBody ??
-                                                    ''),
-                                                r'''$..valorParcela''',
-                                              ).toString();
-                                              FFAppState().reajuste =
-                                                  getJsonField(
-                                                (_model.parcela?.jsonBody ??
-                                                    ''),
-                                                r'''$..valorTotalEmprestimo''',
-                                              ).toString();
+
                                               safeSetState(() {});
-                                              safeSetState(() {
-                                                _model.valorParcelaTextController
-                                                        ?.text =
-                                                    FFAppState().valorParcela;
-                                              });
-                                            }
-
-                                            FFAppState().hasChanged = false;
-                                            safeSetState(() {});
-                                          }
-
-                                          safeSetState(() {});
-                                        },
-                                        width: 155.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              font: GoogleFonts.inter(
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontStyle,
-                                              ),
-                                              letterSpacing: 0.0,
-                                              fontWeight:
+                                            },
+                                            width: 155.0,
+                                            height: 50.0,
+                                            textStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .override(
+                                                      font: GoogleFonts.inter(
+                                                        fontWeight:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .fontWeight,
+                                                        fontStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .fontStyle,
+                                                      ),
+                                                      letterSpacing: 0.0,
+                                                      fontWeight:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .bodyMedium
+                                                              .fontWeight,
+                                                      fontStyle:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .bodyMedium
+                                                              .fontStyle,
+                                                    ),
+                                            hintText: FFAppState().parcela,
+                                            icon: Icon(
+                                              Icons.keyboard_arrow_down_rounded,
+                                              color:
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
+                                                      .secondaryText,
+                                              size: 24.0,
                                             ),
-                                        hintText: FFAppState().parcela,
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                            fillColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondaryBackground,
+                                            elevation: 2.0,
+                                            borderColor: Color(0xFFE6E6E6),
+                                            borderWidth: 1.0,
+                                            borderRadius: 8.0,
+                                            margin:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    12.0, 0.0, 12.0, 0.0),
+                                            hidesUnderline: true,
+                                            isOverButton: false,
+                                            isSearchable: false,
+                                            isMultiSelect: false,
+                                          ),
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor: Color(0xFFE6E6E6),
-                                        borderWidth: 1.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
-                                      ),
+                                      ],
                                     ),
-                                  ),
-                                ],
+                                    Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Align(
+                                          alignment:
+                                              AlignmentDirectional(0.0, 0.0),
+                                          child: Text(
+                                            'Valor da parcela',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  font: GoogleFonts.inter(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .fontStyle,
+                                                  ),
+                                                  fontSize: 12.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontStyle,
+                                                ),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment:
+                                              AlignmentDirectional(0.86, -0.4),
+                                          child: Container(
+                                            width: 155.0,
+                                            child: TextFormField(
+                                              controller: _model
+                                                  .valorParcelaTextController,
+                                              focusNode:
+                                                  _model.valorParcelaFocusNode,
+                                              onChanged: (_) =>
+                                                  EasyDebounce.debounce(
+                                                '_model.valorParcelaTextController',
+                                                Duration(milliseconds: 0),
+                                                () async {
+                                                  safeSetState(() {
+                                                    _model.valorParcelaTextController
+                                                            ?.text =
+                                                        functions
+                                                            .converterParaMoeda(
+                                                                _model
+                                                                    .valorParcelaTextController
+                                                                    .text,
+                                                                true)!;
+                                                    _model.valorParcelaFocusNode
+                                                        ?.requestFocus();
+                                                    WidgetsBinding.instance
+                                                        .addPostFrameCallback(
+                                                            (_) {
+                                                      _model.valorParcelaTextController
+                                                              ?.selection =
+                                                          TextSelection
+                                                              .collapsed(
+                                                        offset: _model
+                                                            .valorParcelaTextController!
+                                                            .text
+                                                            .length,
+                                                      );
+                                                    });
+                                                  });
+                                                },
+                                              ),
+                                              autofocus: false,
+                                              enabled: true,
+                                              obscureText: false,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                labelStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          font:
+                                                              GoogleFonts.inter(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontStyle,
+                                                          ),
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontStyle,
+                                                        ),
+                                                alignLabelWithHint: false,
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .labelMedium
+                                                        .override(
+                                                          font:
+                                                              GoogleFonts.inter(
+                                                            fontWeight:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .labelMedium
+                                                                    .fontWeight,
+                                                            fontStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .labelMedium
+                                                                    .fontStyle,
+                                                          ),
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .labelMedium
+                                                                  .fontWeight,
+                                                          fontStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .labelMedium
+                                                                  .fontStyle,
+                                                        ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Color(0xFFE6E6E6),
+                                                    width: 1.0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Color(0x00000000),
+                                                    width: 1.0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .error,
+                                                    width: 1.0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                focusedErrorBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .error,
+                                                    width: 1.0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                filled: true,
+                                                fillColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                hoverColor: Colors.transparent,
+                                              ),
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        font: GoogleFonts.inter(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontStyle,
+                                                        ),
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .fontStyle,
+                                                      ),
+                                              textAlign: TextAlign.start,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              cursorColor:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
+                                              enableInteractiveSelection: true,
+                                              validator: _model
+                                                  .valorParcelaTextControllerValidator
+                                                  .asValidator(context),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             Align(

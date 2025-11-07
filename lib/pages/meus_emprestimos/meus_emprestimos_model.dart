@@ -1,5 +1,6 @@
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/index.dart';
 import 'meus_emprestimos_widget.dart' show MeusEmprestimosWidget;
 import 'package:flutter/material.dart';
 
@@ -31,6 +32,10 @@ class MeusEmprestimosModel extends FlutterFlowModel<MeusEmprestimosWidget> {
 
   // Stores action output result for [Backend Call - API (contratos)] action in MeusEmprestimos widget.
   ApiCallResponse? contratos;
+  // Stores action output result for [Backend Call - API (contrato)] action in Button widget.
+  ApiCallResponse? contratoPDF;
+  // Stores action output result for [Custom Action - base64UploadedFile] action in Button widget.
+  FFUploadedFile? pdf;
 
   @override
   void initState(BuildContext context) {}

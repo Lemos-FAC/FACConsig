@@ -101,6 +101,7 @@ class _CadastraSenhaWidgetState extends State<CadastraSenhaWidget> {
         body: SafeArea(
           top: true,
           child: SingleChildScrollView(
+            controller: _model.columnController1,
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -114,6 +115,7 @@ class _CadastraSenhaWidgetState extends State<CadastraSenhaWidget> {
                           EdgeInsetsDirectional.fromSTEB(70.0, 0.0, 70.0, 0.0),
                       child: SingleChildScrollView(
                         primary: false,
+                        controller: _model.columnController2,
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -505,6 +507,10 @@ class _CadastraSenhaWidgetState extends State<CadastraSenhaWidget> {
                                     );
                                   } else {
                                     FFAppState().canLoad = true;
+                                    safeSetState(() {});
+                                    _model.senha = _model.textController1.text;
+                                    _model.confirmaSenha =
+                                        _model.textController2.text;
                                     safeSetState(() {});
                                     _model.cadastraSenha = await FACConsigGroup
                                         .cadastraSenhaCall

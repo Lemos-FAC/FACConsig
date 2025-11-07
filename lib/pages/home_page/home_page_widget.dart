@@ -608,8 +608,42 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                context.pushNamed(
-                                                    EmprestimoWidget.routeName);
+                                                if ((String var1) {
+                                                  return var1 ==
+                                                      "Contratante Já Possui uma Proposta em Aberto!";
+                                                }(getJsonField(
+                                                  (_model.home?.jsonBody ?? ''),
+                                                  r'''$.message''',
+                                                ).toString())) {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        title: Text('Atenção!'),
+                                                        content:
+                                                            Text(getJsonField(
+                                                          (_model.home
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$.message''',
+                                                        ).toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: Text('Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                } else {
+                                                  context.pushNamed(
+                                                      EmprestimoWidget
+                                                          .routeName);
+                                                }
                                               },
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.max,
@@ -619,19 +653,71 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                 children: [
                                                   Stack(
                                                     children: [
-                                                      Container(
-                                                        width: 80.0,
-                                                        height: 80.0,
-                                                        clipBehavior:
-                                                            Clip.antiAlias,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                        ),
-                                                        child: Image.asset(
-                                                          'assets/images/ICONE-1.png',
-                                                          fit: BoxFit.cover,
+                                                      InkWell(
+                                                        splashColor:
+                                                            Colors.transparent,
+                                                        focusColor:
+                                                            Colors.transparent,
+                                                        hoverColor:
+                                                            Colors.transparent,
+                                                        highlightColor:
+                                                            Colors.transparent,
+                                                        onTap: () async {
+                                                          if ((String var1) {
+                                                            return var1 ==
+                                                                "Contratante Já Possui uma Proposta em Aberto!";
+                                                          }(getJsonField(
+                                                            (_model.home
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.message''',
+                                                          ).toString())) {
+                                                            await showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (alertDialogContext) {
+                                                                return AlertDialog(
+                                                                  title: Text(
+                                                                      'Atenção!'),
+                                                                  content: Text(
+                                                                      getJsonField(
+                                                                    (_model.home
+                                                                            ?.jsonBody ??
+                                                                        ''),
+                                                                    r'''$.message''',
+                                                                  ).toString()),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.pop(alertDialogContext),
+                                                                      child: Text(
+                                                                          'Ok'),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          } else {
+                                                            context.pushNamed(
+                                                                EmprestimoWidget
+                                                                    .routeName);
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          width: 80.0,
+                                                          height: 80.0,
+                                                          clipBehavior:
+                                                              Clip.antiAlias,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                          ),
+                                                          child: Image.asset(
+                                                            'assets/images/ICONE-1.png',
+                                                            fit: BoxFit.cover,
+                                                          ),
                                                         ),
                                                       ),
                                                     ],
@@ -646,9 +732,46 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                     highlightColor:
                                                         Colors.transparent,
                                                     onTap: () async {
-                                                      context.pushNamed(
-                                                          EmprestimoWidget
-                                                              .routeName);
+                                                      if ((String var1) {
+                                                        return var1 ==
+                                                            "Contratante Já Possui uma Proposta em Aberto!";
+                                                      }(getJsonField(
+                                                        (_model.home
+                                                                ?.jsonBody ??
+                                                            ''),
+                                                        r'''$.message''',
+                                                      ).toString())) {
+                                                        await showDialog(
+                                                          context: context,
+                                                          builder:
+                                                              (alertDialogContext) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Atenção!'),
+                                                              content: Text(
+                                                                  getJsonField(
+                                                                (_model.home
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$.message''',
+                                                              ).toString()),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          alertDialogContext),
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      } else {
+                                                        context.pushNamed(
+                                                            EmprestimoWidget
+                                                                .routeName);
+                                                      }
                                                     },
                                                     child: Text(
                                                       'Solicitar\nEmpréstimo',

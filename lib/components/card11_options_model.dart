@@ -10,6 +10,8 @@ class Card11OptionsModel extends FlutterFlowModel<Card11OptionsWidget> {
 
   ///  State fields for stateful widgets in this component.
 
+  // State field(s) for Column widget.
+  ScrollController? columnController;
   bool isDataUploading_identificacao = false;
   FFUploadedFile uploadedLocalFile_identificacao =
       FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
@@ -60,8 +62,12 @@ class Card11OptionsModel extends FlutterFlowModel<Card11OptionsWidget> {
   ApiCallResponse? doc5;
 
   @override
-  void initState(BuildContext context) {}
+  void initState(BuildContext context) {
+    columnController = ScrollController();
+  }
 
   @override
-  void dispose() {}
+  void dispose() {
+    columnController?.dispose();
+  }
 }

@@ -273,8 +273,27 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                       5.0, 5.0, 5.0, 5.0),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryText,
+                                      color: () {
+                                        if ((String var1) {
+                                          return var1 == "Em Análise";
+                                        }(getJsonField(
+                                          propostasItem,
+                                          r'''$.StatusProposta''',
+                                        ).toString())) {
+                                          return Color(0xFF007BFF);
+                                        } else if ((String var1) {
+                                          return var1 == "Finalizado";
+                                        }(getJsonField(
+                                          propostasItem,
+                                          r'''$.StatusProposta''',
+                                        ).toString())) {
+                                          return FlutterFlowTheme.of(context)
+                                              .secondaryText;
+                                        } else {
+                                          return FlutterFlowTheme.of(context)
+                                              .primary;
+                                        }
+                                      }(),
                                       borderRadius: BorderRadius.only(
                                         bottomLeft: Radius.circular(10.0),
                                         bottomRight: Radius.circular(10.0),
@@ -306,7 +325,7 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .secondaryBackground,
-                                              fontSize: 10.0,
+                                              fontSize: 12.0,
                                               letterSpacing: 0.0,
                                               fontWeight:
                                                   FlutterFlowTheme.of(context)

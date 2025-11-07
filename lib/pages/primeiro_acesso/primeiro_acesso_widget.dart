@@ -64,6 +64,7 @@ class _PrimeiroAcessoWidgetState extends State<PrimeiroAcessoWidget> {
               Stack(
                 children: [
                   SingleChildScrollView(
+                    controller: _model.columnController,
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,

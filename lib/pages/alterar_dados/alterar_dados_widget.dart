@@ -384,6 +384,7 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
         body: SafeArea(
           top: true,
           child: SingleChildScrollView(
+            controller: _model.columnController1,
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -417,6 +418,7 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                             ),
                             child: SingleChildScrollView(
                               primary: false,
+                              controller: _model.columnController2,
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [

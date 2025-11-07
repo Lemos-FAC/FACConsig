@@ -15,6 +15,10 @@ class AtualizaSenhaModel extends FlutterFlowModel<AtualizaSenhaWidget> {
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();
+  // State field(s) for Column widget.
+  ScrollController? columnController1;
+  // State field(s) for Column widget.
+  ScrollController? columnController2;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode;
   TextEditingController? textController;
@@ -38,11 +42,15 @@ class AtualizaSenhaModel extends FlutterFlowModel<AtualizaSenhaWidget> {
 
   @override
   void initState(BuildContext context) {
+    columnController1 = ScrollController();
+    columnController2 = ScrollController();
     textControllerValidator = _textControllerValidator;
   }
 
   @override
   void dispose() {
+    columnController1?.dispose();
+    columnController2?.dispose();
     textFieldFocusNode?.dispose();
     textController?.dispose();
   }

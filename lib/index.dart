@@ -18,3 +18,4 @@ export '/pages/minhas_propostas/minhas_propostas_widget.dart'
     show MinhasPropostasWidget;
 export '/pages/confirmar_emprestimo/confirmar_emprestimo_widget.dart'
     show ConfirmarEmprestimoWidget;
+export '/pages/pdf/pdf_widget.dart' show PdfWidget;

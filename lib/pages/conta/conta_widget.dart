@@ -162,6 +162,7 @@ class _ContaWidgetState extends State<ContaWidget> {
                         ),
                       ),
                       child: SingleChildScrollView(
+                        controller: _model.columnController,
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
