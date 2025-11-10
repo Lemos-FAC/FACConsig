@@ -1,3 +1,4 @@
+import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'confirmar_emprestimo_widget.dart' show ConfirmarEmprestimoWidget;
 import 'package:flutter/material.dart';
@@ -19,6 +20,8 @@ class ConfirmarEmprestimoModel
 
   // State field(s) for Column widget.
   ScrollController? columnController;
+  // Stores action output result for [Backend Call - API (registraSimulacao)] action in Button widget.
+  ApiCallResponse? confirmaEmprestimo;
 
   @override
   void initState(BuildContext context) {

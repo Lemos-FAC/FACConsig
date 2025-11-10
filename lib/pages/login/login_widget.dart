@@ -107,7 +107,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                       Align(
                         alignment: AlignmentDirectional(0.0, 0.0),
                         child: Container(
-                          width: MediaQuery.sizeOf(context).width * 0.82,
+                          width: double.infinity,
                           child: Form(
                             key: _model.formKey,
                             autovalidateMode: AutovalidateMode.disabled,
@@ -808,19 +808,19 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             if (MediaQuery.sizeOf(context)
                                                     .width >=
                                                 430.0) {
-                                              return 10.0;
+                                              return 40.0;
                                             } else if (MediaQuery.sizeOf(
                                                         context)
-                                                    .width >
+                                                    .width >=
                                                 411.0) {
-                                              return 15.0;
+                                              return 30.0;
                                             } else if (MediaQuery.sizeOf(
                                                         context)
                                                     .width >=
                                                 448.0) {
-                                              return 20.0;
+                                              return 45.0;
                                             } else {
-                                              return 0.0;
+                                              return 32.0;
                                             }
                                           }(),
                                           0.0,

@@ -3,6 +3,7 @@ import '/flutter_flow/flutter_flow_pdf_viewer.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/custom_code/actions/index.dart' as actions;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'pdf_model.dart';
@@ -158,8 +159,10 @@ class _PdfWidgetState extends State<PdfWidget> {
                         ),
                       ),
                       FFButtonWidget(
-                        onPressed: () {
-                          print('Button pressed ...');
+                        onPressed: () async {
+                          await actions.sharePdfFile(
+                            widget.doc!,
+                          );
                         },
                         text: 'Compartilhar',
                         icon: Icon(

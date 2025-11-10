@@ -182,6 +182,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
               backgroundColor: FlutterFlowTheme.of(context).warning,
             ),
           );
+          FFAppState().margemDisponivel = 'R\$ 0,00';
+          safeSetState(() {});
         }
 
         FFAppState().isLoading = false;

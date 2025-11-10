@@ -3,8 +3,10 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'confirmar_emprestimo_model.dart';
 export 'confirmar_emprestimo_model.dart';
 
@@ -56,6 +58,8 @@ class _ConfirmarEmprestimoWidgetState extends State<ConfirmarEmprestimoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return FutureBuilder<ApiCallResponse>(
       future: SimulaEmprestimoCall.call(
         contratante: '21220',
@@ -621,8 +625,56 @@ class _ConfirmarEmprestimoWidgetState extends State<ConfirmarEmprestimoWidget> {
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             0.0, 10.0, 0.0, 0.0),
                                         child: FFButtonWidget(
-                                          onPressed: () {
-                                            print('Button pressed ...');
+                                          onPressed: () async {
+                                            _model.confirmaEmprestimo =
+                                                await FACConsigGroup
+                                                    .registraSimulacaoCall
+                                                    .call(
+                                              contratante: getJsonField(
+                                                FFAppState()
+                                                    .contratante
+                                                    .firstOrNull,
+                                                r'''$.CodigoContratante''',
+                                              ).toString(),
+                                              valorParcelas:
+                                                  functions.stringDoubleSFomart(
+                                                      widget.valor),
+                                            );
+
+                                            if (!getJsonField(
+                                              (_model.confirmaEmprestimo
+                                                      ?.jsonBody ??
+                                                  ''),
+                                              r'''$.status''',
+                                            )) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    getJsonField(
+                                                      (_model.confirmaEmprestimo
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.message''',
+                                                    ).toString(),
+                                                    style: TextStyle(
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primaryText,
+                                                    ),
+                                                  ),
+                                                  duration: Duration(
+                                                      milliseconds: 4000),
+                                                  backgroundColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .warning,
+                                                ),
+                                              );
+                                            }
+
+                                            safeSetState(() {});
                                           },
                                           text: 'Solicitar Empréstimo',
                                           icon: Icon(

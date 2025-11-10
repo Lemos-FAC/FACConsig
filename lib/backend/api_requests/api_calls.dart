@@ -471,21 +471,21 @@ class ContratoCall {
 
 class RegistraSimulacaoCall {
   Future<ApiCallResponse> call({
-    int? contratante,
+    String? contratante = '',
     double? valorParcelas,
     double? valorEmprestimo,
-    int? qtdeParcelas,
+    String? qtdeParcelas = '',
     String? origem = 'Contratante',
   }) async {
     final baseUrl = FACConsigGroup.getBaseUrl();
 
     final ffApiRequestBody = '''
 {
-  "contratante": ${contratante},
-  "valorParcelas": ${valorParcelas},
-  "valorEmprestimo": ${valorEmprestimo},
-  "qtdeParcelas": ${qtdeParcelas},
-  "origem": "${escapeStringForJson(origem)}"
+    "contratante": ${escapeStringForJson(contratante)},
+    "valorParcelas": ${valorParcelas},
+    "valorEmprestimo": ${valorEmprestimo},
+    "qtdeParcelas": ${escapeStringForJson(qtdeParcelas)},
+    "origem": "${escapeStringForJson(origem)}"
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'registraSimulacao',
