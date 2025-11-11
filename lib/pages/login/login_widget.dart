@@ -64,7 +64,7 @@ class _LoginWidgetState extends State<LoginWidget> {
 
     _model.cpfTextController ??= TextEditingController();
     _model.cpfFocusNode ??= FocusNode();
-
+    _model.cpfFocusNode!.addListener(() => safeSetState(() {}));
     _model.senhaTextController ??= TextEditingController();
     _model.senhaFocusNode ??= FocusNode();
 
@@ -131,9 +131,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             () async {
                                               safeSetState(() {
                                                 _model.cpfTextController?.text =
-                                                    functions.cpf(_model
-                                                        .cpfTextController
-                                                        .text)!;
+                                                    functions.aplicarMascara(
+                                                        _model.cpfTextController
+                                                            .text,
+                                                        '###.###.###-##')!;
                                                 _model.cpfFocusNode
                                                     ?.requestFocus();
                                                 WidgetsBinding.instance
@@ -311,6 +312,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                         .bodyMedium
                                                         .fontStyle,
                                               ),
+                                          maxLength: 14,
+                                          maxLengthEnforcement:
+                                              MaxLengthEnforcement.enforced,
+                                          buildCounter: (context,
+                                                  {required currentLength,
+                                                  required isFocused,
+                                                  maxLength}) =>
+                                              null,
                                           keyboardType: TextInputType.number,
                                           cursorColor:
                                               FlutterFlowTheme.of(context)
@@ -497,7 +506,271 @@ class _LoginWidgetState extends State<LoginWidget> {
                                       .addToStart(SizedBox(height: 250.0)),
                                 ),
                                 Align(
-                                  alignment: AlignmentDirectional(0.0, 0.5),
+                                  alignment: AlignmentDirectional(
+                                      0.0,
+                                      valueOrDefault<double>(
+                                        () {
+                                          if (MediaQuery.sizeOf(context)
+                                                  .width <=
+                                              360.0) {
+                                            return 0.27;
+                                          } else if (MediaQuery.sizeOf(context)
+                                                  .width <=
+                                              390.0) {
+                                            return 0.22;
+                                          } else if (MediaQuery.sizeOf(context)
+                                                  .width <=
+                                              393.0) {
+                                            return 0.2;
+                                          } else if (MediaQuery.sizeOf(context)
+                                                  .width <=
+                                              402.0) {
+                                            return 0.17;
+                                          } else {
+                                            return 0.15;
+                                          }
+                                        }(),
+                                        0.0,
+                                      )),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        valueOrDefault<double>(
+                                          () {
+                                            if (MediaQuery.sizeOf(context)
+                                                    .width >=
+                                                430.0) {
+                                              return 60.0;
+                                            } else if (MediaQuery.sizeOf(
+                                                        context)
+                                                    .width >=
+                                                411.0) {
+                                              return 30.0;
+                                            } else if (MediaQuery.sizeOf(
+                                                        context)
+                                                    .width >=
+                                                448.0) {
+                                              return 45.0;
+                                            } else {
+                                              return 32.0;
+                                            }
+                                          }(),
+                                          0.0,
+                                        ),
+                                        0.0,
+                                        0.0,
+                                        0.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.1),
+                                              child: Switch.adaptive(
+                                                value: _model.cpfToggleValue!,
+                                                onChanged: (newValue) async {
+                                                  safeSetState(() =>
+                                                      _model.cpfToggleValue =
+                                                          newValue);
+                                                  if (newValue) {
+                                                    FFAppState().lembrarCPF =
+                                                        true;
+                                                    safeSetState(() {});
+                                                  } else {
+                                                    FFAppState().lembrarCPF =
+                                                        false;
+                                                    FFAppState().update(() {});
+                                                    FFAppState().storedCPF = '';
+                                                    FFAppState().storedSenha =
+                                                        '';
+                                                    FFAppState().update(() {});
+                                                  }
+                                                },
+                                                activeColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                activeTrackColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primary,
+                                                inactiveTrackColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .alternate,
+                                                inactiveThumbColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -0.4, 0.1),
+                                              child: Text(
+                                                'Lembrar CPF',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          font:
+                                                              GoogleFonts.inter(
+                                                            fontWeight:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontWeight,
+                                                            fontStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontStyle,
+                                                          ),
+                                                          fontSize: 12.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontWeight,
+                                                          fontStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontStyle,
+                                                        ),
+                                              ),
+                                            ),
+                                          ].addToStart(SizedBox(
+                                              width: MediaQuery.sizeOf(context)
+                                                          .width >=
+                                                      1440.0
+                                                  ? 420.0
+                                                  : 0.0)),
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.36),
+                                              child: Switch.adaptive(
+                                                value: _model.biometriaValue!,
+                                                onChanged: (newValue) async {
+                                                  safeSetState(() =>
+                                                      _model.biometriaValue =
+                                                          newValue);
+                                                  if (newValue) {
+                                                    FFAppState()
+                                                            .toggledBiometric =
+                                                        true;
+                                                    safeSetState(() {});
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title:
+                                                              Text('Atenção!'),
+                                                          content: Text(
+                                                              'O acesso pela biometria será possível a partir do próximo login!'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: Text('Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    FFAppState().lembrarCPF =
+                                                        true;
+                                                    safeSetState(() {});
+                                                    safeSetState(() {
+                                                      _model.cpfToggleValue =
+                                                          true;
+                                                    });
+                                                  } else {
+                                                    FFAppState()
+                                                        .loginBiometria = false;
+                                                    FFAppState()
+                                                            .toggledBiometric =
+                                                        false;
+                                                    safeSetState(() {});
+                                                  }
+                                                },
+                                                activeColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                activeTrackColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primary,
+                                                inactiveTrackColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .alternate,
+                                                inactiveThumbColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -0.29, 0.46),
+                                              child: Text(
+                                                'Login por biometria',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          font:
+                                                              GoogleFonts.inter(
+                                                            fontWeight:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontWeight,
+                                                            fontStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontStyle,
+                                                          ),
+                                                          fontSize: 12.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontWeight,
+                                                          fontStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontStyle,
+                                                        ),
+                                              ),
+                                            ),
+                                          ].addToStart(SizedBox(
+                                              width: MediaQuery.sizeOf(context)
+                                                          .width >=
+                                                      1440.0
+                                                  ? 420.0
+                                                  : 0.0)),
+                                        ),
+                                      ].divide(SizedBox(height: 10.0)),
+                                    ),
+                                  ),
+                                ),
+                                Align(
+                                  alignment: AlignmentDirectional(-0.07, 0.5),
                                   child: FFButtonWidget(
                                     onPressed: () async {
                                       _model.validate = true;
@@ -771,270 +1044,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: AlignmentDirectional(
-                                      0.0,
-                                      valueOrDefault<double>(
-                                        () {
-                                          if (MediaQuery.sizeOf(context)
-                                                  .width <=
-                                              360.0) {
-                                            return 0.27;
-                                          } else if (MediaQuery.sizeOf(context)
-                                                  .width <=
-                                              390.0) {
-                                            return 0.22;
-                                          } else if (MediaQuery.sizeOf(context)
-                                                  .width <=
-                                              393.0) {
-                                            return 0.2;
-                                          } else if (MediaQuery.sizeOf(context)
-                                                  .width <=
-                                              402.0) {
-                                            return 0.17;
-                                          } else {
-                                            return 0.15;
-                                          }
-                                        }(),
-                                        0.0,
-                                      )),
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        valueOrDefault<double>(
-                                          () {
-                                            if (MediaQuery.sizeOf(context)
-                                                    .width >=
-                                                430.0) {
-                                              return 40.0;
-                                            } else if (MediaQuery.sizeOf(
-                                                        context)
-                                                    .width >=
-                                                411.0) {
-                                              return 30.0;
-                                            } else if (MediaQuery.sizeOf(
-                                                        context)
-                                                    .width >=
-                                                448.0) {
-                                              return 45.0;
-                                            } else {
-                                              return 32.0;
-                                            }
-                                          }(),
-                                          0.0,
-                                        ),
-                                        0.0,
-                                        0.0,
-                                        0.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.1),
-                                              child: Switch.adaptive(
-                                                value: _model.cpfToggleValue!,
-                                                onChanged: (newValue) async {
-                                                  safeSetState(() =>
-                                                      _model.cpfToggleValue =
-                                                          newValue);
-                                                  if (newValue) {
-                                                    FFAppState().lembrarCPF =
-                                                        true;
-                                                    safeSetState(() {});
-                                                  } else {
-                                                    FFAppState().lembrarCPF =
-                                                        false;
-                                                    FFAppState().update(() {});
-                                                    FFAppState().storedCPF = '';
-                                                    FFAppState().storedSenha =
-                                                        '';
-                                                    FFAppState().update(() {});
-                                                  }
-                                                },
-                                                activeColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                activeTrackColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                inactiveTrackColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .alternate,
-                                                inactiveThumbColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                            ),
-                                            Align(
-                                              alignment: AlignmentDirectional(
-                                                  -0.4, 0.1),
-                                              child: Text(
-                                                'Lembrar CPF',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          fontSize: 12.0,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontStyle,
-                                                        ),
-                                              ),
-                                            ),
-                                          ].addToStart(SizedBox(
-                                              width: MediaQuery.sizeOf(context)
-                                                          .width >=
-                                                      1440.0
-                                                  ? 420.0
-                                                  : 0.0)),
-                                        ),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.36),
-                                              child: Switch.adaptive(
-                                                value: _model.biometriaValue!,
-                                                onChanged: (newValue) async {
-                                                  safeSetState(() =>
-                                                      _model.biometriaValue =
-                                                          newValue);
-                                                  if (newValue) {
-                                                    FFAppState()
-                                                            .toggledBiometric =
-                                                        true;
-                                                    safeSetState(() {});
-                                                    await showDialog(
-                                                      context: context,
-                                                      builder:
-                                                          (alertDialogContext) {
-                                                        return AlertDialog(
-                                                          title:
-                                                              Text('Atenção!'),
-                                                          content: Text(
-                                                              'O acesso pela biometria será possível a partir do próximo login!'),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () =>
-                                                                  Navigator.pop(
-                                                                      alertDialogContext),
-                                                              child: Text('Ok'),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                    FFAppState().lembrarCPF =
-                                                        true;
-                                                    safeSetState(() {});
-                                                    safeSetState(() {
-                                                      _model.cpfToggleValue =
-                                                          true;
-                                                    });
-                                                  } else {
-                                                    FFAppState()
-                                                        .loginBiometria = false;
-                                                    FFAppState()
-                                                            .toggledBiometric =
-                                                        false;
-                                                    safeSetState(() {});
-                                                  }
-                                                },
-                                                activeColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                activeTrackColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                inactiveTrackColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .alternate,
-                                                inactiveThumbColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                            ),
-                                            Align(
-                                              alignment: AlignmentDirectional(
-                                                  -0.29, 0.46),
-                                              child: Text(
-                                                'Login por biometria',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          fontSize: 12.0,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontStyle,
-                                                        ),
-                                              ),
-                                            ),
-                                          ].addToStart(SizedBox(
-                                              width: MediaQuery.sizeOf(context)
-                                                          .width >=
-                                                      1440.0
-                                                  ? 420.0
-                                                  : 0.0)),
-                                        ),
-                                      ].divide(SizedBox(height: 10.0)),
                                     ),
                                   ),
                                 ),

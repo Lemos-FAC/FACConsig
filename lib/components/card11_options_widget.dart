@@ -161,6 +161,12 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
+                      if (FFAppState().uploadedIdentificacao == true)
+                        Icon(
+                          Icons.check,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 24.0,
+                        ),
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
@@ -175,50 +181,34 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             size: 20.0,
                           ),
                           onPressed: () async {
-                            final selectedMedia =
-                                await selectMediaWithSourceBottomSheet(
-                              context: context,
-                              allowPhoto: true,
+                            final selectedFiles = await selectFiles(
+                              allowedExtensions: ['pdf'],
+                              multiFile: false,
                             );
-                            if (selectedMedia != null &&
-                                selectedMedia.every((m) => validateFileFormat(
-                                    m.storagePath, context))) {
+                            if (selectedFiles != null) {
                               safeSetState(() =>
                                   _model.isDataUploading_identificacao = true);
                               var selectedUploadedFiles = <FFUploadedFile>[];
 
                               try {
-                                showUploadMessage(
-                                  context,
-                                  'Uploading file...',
-                                  showLoading: true,
-                                );
-                                selectedUploadedFiles = selectedMedia
+                                selectedUploadedFiles = selectedFiles
                                     .map((m) => FFUploadedFile(
                                           name: m.storagePath.split('/').last,
                                           bytes: m.bytes,
-                                          height: m.dimensions?.height,
-                                          width: m.dimensions?.width,
-                                          blurHash: m.blurHash,
                                           originalFilename: m.originalFilename,
                                         ))
                                     .toList();
                               } finally {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
                                 _model.isDataUploading_identificacao = false;
                               }
                               if (selectedUploadedFiles.length ==
-                                  selectedMedia.length) {
+                                  selectedFiles.length) {
                                 safeSetState(() {
                                   _model.uploadedLocalFile_identificacao =
                                       selectedUploadedFiles.first;
                                 });
-                                showUploadMessage(context, 'Success!');
                               } else {
                                 safeSetState(() {});
-                                showUploadMessage(
-                                    context, 'Failed to upload data');
                                 return;
                               }
                             }
@@ -258,6 +248,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                   );
                                 },
                               );
+                              FFAppState().uploadedIdentificacao = true;
+                              safeSetState(() {});
                             } else {
                               await showDialog(
                                 context: context,
@@ -344,6 +336,12 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
+                      if (FFAppState().uploadedComprovante == true)
+                        Icon(
+                          Icons.check,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 24.0,
+                        ),
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
@@ -358,27 +356,21 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             size: 20.0,
                           ),
                           onPressed: () async {
-                            final selectedMedia =
-                                await selectMediaWithSourceBottomSheet(
-                              context: context,
-                              allowPhoto: true,
+                            final selectedFiles = await selectFiles(
+                              allowedExtensions: ['pdf'],
+                              multiFile: false,
                             );
-                            if (selectedMedia != null &&
-                                selectedMedia.every((m) => validateFileFormat(
-                                    m.storagePath, context))) {
+                            if (selectedFiles != null) {
                               safeSetState(() =>
                                   _model.isDataUploading_comprovanteResidencia =
                                       true);
                               var selectedUploadedFiles = <FFUploadedFile>[];
 
                               try {
-                                selectedUploadedFiles = selectedMedia
+                                selectedUploadedFiles = selectedFiles
                                     .map((m) => FFUploadedFile(
                                           name: m.storagePath.split('/').last,
                                           bytes: m.bytes,
-                                          height: m.dimensions?.height,
-                                          width: m.dimensions?.width,
-                                          blurHash: m.blurHash,
                                           originalFilename: m.originalFilename,
                                         ))
                                     .toList();
@@ -387,7 +379,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                     false;
                               }
                               if (selectedUploadedFiles.length ==
-                                  selectedMedia.length) {
+                                  selectedFiles.length) {
                                 safeSetState(() {
                                   _model.uploadedLocalFile_comprovanteResidencia =
                                       selectedUploadedFiles.first;
@@ -433,6 +425,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                   );
                                 },
                               );
+                              FFAppState().uploadedComprovante = true;
+                              safeSetState(() {});
                             }
 
                             safeSetState(() {});
@@ -500,6 +494,12 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
+                      if (FFAppState().uploadedPAD == true)
+                        Icon(
+                          Icons.check,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 24.0,
+                        ),
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
@@ -514,36 +514,30 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             size: 20.0,
                           ),
                           onPressed: () async {
-                            final selectedMedia =
-                                await selectMediaWithSourceBottomSheet(
-                              context: context,
-                              allowPhoto: true,
+                            final selectedFiles = await selectFiles(
+                              allowedExtensions: ['pdf'],
+                              multiFile: false,
                             );
-                            if (selectedMedia != null &&
-                                selectedMedia.every((m) => validateFileFormat(
-                                    m.storagePath, context))) {
-                              safeSetState(
-                                  () => _model.isDataUploading_pad = true);
+                            if (selectedFiles != null) {
+                              safeSetState(() =>
+                                  _model.isDataUploading_uploadDataPhi = true);
                               var selectedUploadedFiles = <FFUploadedFile>[];
 
                               try {
-                                selectedUploadedFiles = selectedMedia
+                                selectedUploadedFiles = selectedFiles
                                     .map((m) => FFUploadedFile(
                                           name: m.storagePath.split('/').last,
                                           bytes: m.bytes,
-                                          height: m.dimensions?.height,
-                                          width: m.dimensions?.width,
-                                          blurHash: m.blurHash,
                                           originalFilename: m.originalFilename,
                                         ))
                                     .toList();
                               } finally {
-                                _model.isDataUploading_pad = false;
+                                _model.isDataUploading_uploadDataPhi = false;
                               }
                               if (selectedUploadedFiles.length ==
-                                  selectedMedia.length) {
+                                  selectedFiles.length) {
                                 safeSetState(() {
-                                  _model.uploadedLocalFile_pad =
+                                  _model.uploadedLocalFile_uploadDataPhi =
                                       selectedUploadedFiles.first;
                                 });
                               } else {
@@ -553,7 +547,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             }
 
                             _model.file2 = await actions.uploadedFileToBase64(
-                              _model.uploadedLocalFile_pad,
+                              _model.uploadedLocalFile_uploadDataPhi,
                             );
                             _model.doc2 =
                                 await FACConsigGroup.enviaDocumentoCall.call(
@@ -564,8 +558,9 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                     .elementAtOrNull(2),
                                 r'''$..codigo_documento''',
                               ),
-                              nomeArquivo:
-                                  _model.uploadedLocalFile_pad.originalFilename,
+                              nomeArquivo: _model
+                                  .uploadedLocalFile_uploadDataPhi
+                                  .originalFilename,
                               extensaoArquivo: 'pdf',
                             );
 
@@ -586,6 +581,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                   );
                                 },
                               );
+                              FFAppState().uploadedPAD = true;
+                              safeSetState(() {});
                             }
 
                             safeSetState(() {});
@@ -653,6 +650,12 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
+                      if (FFAppState().uploadedComprovanteBanco == true)
+                        Icon(
+                          Icons.check,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 24.0,
+                        ),
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
@@ -667,38 +670,30 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             size: 20.0,
                           ),
                           onPressed: () async {
-                            final selectedMedia =
-                                await selectMediaWithSourceBottomSheet(
-                              context: context,
-                              allowPhoto: true,
+                            final selectedFiles = await selectFiles(
+                              allowedExtensions: ['pdf'],
+                              multiFile: false,
                             );
-                            if (selectedMedia != null &&
-                                selectedMedia.every((m) => validateFileFormat(
-                                    m.storagePath, context))) {
-                              safeSetState(() => _model
-                                      .isDataUploading_comprovanteContaBancaria =
-                                  true);
+                            if (selectedFiles != null) {
+                              safeSetState(() =>
+                                  _model.isDataUploading_uploadData64k = true);
                               var selectedUploadedFiles = <FFUploadedFile>[];
 
                               try {
-                                selectedUploadedFiles = selectedMedia
+                                selectedUploadedFiles = selectedFiles
                                     .map((m) => FFUploadedFile(
                                           name: m.storagePath.split('/').last,
                                           bytes: m.bytes,
-                                          height: m.dimensions?.height,
-                                          width: m.dimensions?.width,
-                                          blurHash: m.blurHash,
                                           originalFilename: m.originalFilename,
                                         ))
                                     .toList();
                               } finally {
-                                _model.isDataUploading_comprovanteContaBancaria =
-                                    false;
+                                _model.isDataUploading_uploadData64k = false;
                               }
                               if (selectedUploadedFiles.length ==
-                                  selectedMedia.length) {
+                                  selectedFiles.length) {
                                 safeSetState(() {
-                                  _model.uploadedLocalFile_comprovanteContaBancaria =
+                                  _model.uploadedLocalFile_uploadData64k =
                                       selectedUploadedFiles.first;
                                 });
                               } else {
@@ -708,7 +703,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             }
 
                             _model.file3 = await actions.uploadedFileToBase64(
-                              _model.uploadedLocalFile_comprovanteContaBancaria,
+                              _model.uploadedLocalFile_uploadData64k,
                             );
                             _model.doc3 =
                                 await FACConsigGroup.enviaDocumentoCall.call(
@@ -720,7 +715,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                 r'''$..codigo_documento''',
                               ),
                               nomeArquivo: _model
-                                  .uploadedLocalFile_comprovanteContaBancaria
+                                  .uploadedLocalFile_uploadData64k
                                   .originalFilename,
                               extensaoArquivo: 'pdf',
                             );
@@ -742,6 +737,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                   );
                                 },
                               );
+                              FFAppState().uploadedComprovanteBanco = true;
+                              safeSetState(() {});
                             }
 
                             safeSetState(() {});
@@ -809,6 +806,12 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
+                      if (FFAppState().uploadedContraCheque == true)
+                        Icon(
+                          Icons.check,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 24.0,
+                        ),
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
@@ -823,36 +826,30 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             size: 20.0,
                           ),
                           onPressed: () async {
-                            final selectedMedia =
-                                await selectMediaWithSourceBottomSheet(
-                              context: context,
-                              allowPhoto: true,
+                            final selectedFiles = await selectFiles(
+                              allowedExtensions: ['pdf'],
+                              multiFile: false,
                             );
-                            if (selectedMedia != null &&
-                                selectedMedia.every((m) => validateFileFormat(
-                                    m.storagePath, context))) {
+                            if (selectedFiles != null) {
                               safeSetState(() =>
-                                  _model.isDataUploading_contraCheque = true);
+                                  _model.isDataUploading_uploadData4yz = true);
                               var selectedUploadedFiles = <FFUploadedFile>[];
 
                               try {
-                                selectedUploadedFiles = selectedMedia
+                                selectedUploadedFiles = selectedFiles
                                     .map((m) => FFUploadedFile(
                                           name: m.storagePath.split('/').last,
                                           bytes: m.bytes,
-                                          height: m.dimensions?.height,
-                                          width: m.dimensions?.width,
-                                          blurHash: m.blurHash,
                                           originalFilename: m.originalFilename,
                                         ))
                                     .toList();
                               } finally {
-                                _model.isDataUploading_contraCheque = false;
+                                _model.isDataUploading_uploadData4yz = false;
                               }
                               if (selectedUploadedFiles.length ==
-                                  selectedMedia.length) {
+                                  selectedFiles.length) {
                                 safeSetState(() {
-                                  _model.uploadedLocalFile_contraCheque =
+                                  _model.uploadedLocalFile_uploadData4yz =
                                       selectedUploadedFiles.first;
                                 });
                               } else {
@@ -862,7 +859,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             }
 
                             _model.file4 = await actions.uploadedFileToBase64(
-                              _model.uploadedLocalFile_contraCheque,
+                              _model.uploadedLocalFile_uploadData4yz,
                             );
                             _model.doc4 =
                                 await FACConsigGroup.enviaDocumentoCall.call(
@@ -873,7 +870,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                     .elementAtOrNull(4),
                                 r'''$..codigo_documento''',
                               ),
-                              nomeArquivo: _model.uploadedLocalFile_contraCheque
+                              nomeArquivo: _model
+                                  .uploadedLocalFile_uploadData4yz
                                   .originalFilename,
                               extensaoArquivo: 'pdf',
                             );
@@ -895,6 +893,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                   );
                                 },
                               );
+                              FFAppState().uploadedContraCheque = true;
+                              safeSetState(() {});
                             }
 
                             safeSetState(() {});
@@ -962,6 +962,12 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
+                      if (FFAppState().uploadedRecompra == true)
+                        Icon(
+                          Icons.check,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 24.0,
+                        ),
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
@@ -976,37 +982,30 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             size: 20.0,
                           ),
                           onPressed: () async {
-                            final selectedMedia =
-                                await selectMediaWithSourceBottomSheet(
-                              context: context,
-                              allowPhoto: true,
+                            final selectedFiles = await selectFiles(
+                              allowedExtensions: ['pdf'],
+                              multiFile: false,
                             );
-                            if (selectedMedia != null &&
-                                selectedMedia.every((m) => validateFileFormat(
-                                    m.storagePath, context))) {
-                              safeSetState(() => _model
-                                  .isDataUploading_detalhamentoRecompra = true);
+                            if (selectedFiles != null) {
+                              safeSetState(() =>
+                                  _model.isDataUploading_uploadDataGf5 = true);
                               var selectedUploadedFiles = <FFUploadedFile>[];
 
                               try {
-                                selectedUploadedFiles = selectedMedia
+                                selectedUploadedFiles = selectedFiles
                                     .map((m) => FFUploadedFile(
                                           name: m.storagePath.split('/').last,
                                           bytes: m.bytes,
-                                          height: m.dimensions?.height,
-                                          width: m.dimensions?.width,
-                                          blurHash: m.blurHash,
                                           originalFilename: m.originalFilename,
                                         ))
                                     .toList();
                               } finally {
-                                _model.isDataUploading_detalhamentoRecompra =
-                                    false;
+                                _model.isDataUploading_uploadDataGf5 = false;
                               }
                               if (selectedUploadedFiles.length ==
-                                  selectedMedia.length) {
+                                  selectedFiles.length) {
                                 safeSetState(() {
-                                  _model.uploadedLocalFile_detalhamentoRecompra =
+                                  _model.uploadedLocalFile_uploadDataGf5 =
                                       selectedUploadedFiles.first;
                                 });
                               } else {
@@ -1016,7 +1015,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             }
 
                             _model.file5 = await actions.uploadedFileToBase64(
-                              _model.uploadedLocalFile_detalhamentoRecompra,
+                              _model.uploadedLocalFile_uploadDataGf5,
                             );
                             _model.doc5 =
                                 await FACConsigGroup.enviaDocumentoCall.call(
@@ -1028,7 +1027,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                 r'''$..codigo_documento''',
                               ),
                               nomeArquivo: _model
-                                  .uploadedLocalFile_detalhamentoRecompra
+                                  .uploadedLocalFile_uploadDataGf5
                                   .originalFilename,
                               extensaoArquivo: 'pdf',
                             );
@@ -1050,6 +1049,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                   );
                                 },
                               );
+                              FFAppState().uploadedRecompra = true;
+                              safeSetState(() {});
                             }
 
                             safeSetState(() {});

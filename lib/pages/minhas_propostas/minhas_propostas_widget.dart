@@ -275,17 +275,17 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                     decoration: BoxDecoration(
                                       color: () {
                                         if ((String var1) {
-                                          return var1 == "Em Análise";
+                                          return var1 == "Em An\u00e1lise";
                                         }(getJsonField(
                                           propostasItem,
-                                          r'''$.StatusProposta''',
+                                          r'''$.statusProposta''',
                                         ).toString())) {
                                           return Color(0xFF007BFF);
                                         } else if ((String var1) {
-                                          return var1 == "Finalizado";
+                                          return var1 == "Finalizada";
                                         }(getJsonField(
                                           propostasItem,
-                                          r'''$.StatusProposta''',
+                                          r'''$.statusProposta''',
                                         ).toString())) {
                                           return FlutterFlowTheme.of(context)
                                               .secondaryText;
@@ -299,6 +299,9 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                         bottomRight: Radius.circular(10.0),
                                         topLeft: Radius.circular(10.0),
                                         topRight: Radius.circular(10.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0xFFE6E6E6),
                                       ),
                                     ),
                                     child: Padding(

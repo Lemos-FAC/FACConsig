@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
+import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -639,9 +640,14 @@ class _ConfirmarEmprestimoWidgetState extends State<ConfirmarEmprestimoWidget> {
                                               valorParcelas:
                                                   functions.stringDoubleSFomart(
                                                       widget.valor),
+                                              valorEmprestimo:
+                                                  functions.stringDoubleSFomart(
+                                                      widget.valorSolicitado),
+                                              qtdeParcelas: widget.parcelas,
+                                              origem: 'Contratante',
                                             );
 
-                                            if (!getJsonField(
+                                            if (getJsonField(
                                               (_model.confirmaEmprestimo
                                                       ?.jsonBody ??
                                                   ''),
@@ -665,7 +671,36 @@ class _ConfirmarEmprestimoWidgetState extends State<ConfirmarEmprestimoWidget> {
                                                     ),
                                                   ),
                                                   duration: Duration(
-                                                      milliseconds: 4000),
+                                                      milliseconds: 1500),
+                                                  backgroundColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .primary,
+                                                ),
+                                              );
+
+                                              context.pushNamed(
+                                                  HomePageWidget.routeName);
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    getJsonField(
+                                                      (_model.confirmaEmprestimo
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$.message''',
+                                                    ).toString(),
+                                                    style: TextStyle(
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primaryText,
+                                                    ),
+                                                  ),
+                                                  duration: Duration(
+                                                      milliseconds: 1500),
                                                   backgroundColor:
                                                       FlutterFlowTheme.of(
                                                               context)

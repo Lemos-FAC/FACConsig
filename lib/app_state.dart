@@ -69,6 +69,30 @@ class FFAppState extends ChangeNotifier {
     _safeInit(() {
       _dataNascimento = prefs.getString('ff_dataNascimento') ?? _dataNascimento;
     });
+    _safeInit(() {
+      _uploadedIdentificacao =
+          prefs.getBool('ff_uploadedIdentificacao') ?? _uploadedIdentificacao;
+    });
+    _safeInit(() {
+      _uploadedComprovante =
+          prefs.getBool('ff_uploadedComprovante') ?? _uploadedComprovante;
+    });
+    _safeInit(() {
+      _uploadedPAD = prefs.getBool('ff_uploadedPAD') ?? _uploadedPAD;
+    });
+    _safeInit(() {
+      _uploadedComprovanteBanco =
+          prefs.getBool('ff_uploadedComprovanteBanco') ??
+              _uploadedComprovanteBanco;
+    });
+    _safeInit(() {
+      _uploadedContraCheque =
+          prefs.getBool('ff_uploadedContraCheque') ?? _uploadedContraCheque;
+    });
+    _safeInit(() {
+      _uploadedRecompra =
+          prefs.getBool('ff_uploadedRecompra') ?? _uploadedRecompra;
+    });
   }
 
   void update(VoidCallback callback) {
@@ -572,6 +596,48 @@ class FFAppState extends ChangeNotifier {
 
   void insertAtIndexInDocumento(int index, int value) {
     documento.insert(index, value);
+  }
+
+  bool _uploadedIdentificacao = false;
+  bool get uploadedIdentificacao => _uploadedIdentificacao;
+  set uploadedIdentificacao(bool value) {
+    _uploadedIdentificacao = value;
+    prefs.setBool('ff_uploadedIdentificacao', value);
+  }
+
+  bool _uploadedComprovante = false;
+  bool get uploadedComprovante => _uploadedComprovante;
+  set uploadedComprovante(bool value) {
+    _uploadedComprovante = value;
+    prefs.setBool('ff_uploadedComprovante', value);
+  }
+
+  bool _uploadedPAD = false;
+  bool get uploadedPAD => _uploadedPAD;
+  set uploadedPAD(bool value) {
+    _uploadedPAD = value;
+    prefs.setBool('ff_uploadedPAD', value);
+  }
+
+  bool _uploadedComprovanteBanco = false;
+  bool get uploadedComprovanteBanco => _uploadedComprovanteBanco;
+  set uploadedComprovanteBanco(bool value) {
+    _uploadedComprovanteBanco = value;
+    prefs.setBool('ff_uploadedComprovanteBanco', value);
+  }
+
+  bool _uploadedContraCheque = false;
+  bool get uploadedContraCheque => _uploadedContraCheque;
+  set uploadedContraCheque(bool value) {
+    _uploadedContraCheque = value;
+    prefs.setBool('ff_uploadedContraCheque', value);
+  }
+
+  bool _uploadedRecompra = false;
+  bool get uploadedRecompra => _uploadedRecompra;
+  set uploadedRecompra(bool value) {
+    _uploadedRecompra = value;
+    prefs.setBool('ff_uploadedRecompra', value);
   }
 }
 

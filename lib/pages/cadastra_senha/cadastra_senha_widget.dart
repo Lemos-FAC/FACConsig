@@ -282,7 +282,7 @@ class _CadastraSenhaWidgetState extends State<CadastraSenhaWidget> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color(0x00000000),
+                                      color: Colors.transparent,
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(8.0),
@@ -412,7 +412,7 @@ class _CadastraSenhaWidgetState extends State<CadastraSenhaWidget> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color(0x00000000),
+                                      color: Colors.transparent,
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(8.0),
@@ -507,6 +507,8 @@ class _CadastraSenhaWidgetState extends State<CadastraSenhaWidget> {
                                     );
                                   } else {
                                     FFAppState().canLoad = true;
+                                    FFAppState().contratante = [];
+                                    FFAppState().margemDisponivel = '';
                                     safeSetState(() {});
                                     _model.senha = _model.textController1.text;
                                     _model.confirmaSenha =

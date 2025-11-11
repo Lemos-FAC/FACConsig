@@ -42,15 +42,15 @@ class LoginModel extends FlutterFlowModel<LoginWidget> {
     return null;
   }
 
+  // State field(s) for cpfToggle widget.
+  bool? cpfToggleValue;
+  // State field(s) for biometria widget.
+  bool? biometriaValue;
   // Stores action output result for [Validate Form] action in Button widget.
   bool? validate;
   // Stores action output result for [Backend Call - API (autenticacaoConsig)] action in Button widget.
   ApiCallResponse? login;
   bool biometria = false;
-  // State field(s) for cpfToggle widget.
-  bool? cpfToggleValue;
-  // State field(s) for biometria widget.
-  bool? biometriaValue;
 
   @override
   void initState(BuildContext context) {

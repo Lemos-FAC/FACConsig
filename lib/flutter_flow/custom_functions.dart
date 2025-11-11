@@ -169,3 +169,29 @@ String? cpf(String input) {
   if (input.length != 11) return null; // Ensure the input has 11 digits
   return '${input.substring(0, 3)}.${input.substring(3, 6)}.${input.substring(6, 9)}-${input.substring(9)}';
 }
+
+String? aplicarMascara(
+  String? valor,
+  String mascara,
+) {
+  if (valor == null) return null;
+  String somenteNumeros = valor.replaceAll(RegExp(r'\D'), '');
+  var resultado = StringBuffer();
+  int indexValor = 0;
+
+  for (var i = 0; i < mascara.length; i++) {
+    if (mascara[i] == '#') {
+      if (indexValor < somenteNumeros.length) {
+        resultado.write(somenteNumeros[indexValor]);
+        indexValor++;
+      } else {
+        break;
+      }
+    } else {
+      if (indexValor < somenteNumeros.length) {
+        resultado.write(mascara[i]);
+      }
+    }
+  }
+  return resultado.toString();
+}

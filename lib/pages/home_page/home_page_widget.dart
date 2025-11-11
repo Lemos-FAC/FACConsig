@@ -887,7 +887,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                               .routeName);
                                                     },
                                                     child: Text(
-                                                      'Meus\nEmpréstimos',
+                                                      'Meus\nContratos',
                                                       textAlign:
                                                           TextAlign.center,
                                                       style:
