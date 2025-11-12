@@ -9,6 +9,10 @@ class PrimeiroAcessoModel extends FlutterFlowModel<PrimeiroAcessoWidget> {
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();
+  // State field(s) for Column widget.
+  ScrollController? columnController1;
+  // State field(s) for Column widget.
+  ScrollController? columnController2;
   // State field(s) for cpf widget.
   FocusNode? cpfFocusNode;
   TextEditingController? cpfTextController;
@@ -16,7 +20,7 @@ class PrimeiroAcessoModel extends FlutterFlowModel<PrimeiroAcessoWidget> {
   String? Function(BuildContext, String?)? cpfTextControllerValidator;
   String? _cpfTextControllerValidator(BuildContext context, String? val) {
     if (val == null || val.isEmpty) {
-      return 'Por favor informe o CPF';
+      return 'Favor informar o CPF!';
     }
 
     if (!RegExp('^\\d{3}\\.\\d{3}\\.\\d{3}\\-\\d{2}\$').hasMatch(val)) {
@@ -34,7 +38,7 @@ class PrimeiroAcessoModel extends FlutterFlowModel<PrimeiroAcessoWidget> {
   String? _dataNascimentoTextControllerValidator(
       BuildContext context, String? val) {
     if (val == null || val.isEmpty) {
-      return 'Por favor informe a Data Nascimento';
+      return 'Favor informar a Data Nascimento!';
     }
 
     if (!RegExp(
@@ -50,6 +54,8 @@ class PrimeiroAcessoModel extends FlutterFlowModel<PrimeiroAcessoWidget> {
 
   @override
   void initState(BuildContext context) {
+    columnController1 = ScrollController();
+    columnController2 = ScrollController();
     cpfTextControllerValidator = _cpfTextControllerValidator;
     dataNascimentoTextControllerValidator =
         _dataNascimentoTextControllerValidator;
@@ -57,6 +63,8 @@ class PrimeiroAcessoModel extends FlutterFlowModel<PrimeiroAcessoWidget> {
 
   @override
   void dispose() {
+    columnController1?.dispose();
+    columnController2?.dispose();
     cpfFocusNode?.dispose();
     cpfTextController?.dispose();
 

@@ -25,7 +25,7 @@ class CadastraSenhaModel extends FlutterFlowModel<CadastraSenhaWidget> {
   String? Function(BuildContext, String?)? textController1Validator;
   String? _textController1Validator(BuildContext context, String? val) {
     if (val == null || val.isEmpty) {
-      return 'Senha is required';
+      return 'Favor inserir a senha!';
     }
 
     return null;
@@ -38,7 +38,7 @@ class CadastraSenhaModel extends FlutterFlowModel<CadastraSenhaWidget> {
   String? Function(BuildContext, String?)? textController2Validator;
   String? _textController2Validator(BuildContext context, String? val) {
     if (val == null || val.isEmpty) {
-      return 'Confirmar senha is required';
+      return 'Favor confirmar a senha!';
     }
 
     return null;

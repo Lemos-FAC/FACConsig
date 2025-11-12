@@ -20,7 +20,7 @@ class LoginModel extends FlutterFlowModel<LoginWidget> {
   String? Function(BuildContext, String?)? cpfTextControllerValidator;
   String? _cpfTextControllerValidator(BuildContext context, String? val) {
     if (val == null || val.isEmpty) {
-      return 'Por favor informe o CPF';
+      return 'Favor informe o CPF!';
     }
 
     if (!RegExp('^\\d{3}\\.\\d{3}\\.\\d{3}\\-\\d{2}\$').hasMatch(val)) {
@@ -36,7 +36,7 @@ class LoginModel extends FlutterFlowModel<LoginWidget> {
   String? Function(BuildContext, String?)? senhaTextControllerValidator;
   String? _senhaTextControllerValidator(BuildContext context, String? val) {
     if (val == null || val.isEmpty) {
-      return 'Por favor informe a Senha';
+      return 'Favor informe a Senha!';
     }
 
     return null;
