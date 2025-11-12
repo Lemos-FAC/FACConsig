@@ -9,8 +9,6 @@ class PrimeiroAcessoModel extends FlutterFlowModel<PrimeiroAcessoWidget> {
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();
-  // State field(s) for Column widget.
-  ScrollController? columnController;
   // State field(s) for cpf widget.
   FocusNode? cpfFocusNode;
   TextEditingController? cpfTextController;
@@ -52,7 +50,6 @@ class PrimeiroAcessoModel extends FlutterFlowModel<PrimeiroAcessoWidget> {
 
   @override
   void initState(BuildContext context) {
-    columnController = ScrollController();
     cpfTextControllerValidator = _cpfTextControllerValidator;
     dataNascimentoTextControllerValidator =
         _dataNascimentoTextControllerValidator;
@@ -60,7 +57,6 @@ class PrimeiroAcessoModel extends FlutterFlowModel<PrimeiroAcessoWidget> {
 
   @override
   void dispose() {
-    columnController?.dispose();
     cpfFocusNode?.dispose();
     cpfTextController?.dispose();
 

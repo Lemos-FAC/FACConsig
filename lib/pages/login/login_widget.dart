@@ -803,7 +803,12 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                   ? 420.0
                                                   : 0.0)),
                                         ),
-                                      ].divide(SizedBox(height: 10.0)),
+                                      ].divide(SizedBox(
+                                          height: MediaQuery.sizeOf(context)
+                                                      .width >=
+                                                  411.0
+                                              ? 0.0
+                                              : 10.0)),
                                     ),
                                   ),
                                 ),

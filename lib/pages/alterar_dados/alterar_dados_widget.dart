@@ -77,6 +77,14 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
         )!
             .toList()
             .cast<dynamic>();
+        _model.agencia = getJsonField(
+          (_model.result?.jsonBody ?? ''),
+          r'''$.dados[0].Agencia''',
+        ).toString();
+        _model.conta = getJsonField(
+          (_model.result?.jsonBody ?? ''),
+          r'''$.dados[0].Conta''',
+        ).toString();
         safeSetState(() {});
         _model.atualizados = _model.dados
             .where((e) =>
@@ -178,7 +186,7 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
         });
         _model.banco = await FACConsigGroup.buscaBancosCall.call();
 
-        if ((_model.bancoRetorno?.succeeded ?? true)) {
+        if ((_model.banco?.succeeded ?? true)) {
           FFAppState().dropDownBancos = getJsonField(
             (_model.banco?.jsonBody ?? ''),
             r'''$.dados''',
@@ -188,112 +196,6 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
               .cast<dynamic>();
           safeSetState(() {});
         }
-      }
-      _model.cep = getJsonField(
-        FFAppState().matriculaDataList.firstOrNull,
-        r'''$..Cep''',
-      ).toString();
-      _model.endereco = getJsonField(
-        FFAppState().matriculaDataList.firstOrNull,
-        r'''$..Endereco''',
-      ).toString();
-      _model.bairro = getJsonField(
-        FFAppState().matriculaDataList.firstOrNull,
-        r'''$..Bairro''',
-      ).toString();
-      _model.uf = getJsonField(
-        FFAppState().matriculaDataList.firstOrNull,
-        r'''$..UF''',
-      ).toString();
-      _model.cidade = getJsonField(
-        FFAppState().matriculaDataList.firstOrNull,
-        r'''$..Cidade''',
-      ).toString();
-      _model.tipoConta = getJsonField(
-        FFAppState().contratante.firstOrNull,
-        r'''$..TipoConta''',
-      ).toString();
-      safeSetState(() {});
-      safeSetState(() {
-        _model.cepTextController?.text = _model.cep;
-        _model.cepMask.updateMask(
-          newValue: TextEditingValue(
-            text: _model.cepTextController!.text,
-          ),
-        );
-      });
-      safeSetState(() {
-        _model.enderecoTextController?.text = _model.endereco;
-      });
-      safeSetState(() {
-        _model.bairroTextController?.text = _model.bairro;
-      });
-      safeSetState(() {
-        _model.cidadeTextController?.text = _model.cidade;
-      });
-      safeSetState(() {
-        _model.telefoneTextController?.text = valueOrDefault<String>(
-          getJsonField(
-            FFAppState().contratante.firstOrNull,
-            r'''$..Telefone''',
-          )?.toString(),
-          '-',
-        );
-        _model.telefoneMask.updateMask(
-          newValue: TextEditingValue(
-            text: _model.telefoneTextController!.text,
-          ),
-        );
-      });
-      safeSetState(() {
-        _model.emailTextController?.text = valueOrDefault<String>(
-          getJsonField(
-            FFAppState().contratante.firstOrNull,
-            r'''$..Email''',
-          )?.toString(),
-          '-',
-        );
-      });
-      safeSetState(() {
-        _model.agenciaTextController?.text = getJsonField(
-          FFAppState().contratante.firstOrNull,
-          r'''$..Agencia''',
-        ).toString();
-      });
-      safeSetState(() {
-        _model.contTextController?.text = getJsonField(
-          FFAppState().contratante.firstOrNull,
-          r'''$..Conta''',
-        ).toString();
-      });
-      safeSetState(() {
-        _model.dtaNascimentoTextController?.text = getJsonField(
-          FFAppState().matriculaDataList.firstOrNull,
-          r'''$..DataNascimento''',
-        ).toString();
-        _model.dtaNascimentoMask.updateMask(
-          newValue: TextEditingValue(
-            text: _model.dtaNascimentoTextController!.text,
-          ),
-        );
-      });
-      safeSetState(() {
-        _model.tipoContaValueController?.value = _model.tipoConta;
-      });
-      safeSetState(() {
-        _model.ufValueController?.value = _model.uf;
-      });
-      _model.bancoRetorno = await FACConsigGroup.buscaBancosCall.call();
-
-      if ((_model.bancoRetorno?.succeeded ?? true)) {
-        FFAppState().dropDownBancos = getJsonField(
-          (_model.bancoRetorno?.jsonBody ?? ''),
-          r'''$.dados''',
-          true,
-        )!
-            .toList()
-            .cast<dynamic>();
-        safeSetState(() {});
       }
       FFAppState().isLoading = false;
       safeSetState(() {});

@@ -33,25 +33,6 @@ double? stringDoubleSFomart(String value) {
   return double.tryParse(cleaned) ?? 0.0;
 }
 
-String? real(String? texto) {
-  if (texto == null || texto.isEmpty) return "R\$ 0,00";
-
-  final formatter = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
-
-  try {
-    // 1. Parse the string value according to the 'pt_BR' locale.
-    //    This correctly interprets "1.234,56" or "R$ 1.234,56" as 1234.56.
-    final num parsedValue = formatter.parse(texto);
-
-    // 2. Format the numeric value back into the desired currency string.
-    return formatter.format(parsedValue);
-  } catch (e) {
-    // Return the default value or handle the error if the string is unparsable.
-    // print("Error parsing currency string: $e");
-    return "R\$ 0,00";
-  }
-}
-
 String? maskCpf(String cpf) {
 // 1. Tratamento de valor nulo, vazio ou inválido
   if (cpf.isEmpty) {
@@ -161,13 +142,6 @@ String? converterParaMoeda(
     valorFormatado = valorFormatado.replaceFirst(r'R$', '');
   }
   return valorFormatado;
-}
-
-String? cpf(String input) {
-  // criar função que receba uma string de números e retorne essa string formatada da seguinte forma 136.440.146-04
-
-  if (input.length != 11) return null; // Ensure the input has 11 digits
-  return '${input.substring(0, 3)}.${input.substring(3, 6)}.${input.substring(6, 9)}-${input.substring(9)}';
 }
 
 String? aplicarMascara(

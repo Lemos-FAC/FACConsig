@@ -38,6 +38,10 @@ class AlterarDadosModel extends FlutterFlowModel<AlterarDadosWidget> {
   void updateDadosAtIndex(int index, Function(dynamic) updateFn) =>
       dados[index] = updateFn(dados[index]);
 
+  String agencia = '-';
+
+  String conta = '-';
+
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();
@@ -45,8 +49,6 @@ class AlterarDadosModel extends FlutterFlowModel<AlterarDadosWidget> {
   ApiCallResponse? result;
   // Stores action output result for [Backend Call - API (buscaBancos)] action in AlterarDados widget.
   ApiCallResponse? banco;
-  // Stores action output result for [Backend Call - API (buscaBancos)] action in AlterarDados widget.
-  ApiCallResponse? bancoRetorno;
   // State field(s) for Column widget.
   ScrollController? columnController1;
   // State field(s) for Column widget.
