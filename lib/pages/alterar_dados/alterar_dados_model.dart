@@ -80,6 +80,8 @@ class AlterarDadosModel extends FlutterFlowModel<AlterarDadosWidget> {
   FocusNode? emailFocusNode;
   TextEditingController? emailTextController;
   String? Function(BuildContext, String?)? emailTextControllerValidator;
+  // Stores action output result for [Custom Action - isValidEmail] action in Email widget.
+  bool? validator;
   // State field(s) for DtaNascimento widget.
   FocusNode? dtaNascimentoFocusNode;
   TextEditingController? dtaNascimentoTextController;

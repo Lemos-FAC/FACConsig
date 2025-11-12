@@ -98,108 +98,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
       locale: 'pt_BR',
     ));
     _model.totalFocusNode ??= FocusNode();
-    _model.totalFocusNode!.addListener(
-      () async {
-        FFAppState().hasChanged = true;
-        safeSetState(() {});
-        _model.apiResultl9cCopy =
-            await FACConsigGroup.simulaEmprestimoConsigCall.call(
-          contratante: FFAppState().codigoContratante,
-          tipoSimulacao: 'porValorSolicitado',
-          quantidadeParcelas: FFAppState().parcela,
-          valorEmprestimo: functions
-              .stringDoubleSFomart(_model.totalTextController.text)
-              ?.toString(),
-          valorParcelas: '0',
-        );
 
-        if ((_model.apiResultl9cCopy?.succeeded ?? true)) {
-          if ((String var1) {
-            return var1 != "";
-          }(getJsonField(
-            (_model.apiResultl9cCopy?.jsonBody ?? ''),
-            r'''$..alerta''',
-          ).toString())) {
-            await showDialog(
-              context: context,
-              builder: (alertDialogContext) {
-                return AlertDialog(
-                  title: Text('Atenção!'),
-                  content: Text(getJsonField(
-                    (_model.apiResultl9cCopy?.jsonBody ?? ''),
-                    r'''$..alerta''',
-                  ).toString()),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(alertDialogContext),
-                      child: Text('Ok'),
-                    ),
-                  ],
-                );
-              },
-            );
-            FFAppState().totalParcela = getJsonField(
-              (_model.apiResultl9cCopy?.jsonBody ?? ''),
-              r'''$..valorEmprestimoForma''',
-            ).toString();
-            FFAppState().hasChanged = false;
-            safeSetState(() {});
-            safeSetState(() {
-              _model.totalTextController?.text = FFAppState().totalParcela;
-            });
-            FFAppState().hasChanged = true;
-            safeSetState(() {});
-            _model.total2Copy =
-                await FACConsigGroup.simulaEmprestimoConsigCall.call(
-              contratante: FFAppState().codigoContratante,
-              tipoSimulacao: 'porValorSolicitado',
-              quantidadeParcelas: _model.parcelasValue,
-              valorEmprestimo: functions
-                  .stringDoubleSFomart(_model.totalTextController.text)
-                  ?.toString(),
-              valorParcelas: '0',
-            );
-
-            if ((_model.total2Copy?.succeeded ?? true)) {
-              FFAppState().valorParcela = getJsonField(
-                (_model.total2Copy?.jsonBody ?? ''),
-                r'''$..valorParcela''',
-              ).toString();
-              FFAppState().reajuste = getJsonField(
-                (_model.total2Copy?.jsonBody ?? ''),
-                r'''$..valorTotalEmprestimo''',
-              ).toString();
-              safeSetState(() {});
-              safeSetState(() {
-                _model.valorParcelaTextController?.text =
-                    FFAppState().valorParcela;
-              });
-            }
-            FFAppState().hasChanged = false;
-            safeSetState(() {});
-          } else {
-            FFAppState().valorParcela = getJsonField(
-              (_model.apiResultl9cCopy?.jsonBody ?? ''),
-              r'''$..valorParcela''',
-            ).toString();
-            FFAppState().reajuste = getJsonField(
-              (_model.apiResultl9cCopy?.jsonBody ?? ''),
-              r'''$..valorTotalEmprestimo''',
-            ).toString();
-            safeSetState(() {});
-            safeSetState(() {
-              _model.valorParcelaTextController?.text =
-                  FFAppState().valorParcela;
-            });
-          }
-
-          FFAppState().hasChanged = false;
-          safeSetState(() {});
-        }
-
-        safeSetState(() {});
-      },
-    );
     _model.valorParcelaTextController ??= TextEditingController(
         text: formatNumber(
       functions.stringDoubleSFomart(FFAppState().valorParcela),
@@ -209,84 +108,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
       locale: 'pt_BR',
     ));
     _model.valorParcelaFocusNode ??= FocusNode();
-    _model.valorParcelaFocusNode!.addListener(
-      () async {
-        FFAppState().hasChanged = true;
-        safeSetState(() {});
-        _model.apiResultrqrCopy =
-            await FACConsigGroup.simulaEmprestimoConsigCall.call(
-          contratante: FFAppState().codigoContratante,
-          tipoSimulacao: 'porValorParcela',
-          quantidadeParcelas: FFAppState().parcela,
-          valorEmprestimo: '0',
-          valorParcelas: functions
-              .stringDoubleSFomart(_model.valorParcelaTextController.text)
-              ?.toString(),
-        );
-
-        if ((_model.apiResultrqrCopy?.succeeded ?? true)) {
-          if ((String var1) {
-            return var1 != "";
-          }(getJsonField(
-            (_model.apiResultrqrCopy?.jsonBody ?? ''),
-            r'''$..alerta''',
-          ).toString())) {
-            await showDialog(
-              context: context,
-              builder: (alertDialogContext) {
-                return AlertDialog(
-                  title: Text('Atenção!'),
-                  content: Text(getJsonField(
-                    (_model.apiResultrqrCopy?.jsonBody ?? ''),
-                    r'''$..alerta''',
-                  ).toString()),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(alertDialogContext),
-                      child: Text('Ok'),
-                    ),
-                  ],
-                );
-              },
-            );
-            FFAppState().valorParcela = getJsonField(
-              (_model.home?.jsonBody ?? ''),
-              r'''$..valorParcela''',
-            ).toString();
-            FFAppState().reajuste = getJsonField(
-              (_model.apiResultrqrCopy?.jsonBody ?? ''),
-              r'''$..valorTotalEmprestimo''',
-            ).toString();
-            FFAppState().hasChanged = false;
-            safeSetState(() {});
-            safeSetState(() {
-              _model.valorParcelaTextController?.text =
-                  FFAppState().valorParcela;
-            });
-          } else {
-            FFAppState().totalParcela = getJsonField(
-              (_model.apiResultrqrCopy?.jsonBody ?? ''),
-              r'''$..valorEmprestimoForma''',
-            ).toString();
-            FFAppState().reajuste = getJsonField(
-              (_model.apiResultrqrCopy?.jsonBody ?? ''),
-              r'''$..valorTotalEmprestimo''',
-            ).toString();
-            safeSetState(() {});
-            safeSetState(() {
-              _model.totalTextController?.text = FFAppState().totalParcela;
-            });
-          }
-
-          FFAppState().hasChanged = false;
-          safeSetState(() {});
-        }
-        FFAppState().hasChanged = false;
-        safeSetState(() {});
-
-        safeSetState(() {});
-      },
-    );
+    _model.valorParcelaFocusNode!.addListener(() => safeSetState(() {}));
   }
 
   @override
@@ -503,6 +325,151 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                               });
                                             },
                                           ),
+                                          onFieldSubmitted: (_) async {
+                                            FFAppState().hasChanged = true;
+                                            safeSetState(() {});
+                                            _model.apiResultl9cCopyCopy =
+                                                await FACConsigGroup
+                                                    .simulaEmprestimoConsigCall
+                                                    .call(
+                                              contratante: FFAppState()
+                                                  .codigoContratante,
+                                              tipoSimulacao:
+                                                  'porValorSolicitado',
+                                              quantidadeParcelas:
+                                                  FFAppState().parcela,
+                                              valorEmprestimo: functions
+                                                  .stringDoubleSFomart(_model
+                                                      .totalTextController.text)
+                                                  ?.toString(),
+                                              valorParcelas: '0',
+                                            );
+
+                                            if ((_model.apiResultl9cCopyCopy
+                                                    ?.succeeded ??
+                                                true)) {
+                                              if ((String var1) {
+                                                return var1 != "";
+                                              }(getJsonField(
+                                                (_model.apiResultl9cCopyCopy
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$..alerta''',
+                                              ).toString())) {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text('Atenção!'),
+                                                      content:
+                                                          Text(getJsonField(
+                                                        (_model.apiResultl9cCopyCopy
+                                                                ?.jsonBody ??
+                                                            ''),
+                                                        r'''$..alerta''',
+                                                      ).toString()),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child: Text('Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                FFAppState().totalParcela =
+                                                    getJsonField(
+                                                  (_model.apiResultl9cCopyCopy
+                                                          ?.jsonBody ??
+                                                      ''),
+                                                  r'''$..valorEmprestimoForma''',
+                                                ).toString();
+                                                FFAppState().hasChanged = false;
+                                                safeSetState(() {});
+                                                safeSetState(() {
+                                                  _model.totalTextController
+                                                          ?.text =
+                                                      FFAppState().totalParcela;
+                                                });
+                                                FFAppState().hasChanged = true;
+                                                safeSetState(() {});
+                                                _model.total2CopyCopy =
+                                                    await FACConsigGroup
+                                                        .simulaEmprestimoConsigCall
+                                                        .call(
+                                                  contratante: FFAppState()
+                                                      .codigoContratante,
+                                                  tipoSimulacao:
+                                                      'porValorSolicitado',
+                                                  quantidadeParcelas:
+                                                      _model.parcelasValue,
+                                                  valorEmprestimo: functions
+                                                      .stringDoubleSFomart(_model
+                                                          .totalTextController
+                                                          .text)
+                                                      ?.toString(),
+                                                  valorParcelas: '0',
+                                                );
+
+                                                if ((_model.total2CopyCopy
+                                                        ?.succeeded ??
+                                                    true)) {
+                                                  FFAppState().valorParcela =
+                                                      getJsonField(
+                                                    (_model.total2CopyCopy
+                                                            ?.jsonBody ??
+                                                        ''),
+                                                    r'''$..valorParcela''',
+                                                  ).toString();
+                                                  FFAppState().reajuste =
+                                                      getJsonField(
+                                                    (_model.total2CopyCopy
+                                                            ?.jsonBody ??
+                                                        ''),
+                                                    r'''$..valorTotalEmprestimo''',
+                                                  ).toString();
+                                                  safeSetState(() {});
+                                                  safeSetState(() {
+                                                    _model.valorParcelaTextController
+                                                            ?.text =
+                                                        FFAppState()
+                                                            .valorParcela;
+                                                  });
+                                                }
+                                                FFAppState().hasChanged = false;
+                                                safeSetState(() {});
+                                              } else {
+                                                FFAppState().valorParcela =
+                                                    getJsonField(
+                                                  (_model.apiResultl9cCopyCopy
+                                                          ?.jsonBody ??
+                                                      ''),
+                                                  r'''$..valorParcela''',
+                                                ).toString();
+                                                FFAppState().reajuste =
+                                                    getJsonField(
+                                                  (_model.apiResultl9cCopyCopy
+                                                          ?.jsonBody ??
+                                                      ''),
+                                                  r'''$..valorTotalEmprestimo''',
+                                                ).toString();
+                                                safeSetState(() {});
+                                                safeSetState(() {
+                                                  _model.valorParcelaTextController
+                                                          ?.text =
+                                                      FFAppState().valorParcela;
+                                                });
+                                              }
+
+                                              FFAppState().hasChanged = false;
+                                              safeSetState(() {});
+                                            }
+
+                                            safeSetState(() {});
+                                          },
                                           autofocus: false,
                                           enabled: true,
                                           obscureText: false,
@@ -1060,6 +1027,118 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                                   });
                                                 },
                                               ),
+                                              onFieldSubmitted: (_) async {
+                                                FFAppState().hasChanged = true;
+                                                safeSetState(() {});
+                                                _model.apiResultrqrCopyCopy =
+                                                    await FACConsigGroup
+                                                        .simulaEmprestimoConsigCall
+                                                        .call(
+                                                  contratante: FFAppState()
+                                                      .codigoContratante,
+                                                  tipoSimulacao:
+                                                      'porValorParcela',
+                                                  quantidadeParcelas:
+                                                      FFAppState().parcela,
+                                                  valorEmprestimo: '0',
+                                                  valorParcelas: functions
+                                                      .stringDoubleSFomart(_model
+                                                          .valorParcelaTextController
+                                                          .text)
+                                                      ?.toString(),
+                                                );
+
+                                                if ((_model.apiResultrqrCopyCopy
+                                                        ?.succeeded ??
+                                                    true)) {
+                                                  if ((String var1) {
+                                                    return var1 != "";
+                                                  }(getJsonField(
+                                                    (_model.apiResultrqrCopyCopy
+                                                            ?.jsonBody ??
+                                                        ''),
+                                                    r'''$..alerta''',
+                                                  ).toString())) {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title:
+                                                              Text('Atenção!'),
+                                                          content:
+                                                              Text(getJsonField(
+                                                            (_model.apiResultrqrCopyCopy
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$..alerta''',
+                                                          ).toString()),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: Text('Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    FFAppState().valorParcela =
+                                                        getJsonField(
+                                                      (_model.home?.jsonBody ??
+                                                          ''),
+                                                      r'''$..valorParcela''',
+                                                    ).toString();
+                                                    FFAppState().reajuste =
+                                                        getJsonField(
+                                                      (_model.apiResultrqrCopyCopy
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$..valorTotalEmprestimo''',
+                                                    ).toString();
+                                                    FFAppState().hasChanged =
+                                                        false;
+                                                    safeSetState(() {});
+                                                    safeSetState(() {
+                                                      _model.valorParcelaTextController
+                                                              ?.text =
+                                                          FFAppState()
+                                                              .valorParcela;
+                                                    });
+                                                  } else {
+                                                    FFAppState().totalParcela =
+                                                        getJsonField(
+                                                      (_model.apiResultrqrCopyCopy
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$..valorEmprestimoForma''',
+                                                    ).toString();
+                                                    FFAppState().reajuste =
+                                                        getJsonField(
+                                                      (_model.apiResultrqrCopyCopy
+                                                              ?.jsonBody ??
+                                                          ''),
+                                                      r'''$..valorTotalEmprestimo''',
+                                                    ).toString();
+                                                    safeSetState(() {});
+                                                    safeSetState(() {
+                                                      _model.totalTextController
+                                                              ?.text =
+                                                          FFAppState()
+                                                              .totalParcela;
+                                                    });
+                                                  }
+
+                                                  FFAppState().hasChanged =
+                                                      false;
+                                                  safeSetState(() {});
+                                                }
+                                                FFAppState().hasChanged = false;
+                                                safeSetState(() {});
+
+                                                safeSetState(() {});
+                                              },
                                               autofocus: false,
                                               enabled: true,
                                               obscureText: false,

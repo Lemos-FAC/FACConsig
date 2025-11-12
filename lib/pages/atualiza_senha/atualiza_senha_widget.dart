@@ -89,7 +89,7 @@ class _AtualizaSenhaWidgetState extends State<AtualizaSenhaWidget> {
                     autovalidateMode: AutovalidateMode.disabled,
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(30.0, 0.0, 30.0, 0.0),
+                          EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
                       child: Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).primaryBackground,
@@ -232,7 +232,7 @@ class _AtualizaSenhaWidgetState extends State<AtualizaSenhaWidget> {
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Color(0x00000000),
+                                          color: Color(0xFFE6E6E6),
                                           width: 1.0,
                                         ),
                                         borderRadius:
@@ -372,6 +372,7 @@ class _AtualizaSenhaWidgetState extends State<AtualizaSenhaWidget> {
                                   },
                                   text: 'Continuar',
                                   options: FFButtonOptions(
+                                    width: 200.0,
                                     height: 45.0,
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         16.0, 0.0, 16.0, 0.0),

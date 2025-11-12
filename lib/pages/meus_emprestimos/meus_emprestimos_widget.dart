@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/custom_code/actions/index.dart' as actions;
+import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
 import 'package:flutter/material.dart';
@@ -35,17 +36,24 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      FFAppState().isLoading = true;
+      safeSetState(() {});
       _model.contratos = await FACConsigGroup.contratosCall.call(
         cpf: functions.stringTolnt(FFAppState().cpf),
       );
 
-      if ((_model.contratos?.succeeded ?? true)) {
+      if (getJsonField(
+        (_model.contratos?.jsonBody ?? ''),
+        r'''$.status''',
+      )) {
         if ((String var1) {
           return var1 == "Não foram encontradas Contratos!";
         }(getJsonField(
           (_model.contratos?.jsonBody ?? ''),
           r'''$.message''',
         ).toString())) {
+          FFAppState().isLoading = false;
+          safeSetState(() {});
           await showDialog(
             context: context,
             builder: (alertDialogContext) {
@@ -66,21 +74,6 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
           );
           context.safePop();
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                getJsonField(
-                  (_model.contratos?.jsonBody ?? ''),
-                  r'''$..message''',
-                ).toString(),
-                style: TextStyle(
-                  color: FlutterFlowTheme.of(context).primaryText,
-                ),
-              ),
-              duration: Duration(milliseconds: 1500),
-              backgroundColor: FlutterFlowTheme.of(context).primary,
-            ),
-          );
           _model.dados = getJsonField(
             (_model.contratos?.jsonBody ?? ''),
             r'''$.dados''',
@@ -113,22 +106,28 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
           safeSetState(() {});
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              getJsonField(
+        await showDialog(
+          context: context,
+          builder: (alertDialogContext) {
+            return AlertDialog(
+              title: Text('Atenção!'),
+              content: Text(getJsonField(
                 (_model.contratos?.jsonBody ?? ''),
-                r'''$..message''',
-              ).toString(),
-              style: TextStyle(
-                color: FlutterFlowTheme.of(context).primaryText,
-              ),
-            ),
-            duration: Duration(milliseconds: 1500),
-            backgroundColor: FlutterFlowTheme.of(context).error,
-          ),
+                r'''$.message''',
+              ).toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(alertDialogContext),
+                  child: Text('Ok'),
+                ),
+              ],
+            );
+          },
         );
       }
+
+      FFAppState().isLoading = false;
+      safeSetState(() {});
     });
   }
 
@@ -169,7 +168,7 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
             },
           ),
           title: Text(
-            'Meus Empréstimos',
+            'Meus Contratos',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   font: GoogleFonts.interTight(
                     fontWeight:
@@ -192,127 +191,202 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
         ),
         body: SafeArea(
           top: true,
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
-            child: Builder(
-              builder: (context) {
-                final emprestimos = _model.dados.toList();
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
+                child: Builder(
+                  builder: (context) {
+                    final emprestimos = _model.dados.toList();
 
-                return ListView.separated(
-                  padding: EdgeInsets.fromLTRB(
-                    0,
-                    20.0,
-                    0,
-                    0,
-                  ),
-                  primary: false,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: emprestimos.length,
-                  separatorBuilder: (_, __) => SizedBox(height: 10.0),
-                  itemBuilder: (context, emprestimosIndex) {
-                    final emprestimosItem = emprestimos[emprestimosIndex];
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Color(0x1657636C),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20.0),
-                          bottomRight: Radius.circular(20.0),
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                        ),
-                        border: Border.all(
-                          color: Color(0xFFE6E6E6),
-                          width: 1.0,
-                        ),
+                    return ListView.separated(
+                      padding: EdgeInsets.fromLTRB(
+                        0,
+                        20.0,
+                        0,
+                        0,
                       ),
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                            10.0, 10.0, 10.0, 10.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Row(
+                      primary: false,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: emprestimos.length,
+                      separatorBuilder: (_, __) => SizedBox(height: 10.0),
+                      itemBuilder: (context, emprestimosIndex) {
+                        final emprestimosItem = emprestimos[emprestimosIndex];
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Color(0x1657636C),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20.0),
+                              bottomRight: Radius.circular(20.0),
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
+                            ),
+                            border: Border.all(
+                              color: Color(0xFFE6E6E6),
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                10.0, 10.0, 10.0, 10.0),
+                            child: Column(
                               mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                RichText(
-                                  textScaler: MediaQuery.of(context).textScaler,
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'Contrato: #',
-                                        style: TextStyle(),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    RichText(
+                                      textScaler:
+                                          MediaQuery.of(context).textScaler,
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Contrato: #',
+                                            style: TextStyle(),
+                                          ),
+                                          TextSpan(
+                                            text: getJsonField(
+                                              emprestimosItem,
+                                              r'''$.CodigoContrato''',
+                                            ).toString(),
+                                            style: TextStyle(),
+                                          )
+                                        ],
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              font: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w600,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
                                       ),
-                                      TextSpan(
-                                        text: getJsonField(
-                                          emprestimosItem,
-                                          r'''$.CodigoContrato''',
-                                        ).toString(),
-                                        style: TextStyle(),
-                                      )
-                                    ],
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          font: GoogleFonts.inter(
-                                            fontWeight: FontWeight.w600,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: () {
+                                          if ((String var1) {
+                                            return var1 == "Em Análise";
+                                          }(getJsonField(
+                                            emprestimosItem,
+                                            r'''$.StatusContrato''',
+                                          ).toString())) {
+                                            return Color(0xFF007BFF);
+                                          } else if ((String var1) {
+                                            return var1 == "Finalizado";
+                                          }(getJsonField(
+                                            emprestimosItem,
+                                            r'''$.StatusContrato''',
+                                          ).toString())) {
+                                            return FlutterFlowTheme.of(context)
+                                                .secondaryText;
+                                          } else {
+                                            return FlutterFlowTheme.of(context)
+                                                .primary;
+                                          }
+                                        }(),
+                                        borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(10.0),
+                                          bottomRight: Radius.circular(10.0),
+                                          topLeft: Radius.circular(10.0),
+                                          topRight: Radius.circular(10.0),
+                                        ),
+                                        border: Border.all(
+                                          color: Color(0xFFE6E6E6),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            3.0, 3.0, 3.0, 3.0),
+                                        child: Text(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.StatusContrato''',
+                                          ).toString(),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                font: GoogleFonts.inter(
+                                                  fontWeight:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontWeight,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontStyle,
+                                                ),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                fontSize: 12.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                  ].divide(SizedBox(width: 5.0)),
+                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Data Solicitação',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            font: GoogleFonts.inter(
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            letterSpacing: 0.0,
+                                            fontWeight:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontWeight,
                                             fontStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMedium
                                                     .fontStyle,
                                           ),
-                                          color: FlutterFlowTheme.of(context)
-                                              .primary,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.w600,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: () {
-                                      if ((String var1) {
-                                        return var1 == "Em Análise";
-                                      }(getJsonField(
-                                        emprestimosItem,
-                                        r'''$.StatusContrato''',
-                                      ).toString())) {
-                                        return Color(0xFF007BFF);
-                                      } else if ((String var1) {
-                                        return var1 == "Finalizado";
-                                      }(getJsonField(
-                                        emprestimosItem,
-                                        r'''$.StatusContrato''',
-                                      ).toString())) {
-                                        return FlutterFlowTheme.of(context)
-                                            .secondaryText;
-                                      } else {
-                                        return FlutterFlowTheme.of(context)
-                                            .primary;
-                                      }
-                                    }(),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10.0),
-                                      bottomRight: Radius.circular(10.0),
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0),
                                     ),
-                                    border: Border.all(
-                                      color: Color(0xFFE6E6E6),
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        3.0, 3.0, 3.0, 3.0),
-                                    child: Text(
+                                    Text(
                                       getJsonField(
                                         emprestimosItem,
-                                        r'''$.StatusContrato''',
+                                        r'''$.DataContrato''',
                                       ).toString(),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -327,9 +401,6 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                                       .bodyMedium
                                                       .fontStyle,
                                             ),
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                            fontSize: 12.0,
                                             letterSpacing: 0.0,
                                             fontWeight:
                                                 FlutterFlowTheme.of(context)
@@ -341,295 +412,291 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                                     .fontStyle,
                                           ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ].divide(SizedBox(width: 5.0)),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Data Solicitação',
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
+                                Divider(
+                                  thickness: 2.0,
+                                  color: Color(0x5E57636C),
                                 ),
-                                Text(
-                                  getJsonField(
-                                    emprestimosItem,
-                                    r'''$.DataContrato''',
-                                  ).toString(),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            Divider(
-                              thickness: 2.0,
-                              color: Color(0x5E57636C),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Total Empréstimo',
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                ),
-                                Text(
-                                  getJsonField(
-                                    emprestimosItem,
-                                    r'''$.ValorEmprestimo''',
-                                  ).toString(),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            Divider(
-                              thickness: 2.0,
-                              color: Color(0x5E57636C),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Parcela ${getJsonField(
-                                    emprestimosItem,
-                                    r'''$.ParcelaAtual''',
-                                  ).toString()}:',
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                ),
-                                Text(
-                                  getJsonField(
-                                    emprestimosItem,
-                                    r'''$.ValorParcelas''',
-                                  ).toString(),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
-                                  child: FFButtonWidget(
-                                    onPressed: () async {
-                                      _model.contratoPDF = await FACConsigGroup
-                                          .contratoCall
-                                          .call(
-                                        codigoContrato: getJsonField(
-                                          emprestimosItem,
-                                          r'''$..CodigoContrato''',
-                                        ),
-                                      );
-
-                                      if ((_model.contratoPDF?.succeeded ??
-                                          true)) {
-                                        _model.pdf =
-                                            await actions.base64UploadedFile(
-                                          getJsonField(
-                                            (_model.contratoPDF?.jsonBody ??
-                                                ''),
-                                            r'''$..Contrato''',
-                                          ).toString(),
-                                          'pdf',
-                                        );
-
-                                        context.pushNamed(
-                                          PdfWidget.routeName,
-                                          queryParameters: {
-                                            'doc': serializeParam(
-                                              _model.pdf,
-                                              ParamType.FFUploadedFile,
-                                            ),
-                                            'nomeDoc': serializeParam(
-                                              getJsonField(
-                                                emprestimosItem,
-                                                r'''$.CodigoContrato''',
-                                              ).toString(),
-                                              ParamType.String,
-                                            ),
-                                          }.withoutNulls,
-                                        );
-                                      }
-
-                                      safeSetState(() {});
-                                    },
-                                    text: 'Acessar documento do contrato',
-                                    icon: Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 15.0,
-                                    ),
-                                    options: FFButtonOptions(
-                                      width: double.infinity,
-                                      height: 40.0,
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          16.0, 0.0, 16.0, 0.0),
-                                      iconAlignment: IconAlignment.end,
-                                      iconPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
-                                              0.0, 0.0, 0.0, 0.0),
-                                      color:
-                                          FlutterFlowTheme.of(context).primary,
-                                      textStyle: FlutterFlowTheme.of(context)
-                                          .titleSmall
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Total Empréstimo',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
                                           .override(
-                                            font: GoogleFonts.interTight(
+                                            font: GoogleFonts.inter(
                                               fontWeight:
                                                   FlutterFlowTheme.of(context)
-                                                      .titleSmall
+                                                      .bodyMedium
                                                       .fontWeight,
                                               fontStyle:
                                                   FlutterFlowTheme.of(context)
-                                                      .titleSmall
+                                                      .bodyMedium
                                                       .fontStyle,
                                             ),
-                                            color: Colors.white,
                                             letterSpacing: 0.0,
                                             fontWeight:
                                                 FlutterFlowTheme.of(context)
-                                                    .titleSmall
+                                                    .bodyMedium
                                                     .fontWeight,
                                             fontStyle:
                                                 FlutterFlowTheme.of(context)
-                                                    .titleSmall
+                                                    .bodyMedium
                                                     .fontStyle,
                                           ),
-                                      elevation: 0.0,
-                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                  ),
+                                    Text(
+                                      getJsonField(
+                                        emprestimosItem,
+                                        r'''$.ValorEmprestimo''',
+                                      ).toString(),
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            font: GoogleFonts.inter(
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            letterSpacing: 0.0,
+                                            fontWeight:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontWeight,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontStyle,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                                Divider(
+                                  thickness: 2.0,
+                                  color: Color(0x5E57636C),
+                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Parcela ${getJsonField(
+                                        emprestimosItem,
+                                        r'''$.ParcelaAtual''',
+                                      ).toString()}:',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            font: GoogleFonts.inter(
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            letterSpacing: 0.0,
+                                            fontWeight:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontWeight,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontStyle,
+                                          ),
+                                    ),
+                                    Text(
+                                      getJsonField(
+                                        emprestimosItem,
+                                        r'''$.ValorParcelas''',
+                                      ).toString(),
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            font: GoogleFonts.inter(
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            letterSpacing: 0.0,
+                                            fontWeight:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontWeight,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontStyle,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Align(
+                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                      child: FFButtonWidget(
+                                        onPressed: () async {
+                                          _model.contratoPDF =
+                                              await FACConsigGroup.contratoCall
+                                                  .call(
+                                            codigoContrato: getJsonField(
+                                              emprestimosItem,
+                                              r'''$..CodigoContrato''',
+                                            ),
+                                          );
+
+                                          if (getJsonField(
+                                            (_model.contratoPDF?.jsonBody ??
+                                                ''),
+                                            r'''$.status''',
+                                          )) {
+                                            _model.pdf = await actions
+                                                .base64UploadedFile(
+                                              getJsonField(
+                                                (_model.contratoPDF?.jsonBody ??
+                                                    ''),
+                                                r'''$..Contrato''',
+                                              ).toString(),
+                                              'pdf',
+                                            );
+
+                                            context.pushNamed(
+                                              PdfWidget.routeName,
+                                              queryParameters: {
+                                                'doc': serializeParam(
+                                                  _model.pdf,
+                                                  ParamType.FFUploadedFile,
+                                                ),
+                                                'nomeDoc': serializeParam(
+                                                  getJsonField(
+                                                    emprestimosItem,
+                                                    r'''$.CodigoContrato''',
+                                                  ).toString(),
+                                                  ParamType.String,
+                                                ),
+                                              }.withoutNulls,
+                                            );
+                                          } else {
+                                            await showDialog(
+                                              context: context,
+                                              builder: (alertDialogContext) {
+                                                return AlertDialog(
+                                                  title: Text('Atenção!'),
+                                                  content: Text(getJsonField(
+                                                    (_model.contratoPDF
+                                                            ?.jsonBody ??
+                                                        ''),
+                                                    r'''$.message''',
+                                                  ).toString()),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              alertDialogContext),
+                                                      child: Text('Ok'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+
+                                          safeSetState(() {});
+                                        },
+                                        text: 'Acessar documento do contrato',
+                                        icon: Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 15.0,
+                                        ),
+                                        options: FFButtonOptions(
+                                          width: double.infinity,
+                                          height: 40.0,
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  16.0, 0.0, 16.0, 0.0),
+                                          iconAlignment: IconAlignment.end,
+                                          iconPadding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
+                                          textStyle: FlutterFlowTheme.of(
+                                                  context)
+                                              .titleSmall
+                                              .override(
+                                                font: GoogleFonts.interTight(
+                                                  fontWeight:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .titleSmall
+                                                          .fontWeight,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .titleSmall
+                                                          .fontStyle,
+                                                ),
+                                                color: Colors.white,
+                                                letterSpacing: 0.0,
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleSmall
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleSmall
+                                                        .fontStyle,
+                                              ),
+                                          elevation: 0.0,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ].divide(SizedBox(height: 10.0)),
                             ),
-                          ].divide(SizedBox(height: 10.0)),
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
+                ),
+              ),
+              if (FFAppState().isLoading == true)
+                Align(
+                  alignment: AlignmentDirectional(0.0, 0.0),
+                  child: Container(
+                    width: 100.0,
+                    height: 100.0,
+                    child: custom_widgets.LoadingIndicator(
+                      width: 100.0,
+                      height: 100.0,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),

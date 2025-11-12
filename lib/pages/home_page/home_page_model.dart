@@ -29,6 +29,8 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   TextEditingController? textController;
   late bool passwordVisibility;
   String? Function(BuildContext, String?)? textControllerValidator;
+  // State field(s) for Column widget.
+  ScrollController? columnController;
   // State field(s) for DropDown widget.
   String? dropDownValue;
   FormFieldController<String>? dropDownValueController;
@@ -38,11 +40,14 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   @override
   void initState(BuildContext context) {
     passwordVisibility = false;
+    columnController = ScrollController();
   }
 
   @override
   void dispose() {
     textFieldFocusNode?.dispose();
     textController?.dispose();
+
+    columnController?.dispose();
   }
 }

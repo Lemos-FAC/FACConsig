@@ -21,9 +21,9 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
   TextEditingController? totalTextController;
   String? Function(BuildContext, String?)? totalTextControllerValidator;
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in total widget.
-  ApiCallResponse? apiResultl9cCopy;
+  ApiCallResponse? apiResultl9cCopyCopy;
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in total widget.
-  ApiCallResponse? total2Copy;
+  ApiCallResponse? total2CopyCopy;
   // State field(s) for parcelas widget.
   String? parcelasValue;
   FormFieldController<String>? parcelasValueController;
@@ -36,7 +36,7 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
   TextEditingController? valorParcelaTextController;
   String? Function(BuildContext, String?)? valorParcelaTextControllerValidator;
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in valorParcela widget.
-  ApiCallResponse? apiResultrqrCopy;
+  ApiCallResponse? apiResultrqrCopyCopy;
 
   @override
   void initState(BuildContext context) {

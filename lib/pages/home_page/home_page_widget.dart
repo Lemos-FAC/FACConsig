@@ -138,7 +138,27 @@ class _HomePageWidgetState extends State<HomePageWidget>
                 .cast<String>();
             safeSetState(() {});
           }
+        } else {
+          await showDialog(
+            context: context,
+            builder: (alertDialogContext) {
+              return AlertDialog(
+                title: Text('Atenção!'),
+                content: Text(getJsonField(
+                  (_model.contratante?.jsonBody ?? ''),
+                  r'''$.message''',
+                ).toString()),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(alertDialogContext),
+                    child: Text('Ok'),
+                  ),
+                ],
+              );
+            },
+          );
         }
+
         FFAppState().isLoading = true;
         safeSetState(() {});
         _model.home = await FACConsigGroup.simulaEmprestimoConsigCall.call(
@@ -167,20 +187,23 @@ class _HomePageWidgetState extends State<HomePageWidget>
             _model.textController?.text = FFAppState().margemDisponivel;
           });
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                getJsonField(
+          await showDialog(
+            context: context,
+            builder: (alertDialogContext) {
+              return AlertDialog(
+                title: Text('Atenção!'),
+                content: Text(getJsonField(
                   (_model.home?.jsonBody ?? ''),
                   r'''$.message''',
-                ).toString(),
-                style: TextStyle(
-                  color: FlutterFlowTheme.of(context).primaryText,
-                ),
-              ),
-              duration: Duration(milliseconds: 1500),
-              backgroundColor: FlutterFlowTheme.of(context).warning,
-            ),
+                ).toString()),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(alertDialogContext),
+                    child: Text('Ok'),
+                  ),
+                ],
+              );
+            },
           );
           FFAppState().margemDisponivel = 'R\$ 0,00';
           safeSetState(() {});
@@ -196,19 +219,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
     _model.textFieldFocusNode ??= FocusNode();
 
     animationsMap.addAll({
-      'textOnPageLoadAnimation1': AnimationInfo(
-        trigger: AnimationTrigger.onPageLoad,
-        effectsBuilder: () => [
-          FadeEffect(
-            curve: Curves.easeInOut,
-            delay: 1000.0.ms,
-            duration: 1000.0.ms,
-            begin: 0.0,
-            end: 1.0,
-          ),
-        ],
-      ),
-      'textOnPageLoadAnimation2': AnimationInfo(
+      'textOnPageLoadAnimation': AnimationInfo(
         trigger: AnimationTrigger.onPageLoad,
         effectsBuilder: () => [
           FadeEffect(
@@ -294,7 +305,17 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                         child: Padding(
                                           padding:
                                               EdgeInsetsDirectional.fromSTEB(
-                                                  10.0, 0.0, 10.0, 0.0),
+                                                  10.0,
+                                                  0.0,
+                                                  valueOrDefault<double>(
+                                                    MediaQuery.sizeOf(context)
+                                                                .width >
+                                                            360.0
+                                                        ? 10.0
+                                                        : 0.0,
+                                                    0.0,
+                                                  ),
+                                                  0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -337,8 +358,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                      MainAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                       'R\$',
@@ -368,7 +388,28 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           ),
                                                     ),
                                                     Container(
-                                                      width: 300.0,
+                                                      width: () {
+                                                        if (MediaQuery.sizeOf(
+                                                                    context)
+                                                                .width <=
+                                                            360.0) {
+                                                          return 280.0;
+                                                        } else if (MediaQuery
+                                                                    .sizeOf(
+                                                                        context)
+                                                                .width >=
+                                                            412.0) {
+                                                          return 330.0;
+                                                        } else if (MediaQuery
+                                                                    .sizeOf(
+                                                                        context)
+                                                                .width >=
+                                                            448.0) {
+                                                          return 340.0;
+                                                        } else {
+                                                          return 310.0;
+                                                        }
+                                                      }(),
                                                       child: TextFormField(
                                                         controller: _model
                                                             .textController,
@@ -589,7 +630,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                         SafeArea(
                                           child: Container(
                                             width: double.infinity,
-                                            height: 150.0,
+                                            height: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <=
+                                                  393.0) {
+                                                return 140.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width >=
+                                                  448.0) {
+                                                return 165.0;
+                                              } else {
+                                                return 160.0;
+                                              }
+                                            }(),
                                             decoration: BoxDecoration(
                                               color:
                                                   FlutterFlowTheme.of(context)
@@ -822,7 +876,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                         SafeArea(
                                           child: Container(
                                             width: double.infinity,
-                                            height: 150.0,
+                                            height: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <=
+                                                  393.0) {
+                                                return 140.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width >=
+                                                  448.0) {
+                                                return 165.0;
+                                              } else {
+                                                return 160.0;
+                                              }
+                                            }(),
                                             decoration: BoxDecoration(
                                               color:
                                                   FlutterFlowTheme.of(context)
@@ -933,7 +1000,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                         SafeArea(
                                           child: Container(
                                             width: double.infinity,
-                                            height: 150.0,
+                                            height: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <=
+                                                  393.0) {
+                                                return 140.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width >=
+                                                  448.0) {
+                                                return 165.0;
+                                              } else {
+                                                return 160.0;
+                                              }
+                                            }(),
                                             decoration: BoxDecoration(
                                               color:
                                                   FlutterFlowTheme.of(context)
@@ -1044,7 +1124,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                         SafeArea(
                                           child: Container(
                                             width: double.infinity,
-                                            height: 150.0,
+                                            height: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <=
+                                                  393.0) {
+                                                return 140.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width >=
+                                                  448.0) {
+                                                return 165.0;
+                                              } else {
+                                                return 160.0;
+                                              }
+                                            }(),
                                             decoration: BoxDecoration(
                                               color:
                                                   FlutterFlowTheme.of(context)
@@ -1153,7 +1246,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                         SafeArea(
                                           child: Container(
                                             width: double.infinity,
-                                            height: 150.0,
+                                            height: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <=
+                                                  393.0) {
+                                                return 140.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width >=
+                                                  448.0) {
+                                                return 165.0;
+                                              } else {
+                                                return 160.0;
+                                              }
+                                            }(),
                                             decoration: BoxDecoration(
                                               color:
                                                   FlutterFlowTheme.of(context)
@@ -1268,207 +1374,321 @@ class _HomePageWidgetState extends State<HomePageWidget>
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-0.63, -0.98),
+                  alignment: AlignmentDirectional(0.0, -0.96),
                   child: Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
-                    child: Text(
-                      'Olá, ${FFAppState().nomContratante}',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            font: GoogleFonts.inter(
-                              fontWeight: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontWeight,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontStyle,
-                            ),
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            fontSize: 15.0,
-                            letterSpacing: 0.0,
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                    ).animateOnPageLoad(
-                        animationsMap['textOnPageLoadAnimation1']!),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional(-0.85, -0.9),
-                  child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
-                    child: Text(
-                      'CPF: ${functions.maskCpf(FFAppState().cpfContratante)}',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            font: GoogleFonts.inter(
-                              fontWeight: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontWeight,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontStyle,
-                            ),
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            letterSpacing: 0.0,
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                    ).animateOnPageLoad(
-                        animationsMap['textOnPageLoadAnimation2']!),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional(0.86, -0.9),
-                  child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(270.0, 0.0, 0.0, 0.0),
-                    child: FlutterFlowDropDown<String>(
-                      controller: _model.dropDownValueController ??=
-                          FormFieldController<String>(
-                        _model.dropDownValue ??= valueOrDefault<String>(
-                          getJsonField(
-                            FFAppState().matriculaDataList.firstOrNull,
-                            r'''$..Matricula''',
-                          )?.toString(),
-                          '-',
-                        ),
-                      ),
-                      options: FFAppState()
-                          .matriculaDataList
-                          .map((e) => getJsonField(
-                                e,
-                                r'''$..Matricula''',
-                              ))
-                          .toList()
-                          .map((e) => e.toString())
-                          .toList(),
-                      onChanged: (val) async {
-                        safeSetState(() => _model.dropDownValue = val);
-                        FFAppState().contratante = FFAppState()
-                            .matriculaDataList
-                            .where((e) =>
-                                _model.dropDownValue ==
-                                getJsonField(
-                                  e,
-                                  r'''$.Matricula''',
-                                ).toString())
-                            .toList()
-                            .cast<dynamic>();
-                        FFAppState().update(() {});
-                        FFAppState().email = (String var1) {
-                          return var1 == "" || var1 == "null";
-                        }(getJsonField(
-                          FFAppState().contratante.firstOrNull,
-                          r'''$..Email''',
-                        ).toString())
-                            ? 'Não informado!'
-                            : getJsonField(
-                                FFAppState().contratante.firstOrNull,
-                                r'''$..Email''',
-                              ).toString();
-                        FFAppState().celular = (String var1) {
-                          return var1 == "" || var1 == "null";
-                        }(getJsonField(
-                          FFAppState().contratante.firstOrNull,
-                          r'''$..Telefone''',
-                        ).toString())
-                            ? '-'
-                            : getJsonField(
-                                FFAppState().contratante.firstOrNull,
-                                r'''$..Telefone''',
-                              ).toString();
-                        safeSetState(() {});
-                        FFAppState().codigoContratante = getJsonField(
-                          FFAppState().contratante.firstOrNull,
-                          r'''$.CodigoContratante''',
-                        ).toString();
-                        safeSetState(() {});
-                        _model.mudaContratante = await FACConsigGroup
-                            .simulaEmprestimoConsigCall
-                            .call(
-                          contratante: FFAppState().codigoContratante,
-                          tipoSimulacao: 'processaSimulacao',
-                          quantidadeParcelas: '0',
-                          valorEmprestimo: '0',
-                          valorParcelas: '0',
-                        );
-
-                        if ((_model.mudaContratante?.succeeded ?? true)) {
-                          FFAppState().margemDisponivel = getJsonField(
-                            (_model.mudaContratante?.jsonBody ?? ''),
-                            r'''$..valorEmprestimo''',
-                          ).toString();
-                          safeSetState(() {});
-                          safeSetState(() {
-                            _model.textController?.text = formatNumber(
-                              functions.stringDoubleSFomart(
-                                  FFAppState().margemDisponivel),
-                              formatType: FormatType.custom,
-                              format: '#,##0.00',
-                              locale: 'pt_BR',
-                            );
-                          });
-                          safeSetState(() {});
-                        }
-
-                        safeSetState(() {});
-                      },
-                      width: 115.0,
-                      height: 40.0,
-                      textStyle:
-                          FlutterFlowTheme.of(context).bodySmall.override(
-                                font: GoogleFonts.inter(
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .bodySmall
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .bodySmall
-                                      .fontStyle,
+                        EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
+                    child: SingleChildScrollView(
+                      primary: false,
+                      controller: _model.columnController,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  width: 355.0,
+                                  decoration: BoxDecoration(),
+                                  child: RichText(
+                                    textScaler:
+                                        MediaQuery.of(context).textScaler,
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Olá, ',
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                font: GoogleFonts.inter(
+                                                  fontWeight:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontWeight,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontStyle,
+                                                ),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                letterSpacing: 0.0,
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                        ),
+                                        TextSpan(
+                                          text: valueOrDefault<String>(
+                                            FFAppState().nomContratante,
+                                            '-',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                font: GoogleFonts.inter(
+                                                  fontWeight:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontWeight,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontStyle,
+                                                ),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                letterSpacing: 0.0,
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                        )
+                                      ],
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            font: GoogleFonts.inter(
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.normal,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontStyle,
+                                          ),
+                                    ),
+                                    maxLines: 3,
+                                  ),
                                 ),
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                letterSpacing: 0.0,
-                                fontWeight: FlutterFlowTheme.of(context)
-                                    .bodySmall
-                                    .fontWeight,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .bodySmall
-                                    .fontStyle,
                               ),
-                      hintText: valueOrDefault<String>(
-                        getJsonField(
-                          FFAppState().matriculaDataList.firstOrNull,
-                          r'''$..Matricula''',
-                        )?.toString(),
-                        '-',
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: AlignmentDirectional(-0.85, -0.9),
+                                child: Text(
+                                  'CPF: ${functions.maskCpf(FFAppState().cpfContratante)}',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
+                                        ),
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
+                                      ),
+                                ).animateOnPageLoad(
+                                    animationsMap['textOnPageLoadAnimation']!),
+                              ),
+                              Align(
+                                alignment: AlignmentDirectional(0.86, -0.9),
+                                child: FlutterFlowDropDown<String>(
+                                  controller: _model.dropDownValueController ??=
+                                      FormFieldController<String>(
+                                    _model.dropDownValue ??=
+                                        valueOrDefault<String>(
+                                      getJsonField(
+                                        FFAppState()
+                                            .matriculaDataList
+                                            .firstOrNull,
+                                        r'''$..Matricula''',
+                                      )?.toString(),
+                                      '-',
+                                    ),
+                                  ),
+                                  options: FFAppState()
+                                      .matriculaDataList
+                                      .map((e) => getJsonField(
+                                            e,
+                                            r'''$..Matricula''',
+                                          ))
+                                      .toList()
+                                      .map((e) => e.toString())
+                                      .toList(),
+                                  onChanged: (val) async {
+                                    safeSetState(
+                                        () => _model.dropDownValue = val);
+                                    FFAppState().contratante = FFAppState()
+                                        .matriculaDataList
+                                        .where((e) =>
+                                            _model.dropDownValue ==
+                                            getJsonField(
+                                              e,
+                                              r'''$.Matricula''',
+                                            ).toString())
+                                        .toList()
+                                        .cast<dynamic>();
+                                    FFAppState().update(() {});
+                                    FFAppState().email = (String var1) {
+                                      return var1 == "" ||
+                                          var1 == "null";
+                                    }(getJsonField(
+                                      FFAppState().contratante.firstOrNull,
+                                      r'''$..Email''',
+                                    ).toString())
+                                        ? 'Não informado!'
+                                        : getJsonField(
+                                            FFAppState()
+                                                .contratante
+                                                .firstOrNull,
+                                            r'''$..Email''',
+                                          ).toString();
+                                    FFAppState().celular = (String var1) {
+                                      return var1 == "" ||
+                                          var1 == "null";
+                                    }(getJsonField(
+                                      FFAppState().contratante.firstOrNull,
+                                      r'''$..Telefone''',
+                                    ).toString())
+                                        ? '-'
+                                        : getJsonField(
+                                            FFAppState()
+                                                .contratante
+                                                .firstOrNull,
+                                            r'''$..Telefone''',
+                                          ).toString();
+                                    safeSetState(() {});
+                                    FFAppState().codigoContratante =
+                                        getJsonField(
+                                      FFAppState().contratante.firstOrNull,
+                                      r'''$.CodigoContratante''',
+                                    ).toString();
+                                    safeSetState(() {});
+                                    _model.mudaContratante =
+                                        await FACConsigGroup
+                                            .simulaEmprestimoConsigCall
+                                            .call(
+                                      contratante:
+                                          FFAppState().codigoContratante,
+                                      tipoSimulacao: 'processaSimulacao',
+                                      quantidadeParcelas: '0',
+                                      valorEmprestimo: '0',
+                                      valorParcelas: '0',
+                                    );
+
+                                    if ((_model.mudaContratante?.succeeded ??
+                                        true)) {
+                                      FFAppState().margemDisponivel =
+                                          getJsonField(
+                                        (_model.mudaContratante?.jsonBody ??
+                                            ''),
+                                        r'''$..valorEmprestimo''',
+                                      ).toString();
+                                      safeSetState(() {});
+                                      safeSetState(() {
+                                        _model.textController?.text =
+                                            formatNumber(
+                                          functions.stringDoubleSFomart(
+                                              FFAppState().margemDisponivel),
+                                          formatType: FormatType.custom,
+                                          format: '#,##0.00',
+                                          locale: 'pt_BR',
+                                        );
+                                      });
+                                      safeSetState(() {});
+                                    }
+
+                                    safeSetState(() {});
+                                  },
+                                  width: 115.0,
+                                  height: 40.0,
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .bodySmall
+                                      .override(
+                                        font: GoogleFonts.inter(
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodySmall
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodySmall
+                                                  .fontStyle,
+                                        ),
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .bodySmall
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodySmall
+                                            .fontStyle,
+                                      ),
+                                  hintText: valueOrDefault<String>(
+                                    getJsonField(
+                                      FFAppState()
+                                          .matriculaDataList
+                                          .firstOrNull,
+                                      r'''$..Matricula''',
+                                    )?.toString(),
+                                    '-',
+                                  ),
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
+                                    size: 24.0,
+                                  ),
+                                  fillColor: Color(0x02FFFFFF),
+                                  elevation: 2.0,
+                                  borderColor: Color(0x02FFFFFF),
+                                  borderWidth: 0.0,
+                                  borderRadius: 8.0,
+                                  margin: EdgeInsetsDirectional.fromSTEB(
+                                      12.0, 0.0, 12.0, 0.0),
+                                  hidesUnderline: true,
+                                  isOverButton: false,
+                                  isSearchable: false,
+                                  isMultiSelect: false,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      icon: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                        size: 24.0,
-                      ),
-                      fillColor: Color(0x02FFFFFF),
-                      elevation: 2.0,
-                      borderColor: Color(0x02FFFFFF),
-                      borderWidth: 0.0,
-                      borderRadius: 8.0,
-                      margin:
-                          EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
-                      hidesUnderline: true,
-                      isOverButton: false,
-                      isSearchable: false,
-                      isMultiSelect: false,
                     ),
                   ),
                 ),
