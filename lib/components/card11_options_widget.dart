@@ -106,10 +106,10 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
               (_model.checkUploadArquivo?.jsonBody ?? ''),
               r'''$.dados[3].nome_arquivo''',
             ).toString()))) {
-          _model.submetidoContaBancaria = true;
+          _model.submetidoAutorizacaoDesconto = true;
           safeSetState(() {});
         } else {
-          _model.submetidoContaBancaria = false;
+          _model.submetidoAutorizacaoDesconto = false;
           safeSetState(() {});
         }
 
@@ -124,10 +124,10 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
               (_model.checkUploadArquivo?.jsonBody ?? ''),
               r'''$.dados[4].nome_arquivo''',
             ).toString()))) {
-          _model.submetidoContraCheque = true;
+          _model.submetidoContaBancaria = true;
           safeSetState(() {});
         } else {
-          _model.submetidoContraCheque = false;
+          _model.submetidoContaBancaria = false;
           safeSetState(() {});
         }
 
@@ -141,6 +141,24 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
             }(getJsonField(
               (_model.checkUploadArquivo?.jsonBody ?? ''),
               r'''$.dados[5].nome_arquivo''',
+            ).toString()))) {
+          _model.submetidoContraCheque = true;
+          safeSetState(() {});
+        } else {
+          _model.submetidoContraCheque = false;
+          safeSetState(() {});
+        }
+
+        if ((getJsonField(
+                  (_model.checkUploadArquivo?.jsonBody ?? ''),
+                  r'''$.dados[6].nome_arquivo''',
+                ) !=
+                null) &&
+            ((String var1) {
+              return var1 != "";
+            }(getJsonField(
+              (_model.checkUploadArquivo?.jsonBody ?? ''),
+              r'''$.dados[6].nome_arquivo''',
             ).toString()))) {
           _model.submetidoRecompra = true;
           safeSetState(() {});
@@ -281,7 +299,13 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                         ),
                       ),
                       if ((_model.file0 != null && _model.file0 != '') ||
-                          (_model.submetidoIdentificacao == true))
+                          (_model.submetidoIdentificacao == true) ||
+                          ((String var1) {
+                            return var1 != "R";
+                          }(getJsonField(
+                            (_model.checkUploadArquivo?.jsonBody ?? ''),
+                            r'''$.dados[0].status_documento''',
+                          ).toString())))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -458,7 +482,13 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                         ),
                       ),
                       if ((_model.file1 != null && _model.file1 != '') ||
-                          (_model.submetidoComprovante == true))
+                          (_model.submetidoComprovante == true) ||
+                          ((String var1) {
+                            return var1 != "R";
+                          }(getJsonField(
+                            (_model.checkUploadArquivo?.jsonBody ?? ''),
+                            r'''$.dados[1].status_documento''',
+                          ).toString())))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -618,7 +648,13 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                         ),
                       ),
                       if ((_model.file2 != null && _model.file2 != '') ||
-                          (_model.submetidoPAD == true))
+                          (_model.submetidoPAD == true) ||
+                          ((String var1) {
+                            return var1 != "R";
+                          }(getJsonField(
+                            (_model.checkUploadArquivo?.jsonBody ?? ''),
+                            r'''$.dados[2].status_documento''',
+                          ).toString())))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -750,6 +786,170 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
+                                'Autorização de Desconto',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyLarge
+                                    .override(
+                                      font: GoogleFonts.inter(
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .bodyLarge
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyLarge
+                                            .fontStyle,
+                                      ),
+                                      letterSpacing: 0.0,
+                                      fontWeight: FlutterFlowTheme.of(context)
+                                          .bodyLarge
+                                          .fontWeight,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .bodyLarge
+                                          .fontStyle,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if ((_model.file03 != null && _model.file03 != '') ||
+                          (_model.submetidoAutorizacaoDesconto == true) ||
+                          ((String var1) {
+                            return var1 != "R";
+                          }(getJsonField(
+                            (_model.checkUploadArquivo?.jsonBody ?? ''),
+                            r'''$.dados[3].status_documento''',
+                          ).toString())))
+                        Icon(
+                          Icons.check,
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 24.0,
+                        ),
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
+                        child: FlutterFlowIconButton(
+                          borderColor: FlutterFlowTheme.of(context).alternate,
+                          borderRadius: 8.0,
+                          borderWidth: 2.0,
+                          buttonSize: 40.0,
+                          icon: Icon(
+                            Icons.upload_file,
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                            size: 20.0,
+                          ),
+                          onPressed: () async {
+                            final selectedFiles = await selectFiles(
+                              multiFile: false,
+                            );
+                            if (selectedFiles != null) {
+                              safeSetState(() =>
+                                  _model.isDataUploading_uploadDataFf8 = true);
+                              var selectedUploadedFiles = <FFUploadedFile>[];
+
+                              try {
+                                selectedUploadedFiles = selectedFiles
+                                    .map((m) => FFUploadedFile(
+                                          name: m.storagePath.split('/').last,
+                                          bytes: m.bytes,
+                                          originalFilename: m.originalFilename,
+                                        ))
+                                    .toList();
+                              } finally {
+                                _model.isDataUploading_uploadDataFf8 = false;
+                              }
+                              if (selectedUploadedFiles.length ==
+                                  selectedFiles.length) {
+                                safeSetState(() {
+                                  _model.uploadedLocalFile_uploadDataFf8 =
+                                      selectedUploadedFiles.first;
+                                });
+                              } else {
+                                safeSetState(() {});
+                                return;
+                              }
+                            }
+
+                            _model.file03 = await actions.uploadedFileToBase64(
+                              _model.uploadedLocalFile_uploadDataFf8,
+                            );
+                            if (_model.file03 != null && _model.file03 != '') {
+                              _model.doc03 =
+                                  await FACConsigGroup.enviaDocumentoCall.call(
+                                arquivo: _model.file03,
+                                codigoArquivo: getJsonField(
+                                  FFAppState()
+                                      .documentosPendentes
+                                      .elementAtOrNull(3),
+                                  r'''$..codigo_documento''',
+                                ),
+                                nomeArquivo: _model
+                                    .uploadedLocalFile_uploadDataFf8
+                                    .originalFilename,
+                                extensaoArquivo: 'pdf',
+                              );
+
+                              if ((_model.doc03?.succeeded ?? true)) {
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      content:
+                                          Text('Arquivo enviado com sucesso!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(alertDialogContext),
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                FFAppState().uploadedAutorizacaoDesconto = true;
+                                safeSetState(() {});
+                              }
+                            }
+
+                            safeSetState(() {});
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 16.0),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                  borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(
+                    color: Color(0xFFE6E6E6),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(12.0, 8.0, 12.0, 8.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Icon(
+                        Icons.edit_document,
+                        color: FlutterFlowTheme.of(context).primary,
+                        size: 32.0,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              12.0, 0.0, 8.0, 0.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
                                 'Comprovante Conta Bancária',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyLarge
@@ -775,8 +975,14 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if ((_model.file3 != null && _model.file3 != '') ||
-                          (_model.submetidoContaBancaria == true))
+                      if ((_model.file04 != null && _model.file04 != '') ||
+                          (_model.submetidoContaBancaria == true) ||
+                          ((String var1) {
+                            return var1 != "R";
+                          }(getJsonField(
+                            (_model.checkUploadArquivo?.jsonBody ?? ''),
+                            r'''$.dados[4].status_documento''',
+                          ).toString())))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -827,17 +1033,17 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                               }
                             }
 
-                            _model.file3 = await actions.uploadedFileToBase64(
+                            _model.file04 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_uploadData64k,
                             );
-                            if (_model.file3 != null && _model.file3 != '') {
-                              _model.doc3 =
+                            if (_model.file04 != null && _model.file04 != '') {
+                              _model.doc04 =
                                   await FACConsigGroup.enviaDocumentoCall.call(
-                                arquivo: _model.file3,
+                                arquivo: _model.file04,
                                 codigoArquivo: getJsonField(
                                   FFAppState()
                                       .documentosPendentes
-                                      .elementAtOrNull(3),
+                                      .elementAtOrNull(4),
                                   r'''$..codigo_documento''',
                                 ),
                                 nomeArquivo: _model
@@ -846,7 +1052,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                 extensaoArquivo: 'pdf',
                               );
 
-                              if ((_model.doc3?.succeeded ?? true)) {
+                              if ((_model.doc04?.succeeded ?? true)) {
                                 await showDialog(
                                   context: context,
                                   builder: (alertDialogContext) {
@@ -933,8 +1139,14 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if ((_model.file4 != null && _model.file4 != '') ||
-                          (_model.submetidoContraCheque == true))
+                      if ((_model.file05 != null && _model.file05 != '') ||
+                          (_model.submetidoContraCheque == true) ||
+                          ((String var1) {
+                            return var1 != "R";
+                          }(getJsonField(
+                            (_model.checkUploadArquivo?.jsonBody ?? ''),
+                            r'''$.dados[5].status_documento''',
+                          ).toString())))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -985,13 +1197,13 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                               }
                             }
 
-                            _model.file4 = await actions.uploadedFileToBase64(
+                            _model.file05 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_uploadData4yz,
                             );
-                            if (_model.file4 != null && _model.file4 != '') {
-                              _model.doc4 =
+                            if (_model.file05 != null && _model.file05 != '') {
+                              _model.doc05 =
                                   await FACConsigGroup.enviaDocumentoCall.call(
-                                arquivo: _model.file4,
+                                arquivo: _model.file05,
                                 codigoArquivo: getJsonField(
                                   FFAppState()
                                       .documentosPendentes
@@ -1004,7 +1216,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                 extensaoArquivo: 'pdf',
                               );
 
-                              if ((_model.doc4?.succeeded ?? true)) {
+                              if ((_model.doc05?.succeeded ?? true)) {
                                 await showDialog(
                                   context: context,
                                   builder: (alertDialogContext) {
@@ -1091,8 +1303,14 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if ((_model.file5 != null && _model.file5 != '') ||
-                          (_model.submetidoRecompra == true))
+                      if ((_model.file06 != null && _model.file06 != '') ||
+                          (_model.submetidoRecompra == true) ||
+                          ((String var1) {
+                            return var1 != "R";
+                          }(getJsonField(
+                            (_model.checkUploadArquivo?.jsonBody ?? ''),
+                            r'''$.dados[6].status_documento''',
+                          ).toString())))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -1143,13 +1361,13 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                               }
                             }
 
-                            _model.file5 = await actions.uploadedFileToBase64(
+                            _model.file06 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_uploadDataGf5,
                             );
-                            if (_model.file5 != null && _model.file5 != '') {
-                              _model.doc5 =
+                            if (_model.file06 != null && _model.file06 != '') {
+                              _model.doc06 =
                                   await FACConsigGroup.enviaDocumentoCall.call(
-                                arquivo: _model.file5,
+                                arquivo: _model.file06,
                                 codigoArquivo: getJsonField(
                                   FFAppState()
                                       .documentosPendentes
@@ -1162,7 +1380,7 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                                 extensaoArquivo: 'pdf',
                               );
 
-                              if ((_model.doc5?.succeeded ?? true)) {
+                              if ((_model.doc06?.succeeded ?? true)) {
                                 await showDialog(
                                   context: context,
                                   builder: (alertDialogContext) {
@@ -1201,14 +1419,15 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                   onPressed: () async {
                     Navigator.pop(context);
                   },
-                  text: 'Cancelar',
+                  text: 'Fechar',
                   options: FFButtonOptions(
+                    width: MediaQuery.sizeOf(context).width * 0.95,
                     height: 40.0,
                     padding:
                         EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                     iconPadding:
                         EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                    color: FlutterFlowTheme.of(context).error,
+                    color: FlutterFlowTheme.of(context).primary,
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                           font: GoogleFonts.interTight(
                             fontWeight: FlutterFlowTheme.of(context)

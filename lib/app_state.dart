@@ -93,6 +93,11 @@ class FFAppState extends ChangeNotifier {
       _uploadedRecompra =
           prefs.getBool('ff_uploadedRecompra') ?? _uploadedRecompra;
     });
+    _safeInit(() {
+      _uploadedAutorizacaoDesconto =
+          prefs.getBool('ff_uploadedAutorizacaoDesconto') ??
+              _uploadedAutorizacaoDesconto;
+    });
   }
 
   void update(VoidCallback callback) {
@@ -638,6 +643,13 @@ class FFAppState extends ChangeNotifier {
   set uploadedRecompra(bool value) {
     _uploadedRecompra = value;
     prefs.setBool('ff_uploadedRecompra', value);
+  }
+
+  bool _uploadedAutorizacaoDesconto = false;
+  bool get uploadedAutorizacaoDesconto => _uploadedAutorizacaoDesconto;
+  set uploadedAutorizacaoDesconto(bool value) {
+    _uploadedAutorizacaoDesconto = value;
+    prefs.setBool('ff_uploadedAutorizacaoDesconto', value);
   }
 }
 

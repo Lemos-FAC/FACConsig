@@ -20,6 +20,8 @@ class Card11OptionsModel extends FlutterFlowModel<Card11OptionsWidget> {
 
   bool? submetidoRecompra;
 
+  bool? submetidoAutorizacaoDesconto;
+
   ///  State fields for stateful widgets in this component.
 
   // Stores action output result for [Backend Call - API (documentosPendentes)] action in Card11Options widget.
@@ -50,30 +52,38 @@ class Card11OptionsModel extends FlutterFlowModel<Card11OptionsWidget> {
   String? file2;
   // Stores action output result for [Backend Call - API (enviaDocumento)] action in IconButton widget.
   ApiCallResponse? doc2;
+  bool isDataUploading_uploadDataFf8 = false;
+  FFUploadedFile uploadedLocalFile_uploadDataFf8 =
+      FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
+
+  // Stores action output result for [Custom Action - uploadedFileToBase64] action in IconButton widget.
+  String? file03;
+  // Stores action output result for [Backend Call - API (enviaDocumento)] action in IconButton widget.
+  ApiCallResponse? doc03;
   bool isDataUploading_uploadData64k = false;
   FFUploadedFile uploadedLocalFile_uploadData64k =
       FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
 
   // Stores action output result for [Custom Action - uploadedFileToBase64] action in IconButton widget.
-  String? file3;
+  String? file04;
   // Stores action output result for [Backend Call - API (enviaDocumento)] action in IconButton widget.
-  ApiCallResponse? doc3;
+  ApiCallResponse? doc04;
   bool isDataUploading_uploadData4yz = false;
   FFUploadedFile uploadedLocalFile_uploadData4yz =
       FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
 
   // Stores action output result for [Custom Action - uploadedFileToBase64] action in IconButton widget.
-  String? file4;
+  String? file05;
   // Stores action output result for [Backend Call - API (enviaDocumento)] action in IconButton widget.
-  ApiCallResponse? doc4;
+  ApiCallResponse? doc05;
   bool isDataUploading_uploadDataGf5 = false;
   FFUploadedFile uploadedLocalFile_uploadDataGf5 =
       FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
 
   // Stores action output result for [Custom Action - uploadedFileToBase64] action in IconButton widget.
-  String? file5;
+  String? file06;
   // Stores action output result for [Backend Call - API (enviaDocumento)] action in IconButton widget.
-  ApiCallResponse? doc5;
+  ApiCallResponse? doc06;
 
   @override
   void initState(BuildContext context) {

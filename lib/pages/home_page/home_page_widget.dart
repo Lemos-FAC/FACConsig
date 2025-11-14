@@ -190,7 +190,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
             _model.textController?.text = FFAppState().margemDisponivel;
           });
         } else {
-          FFAppState().margemDisponivel = 'R\$ 0,00';
+          FFAppState().margemDisponivel = '0,00';
           safeSetState(() {});
         }
 
@@ -245,8 +245,13 @@ class _HomePageWidgetState extends State<HomePageWidget>
             if (FFAppState().lembrarCPF == false) {
               FFAppState().storedCPF = '';
               FFAppState().storedSenha = '';
+              FFAppState().canLoad = true;
+              FFAppState().update(() {});
+            } else {
+              FFAppState().canLoad = false;
               FFAppState().update(() {});
             }
+
             GoRouter.of(context).prepareAuthEvent();
             await authManager.signOut();
             GoRouter.of(context).clearRedirectLocation();
@@ -264,8 +269,13 @@ class _HomePageWidgetState extends State<HomePageWidget>
               if (FFAppState().lembrarCPF == false) {
                 FFAppState().storedCPF = '';
                 FFAppState().storedSenha = '';
+                FFAppState().canLoad = true;
+                FFAppState().update(() {});
+              } else {
+                FFAppState().canLoad = false;
                 FFAppState().update(() {});
               }
+
               GoRouter.of(context).prepareAuthEvent();
               await authManager.signOut();
               GoRouter.of(context).clearRedirectLocation();

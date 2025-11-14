@@ -95,10 +95,33 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                 .toList()
                 .cast<dynamic>();
             safeSetState(() {});
+          } else {
+            await showDialog(
+              context: context,
+              builder: (alertDialogContext) {
+                return AlertDialog(
+                  title: Text('Atenção!'),
+                  content: Text(getJsonField(
+                    (_model.documentosPendentes?.jsonBody ?? ''),
+                    r'''$..message''',
+                  ).toString()),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(alertDialogContext),
+                      child: Text('Ok'),
+                    ),
+                  ],
+                );
+              },
+            );
           }
+
           FFAppState().isLoading = false;
           safeSetState(() {});
         }
+
+        FFAppState().isLoading = false;
+        safeSetState(() {});
       } else {
         await showDialog(
           context: context,
