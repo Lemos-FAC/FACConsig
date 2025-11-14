@@ -1,3 +1,4 @@
+import '/auth/custom_auth/auth_util.dart';
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
@@ -43,6 +44,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
       if (FFAppState().canLoad == true) {
         FFAppState().contratante = [];
         FFAppState().margemDisponivel = '';
+        safeSetState(() {});
+        _model.canTap = false;
+        safeSetState(() {});
+        FFAppState().isLoading = true;
         safeSetState(() {});
         _model.contratante = await DadosContratanteCall.call(
           cpf: FFAppState().cpf,
@@ -159,8 +164,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
           );
         }
 
-        FFAppState().isLoading = true;
-        safeSetState(() {});
         _model.home = await FACConsigGroup.simulaEmprestimoConsigCall.call(
           contratante: FFAppState().codigoContratante,
           tipoSimulacao: 'processaSimulacao',
@@ -187,29 +190,13 @@ class _HomePageWidgetState extends State<HomePageWidget>
             _model.textController?.text = FFAppState().margemDisponivel;
           });
         } else {
-          await showDialog(
-            context: context,
-            builder: (alertDialogContext) {
-              return AlertDialog(
-                title: Text('Atenção!'),
-                content: Text(getJsonField(
-                  (_model.home?.jsonBody ?? ''),
-                  r'''$.message''',
-                ).toString()),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(alertDialogContext),
-                    child: Text('Ok'),
-                  ),
-                ],
-              );
-            },
-          );
           FFAppState().margemDisponivel = 'R\$ 0,00';
           safeSetState(() {});
         }
 
         FFAppState().isLoading = false;
+        safeSetState(() {});
+        _model.canTap = true;
         safeSetState(() {});
       }
     });
@@ -253,6 +240,45 @@ class _HomePageWidgetState extends State<HomePageWidget>
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFF33B46E),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            if (FFAppState().lembrarCPF == false) {
+              FFAppState().storedCPF = '';
+              FFAppState().storedSenha = '';
+              FFAppState().update(() {});
+            }
+            GoRouter.of(context).prepareAuthEvent();
+            await authManager.signOut();
+            GoRouter.of(context).clearRedirectLocation();
+
+            context.goNamedAuth(LoginWidget.routeName, context.mounted);
+          },
+          backgroundColor: FlutterFlowTheme.of(context).primary,
+          elevation: 8.0,
+          child: InkWell(
+            splashColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: () async {
+              if (FFAppState().lembrarCPF == false) {
+                FFAppState().storedCPF = '';
+                FFAppState().storedSenha = '';
+                FFAppState().update(() {});
+              }
+              GoRouter.of(context).prepareAuthEvent();
+              await authManager.signOut();
+              GoRouter.of(context).clearRedirectLocation();
+
+              context.goNamedAuth(LoginWidget.routeName, context.mounted);
+            },
+            child: Icon(
+              Icons.logout,
+              color: FlutterFlowTheme.of(context).info,
+              size: 24.0,
+            ),
+          ),
+        ),
         body: SafeArea(
           top: true,
           child: Container(
@@ -265,7 +291,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
                   child: SafeArea(
                     child: Container(
                       width: double.infinity,
-                      height: 850.0,
                       decoration: BoxDecoration(
                         color: Color(0xFFE1E1E9),
                         borderRadius: BorderRadius.only(
@@ -274,6 +299,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                           topLeft: Radius.circular(50.0),
                           topRight: Radius.circular(50.0),
                         ),
+                        shape: BoxShape.rectangle,
                       ),
                       child: Container(
                         width: double.infinity,
@@ -611,9 +637,16 @@ class _HomePageWidgetState extends State<HomePageWidget>
                               alignment: AlignmentDirectional(0.0, 0.0),
                               child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    20.0, 80.0, 20.0, 0.0),
+                                    20.0, 0.0, 20.0, 0.0),
                                 child: GridView(
-                                  padding: EdgeInsets.zero,
+                                  padding: EdgeInsets.fromLTRB(
+                                    0,
+                                    0,
+                                    0,
+                                    MediaQuery.sizeOf(context).height == 824.0
+                                        ? 45.0
+                                        : 0.0,
+                                  ),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
@@ -622,6 +655,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                     childAspectRatio: 1.1,
                                   ),
                                   primary: false,
+                                  shrinkWrap: true,
                                   scrollDirection: Axis.vertical,
                                   children: [
                                     Column(
@@ -664,41 +698,91 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                if ((String var1) {
-                                                  return var1 ==
-                                                      "Contratante Já Possui uma Proposta em Aberto!";
-                                                }(getJsonField(
-                                                  (_model.home?.jsonBody ?? ''),
-                                                  r'''$.message''',
-                                                ).toString())) {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (alertDialogContext) {
-                                                      return AlertDialog(
-                                                        title: Text('Atenção!'),
-                                                        content:
-                                                            Text(getJsonField(
+                                                if (_model.canTap) {
+                                                  if ((String var1) {
+                                                    return var1 ==
+                                                        "Contratante Já Possui uma Proposta em Aberto!";
+                                                  }(getJsonField(
+                                                    (_model.home?.jsonBody ??
+                                                        ''),
+                                                    r'''$.message''',
+                                                  ).toString())) {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title:
+                                                              Text('Atenção!'),
+                                                          content:
+                                                              Text(getJsonField(
+                                                            (_model.home
+                                                                    ?.jsonBody ??
+                                                                ''),
+                                                            r'''$.message''',
+                                                          ).toString()),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: Text('Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  } else {
+                                                    if ((String var1,
+                                                            bool var2) {
+                                                      return var1.startsWith(
+                                                              '0') ||
+                                                          var1.isEmpty ||
+                                                          var2 == false;
+                                                    }(
+                                                        getJsonField(
                                                           (_model.home
                                                                   ?.jsonBody ??
                                                               ''),
-                                                          r'''$.message''',
-                                                        ).toString()),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: Text('Ok'),
-                                                          ),
-                                                        ],
+                                                          r'''$..valorEmprestimo''',
+                                                        ).toString(),
+                                                        getJsonField(
+                                                          (_model.home
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$..status''',
+                                                        ))) {
+                                                      await showDialog(
+                                                        context: context,
+                                                        builder:
+                                                            (alertDialogContext) {
+                                                          return AlertDialog(
+                                                            title: Text(
+                                                                'Atenção!'),
+                                                            content: Text(
+                                                                'Valor insuficiente para solicitar empréstimo!'),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        alertDialogContext),
+                                                                child:
+                                                                    Text('Ok'),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
                                                       );
-                                                    },
-                                                  );
-                                                } else {
-                                                  context.pushNamed(
-                                                      EmprestimoWidget
-                                                          .routeName);
+
+                                                      context.pushNamed(
+                                                          HomePageWidget
+                                                              .routeName);
+                                                    } else {
+                                                      context.pushNamed(
+                                                          EmprestimoWidget
+                                                              .routeName);
+                                                    }
+                                                  }
                                                 }
                                               },
                                               child: Column(
@@ -719,45 +803,91 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                         highlightColor:
                                                             Colors.transparent,
                                                         onTap: () async {
-                                                          if ((String var1) {
-                                                            return var1 ==
-                                                                "Contratante Já Possui uma Proposta em Aberto!";
-                                                          }(getJsonField(
-                                                            (_model.home
-                                                                    ?.jsonBody ??
-                                                                ''),
-                                                            r'''$.message''',
-                                                          ).toString())) {
-                                                            await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (alertDialogContext) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      'Atenção!'),
-                                                                  content: Text(
-                                                                      getJsonField(
+                                                          if (_model.canTap) {
+                                                            if ((String var1) {
+                                                              return var1 ==
+                                                                  "Contratante Já Possui uma Proposta em Aberto!";
+                                                            }(getJsonField(
+                                                              (_model.home
+                                                                      ?.jsonBody ??
+                                                                  ''),
+                                                              r'''$.message''',
+                                                            ).toString())) {
+                                                              await showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (alertDialogContext) {
+                                                                  return AlertDialog(
+                                                                    title: Text(
+                                                                        'Atenção!'),
+                                                                    content: Text(
+                                                                        getJsonField(
+                                                                      (_model.home
+                                                                              ?.jsonBody ??
+                                                                          ''),
+                                                                      r'''$.message''',
+                                                                    ).toString()),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.pop(alertDialogContext),
+                                                                        child: Text(
+                                                                            'Ok'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            } else {
+                                                              if ((String var1,
+                                                                      bool
+                                                                          var2) {
+                                                                return var1.startsWith(
+                                                                        '0') ||
+                                                                    var2 ==
+                                                                        false;
+                                                              }(
+                                                                  getJsonField(
                                                                     (_model.home
                                                                             ?.jsonBody ??
                                                                         ''),
-                                                                    r'''$.message''',
-                                                                  ).toString()),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
+                                                                    r'''$..valorEmprestimo''',
+                                                                  ).toString(),
+                                                                  getJsonField(
+                                                                    (_model.home
+                                                                            ?.jsonBody ??
+                                                                        ''),
+                                                                    r'''$..status''',
+                                                                  ))) {
+                                                                await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (alertDialogContext) {
+                                                                    return AlertDialog(
+                                                                      title: Text(
+                                                                          'Atenção!'),
+                                                                      content: Text(
+                                                                          'Valor insuficiente para solicitar empréstimo!'),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                          onPressed: () =>
                                                                               Navigator.pop(alertDialogContext),
-                                                                      child: Text(
-                                                                          'Ok'),
-                                                                    ),
-                                                                  ],
+                                                                          child:
+                                                                              Text('Ok'),
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
                                                                 );
-                                                              },
-                                                            );
-                                                          } else {
-                                                            context.pushNamed(
-                                                                EmprestimoWidget
-                                                                    .routeName);
+                                                              } else {
+                                                                context.pushNamed(
+                                                                    EmprestimoWidget
+                                                                        .routeName);
+                                                              }
+                                                            }
                                                           }
                                                         },
                                                         child: Container(
@@ -788,45 +918,89 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                     highlightColor:
                                                         Colors.transparent,
                                                     onTap: () async {
-                                                      if ((String var1) {
-                                                        return var1 ==
-                                                            "Contratante Já Possui uma Proposta em Aberto!";
-                                                      }(getJsonField(
-                                                        (_model.home
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.message''',
-                                                      ).toString())) {
-                                                        await showDialog(
-                                                          context: context,
-                                                          builder:
-                                                              (alertDialogContext) {
-                                                            return AlertDialog(
-                                                              title: Text(
-                                                                  'Atenção!'),
-                                                              content: Text(
-                                                                  getJsonField(
+                                                      if (_model.canTap) {
+                                                        if ((String var1) {
+                                                          return var1 ==
+                                                              "Contratante Já Possui uma Proposta em Aberto!";
+                                                        }(getJsonField(
+                                                          (_model.home
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$.message''',
+                                                        ).toString())) {
+                                                          await showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (alertDialogContext) {
+                                                              return AlertDialog(
+                                                                title: Text(
+                                                                    'Atenção!'),
+                                                                content: Text(
+                                                                    getJsonField(
+                                                                  (_model.home
+                                                                          ?.jsonBody ??
+                                                                      ''),
+                                                                  r'''$.message''',
+                                                                ).toString()),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.pop(
+                                                                            alertDialogContext),
+                                                                    child: Text(
+                                                                        'Ok'),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                        } else {
+                                                          if ((String var1,
+                                                                  bool var2) {
+                                                            return var1
+                                                                    .startsWith(
+                                                                        '0') ||
+                                                                var2 == false;
+                                                          }(
+                                                              getJsonField(
                                                                 (_model.home
                                                                         ?.jsonBody ??
                                                                     ''),
-                                                                r'''$.message''',
-                                                              ).toString()),
-                                                              actions: [
-                                                                TextButton(
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          alertDialogContext),
-                                                                  child: Text(
-                                                                      'Ok'),
-                                                                ),
-                                                              ],
+                                                                r'''$..valorEmprestimo''',
+                                                              ).toString(),
+                                                              getJsonField(
+                                                                (_model.home
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$..status''',
+                                                              ))) {
+                                                            await showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (alertDialogContext) {
+                                                                return AlertDialog(
+                                                                  title: Text(
+                                                                      'Atenção!'),
+                                                                  content: Text(
+                                                                      'Valor insuficiente para solicitar empréstimo!'),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.pop(alertDialogContext),
+                                                                      child: Text(
+                                                                          'Ok'),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
                                                             );
-                                                          },
-                                                        );
-                                                      } else {
-                                                        context.pushNamed(
-                                                            EmprestimoWidget
-                                                                .routeName);
+                                                          } else {
+                                                            context.pushNamed(
+                                                                EmprestimoWidget
+                                                                    .routeName);
+                                                          }
+                                                        }
                                                       }
                                                     },
                                                     child: Text(
@@ -1387,57 +1561,59 @@ class _HomePageWidgetState extends State<HomePageWidget>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.max,
                             children: [
                               Expanded(
                                 child: Container(
-                                  width: 355.0,
                                   decoration: BoxDecoration(),
-                                  child: RichText(
-                                    textScaler:
-                                        MediaQuery.of(context).textScaler,
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: 'Olá, ',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                font: GoogleFonts.inter(
-                                                  fontWeight:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .fontWeight,
-                                                  fontStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .fontStyle,
-                                                ),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                letterSpacing: 0.0,
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontStyle,
-                                              ),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0,
+                                        0.0,
+                                        valueOrDefault<double>(
+                                          () {
+                                            if (MediaQuery.sizeOf(context)
+                                                    .width >=
+                                                411.0) {
+                                              return 50.0;
+                                            } else if (MediaQuery.sizeOf(
+                                                        context)
+                                                    .width <=
+                                                390.0) {
+                                              return 40.0;
+                                            } else {
+                                              return 0.0;
+                                            }
+                                          }(),
+                                          0.0,
                                         ),
-                                        TextSpan(
-                                          text: valueOrDefault<String>(
-                                            FFAppState().nomContratante,
-                                            '-',
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                font: GoogleFonts.inter(
+                                        0.0),
+                                    child: RichText(
+                                      textScaler:
+                                          MediaQuery.of(context).textScaler,
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Olá, ',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  font: GoogleFonts.inter(
+                                                    fontWeight:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .fontWeight,
+                                                    fontStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .fontStyle,
+                                                  ),
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryBackground,
+                                                  letterSpacing: 0.0,
                                                   fontWeight:
                                                       FlutterFlowTheme.of(
                                                               context)
@@ -1449,40 +1625,64 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                letterSpacing: 0.0,
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontWeight,
+                                          ),
+                                          TextSpan(
+                                            text: valueOrDefault<String>(
+                                              FFAppState().nomContratante,
+                                              'DANIELE MARTINS ALCANTARA APRESENTAÇÃO FAC',
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  font: GoogleFonts.inter(
+                                                    fontWeight:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .fontWeight,
+                                                    fontStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .fontStyle,
+                                                  ),
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryBackground,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontWeight,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .fontStyle,
+                                                ),
+                                          )
+                                        ],
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              font: GoogleFonts.inter(
+                                                fontWeight: FontWeight.normal,
                                                 fontStyle:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .fontStyle,
                                               ),
-                                        )
-                                      ],
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            font: GoogleFonts.inter(
+                                              letterSpacing: 0.0,
                                               fontWeight: FontWeight.normal,
                                               fontStyle:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
                                                       .fontStyle,
                                             ),
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
+                                      ),
+                                      maxLines: 3,
                                     ),
-                                    maxLines: 3,
                                   ),
                                 ),
                               ),

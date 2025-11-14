@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/upload_data.dart';
 import '/custom_code/actions/index.dart' as actions;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'card11_options_model.dart';
@@ -31,6 +32,124 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => Card11OptionsModel());
+
+    // On component load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      _model.checkUploadArquivo =
+          await FACConsigGroup.documentosPendentesCall.call(
+        cpf: FFAppState().cpf,
+      );
+
+      if ((_model.checkUploadArquivo?.succeeded ?? true)) {
+        if ((getJsonField(
+                  (_model.checkUploadArquivo?.jsonBody ?? ''),
+                  r'''$.dados[0].nome_arquivo''',
+                ) !=
+                null) &&
+            ((String var1) {
+              return var1 != "";
+            }(getJsonField(
+              (_model.checkUploadArquivo?.jsonBody ?? ''),
+              r'''$.dados[0].nome_arquivo''',
+            ).toString()))) {
+          _model.submetidoIdentificacao = true;
+          safeSetState(() {});
+        } else {
+          _model.submetidoIdentificacao = false;
+          safeSetState(() {});
+        }
+
+        if ((getJsonField(
+                  (_model.checkUploadArquivo?.jsonBody ?? ''),
+                  r'''$.dados[1].nome_arquivo''',
+                ) !=
+                null) &&
+            ((String var1) {
+              return var1 != "";
+            }(getJsonField(
+              (_model.checkUploadArquivo?.jsonBody ?? ''),
+              r'''$.dados[1].nome_arquivo''',
+            ).toString()))) {
+          _model.submetidoComprovante = true;
+          safeSetState(() {});
+        } else {
+          _model.submetidoComprovante = false;
+          safeSetState(() {});
+        }
+
+        if ((getJsonField(
+                  (_model.checkUploadArquivo?.jsonBody ?? ''),
+                  r'''$.dados[2].nome_arquivo''',
+                ) !=
+                null) &&
+            ((String var1) {
+              return var1 != "";
+            }(getJsonField(
+              (_model.checkUploadArquivo?.jsonBody ?? ''),
+              r'''$.dados[2].nome_arquivo''',
+            ).toString()))) {
+          _model.submetidoPAD = true;
+          safeSetState(() {});
+        } else {
+          _model.submetidoPAD = false;
+          safeSetState(() {});
+        }
+
+        if ((getJsonField(
+                  (_model.checkUploadArquivo?.jsonBody ?? ''),
+                  r'''$.dados[3].nome_arquivo''',
+                ) !=
+                null) &&
+            ((String var1) {
+              return var1 != "";
+            }(getJsonField(
+              (_model.checkUploadArquivo?.jsonBody ?? ''),
+              r'''$.dados[3].nome_arquivo''',
+            ).toString()))) {
+          _model.submetidoContaBancaria = true;
+          safeSetState(() {});
+        } else {
+          _model.submetidoContaBancaria = false;
+          safeSetState(() {});
+        }
+
+        if ((getJsonField(
+                  (_model.checkUploadArquivo?.jsonBody ?? ''),
+                  r'''$.dados[4].nome_arquivo''',
+                ) !=
+                null) &&
+            ((String var1) {
+              return var1 != "";
+            }(getJsonField(
+              (_model.checkUploadArquivo?.jsonBody ?? ''),
+              r'''$.dados[4].nome_arquivo''',
+            ).toString()))) {
+          _model.submetidoContraCheque = true;
+          safeSetState(() {});
+        } else {
+          _model.submetidoContraCheque = false;
+          safeSetState(() {});
+        }
+
+        if ((getJsonField(
+                  (_model.checkUploadArquivo?.jsonBody ?? ''),
+                  r'''$.dados[5].nome_arquivo''',
+                ) !=
+                null) &&
+            ((String var1) {
+              return var1 != "";
+            }(getJsonField(
+              (_model.checkUploadArquivo?.jsonBody ?? ''),
+              r'''$.dados[5].nome_arquivo''',
+            ).toString()))) {
+          _model.submetidoRecompra = true;
+          safeSetState(() {});
+        } else {
+          _model.submetidoRecompra = false;
+          safeSetState(() {});
+        }
+      }
+    });
   }
 
   @override
@@ -161,7 +280,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if (FFAppState().uploadedIdentificacao == true)
+                      if ((_model.file0 != null && _model.file0 != '') ||
+                          (_model.submetidoIdentificacao == true))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -182,7 +302,6 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                           onPressed: () async {
                             final selectedFiles = await selectFiles(
-                              allowedExtensions: ['pdf'],
                               multiFile: false,
                             );
                             if (selectedFiles != null) {
@@ -216,59 +335,61 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             _model.file0 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_identificacao,
                             );
-                            _model.apiResultcqf =
-                                await FACConsigGroup.enviaDocumentoCall.call(
-                              arquivo: _model.file0,
-                              codigoArquivo: getJsonField(
-                                FFAppState().documentosPendentes.firstOrNull,
-                                r'''$..codigo_documento''',
-                              ),
-                              nomeArquivo: _model
-                                  .uploadedLocalFile_identificacao
-                                  .originalFilename,
-                              extensaoArquivo: 'png',
-                            );
+                            if (_model.file0 != null && _model.file0 != '') {
+                              _model.doc0 =
+                                  await FACConsigGroup.enviaDocumentoCall.call(
+                                arquivo: _model.file0,
+                                codigoArquivo: getJsonField(
+                                  FFAppState().documentosPendentes.firstOrNull,
+                                  r'''$..codigo_documento''',
+                                ),
+                                nomeArquivo: _model
+                                    .uploadedLocalFile_identificacao
+                                    .originalFilename,
+                                extensaoArquivo: 'png',
+                              );
 
-                            if ((_model.apiResultcqf?.succeeded ?? true)) {
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    content: Text(getJsonField(
-                                      (_model.apiResultcqf?.jsonBody ?? ''),
-                                      r'''$.message''',
-                                    ).toString()),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                              FFAppState().uploadedIdentificacao = true;
-                              safeSetState(() {});
-                            } else {
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    content: Text(getJsonField(
-                                      (_model.apiResultcqf?.jsonBody ?? ''),
-                                      r'''$.message''',
-                                    ).toString()),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+                              if ((_model.doc0?.succeeded ?? true)) {
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      content: Text(getJsonField(
+                                        (_model.doc0?.jsonBody ?? ''),
+                                        r'''$..message''',
+                                      ).toString()),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(alertDialogContext),
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                FFAppState().uploadedIdentificacao = true;
+                                safeSetState(() {});
+                              } else {
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      content: Text(getJsonField(
+                                        (_model.doc0?.jsonBody ?? ''),
+                                        r'''$..message''',
+                                      ).toString()),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(alertDialogContext),
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
                             }
 
                             safeSetState(() {});
@@ -336,7 +457,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if (FFAppState().uploadedComprovante == true)
+                      if ((_model.file1 != null && _model.file1 != '') ||
+                          (_model.submetidoComprovante == true))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -357,7 +479,6 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                           onPressed: () async {
                             final selectedFiles = await selectFiles(
-                              allowedExtensions: ['pdf'],
                               multiFile: false,
                             );
                             if (selectedFiles != null) {
@@ -393,40 +514,42 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             _model.file1 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_comprovanteResidencia,
                             );
-                            _model.doc1 =
-                                await FACConsigGroup.enviaDocumentoCall.call(
-                              arquivo: _model.file1,
-                              codigoArquivo: getJsonField(
-                                FFAppState()
-                                    .documentosPendentes
-                                    .elementAtOrNull(1),
-                                r'''$..codigo_documento''',
-                              ),
-                              nomeArquivo: _model
-                                  .uploadedLocalFile_comprovanteResidencia
-                                  .originalFilename,
-                              extensaoArquivo: 'pdf',
-                            );
-
-                            if ((_model.doc1?.succeeded ?? true)) {
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    content:
-                                        Text('Arquivo enviado com sucesso!'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                            if (_model.file1 != null && _model.file1 != '') {
+                              _model.doc1 =
+                                  await FACConsigGroup.enviaDocumentoCall.call(
+                                arquivo: _model.file1,
+                                codigoArquivo: getJsonField(
+                                  FFAppState()
+                                      .documentosPendentes
+                                      .elementAtOrNull(1),
+                                  r'''$..codigo_documento''',
+                                ),
+                                nomeArquivo: _model
+                                    .uploadedLocalFile_comprovanteResidencia
+                                    .originalFilename,
+                                extensaoArquivo: 'pdf',
                               );
-                              FFAppState().uploadedComprovante = true;
-                              safeSetState(() {});
+
+                              if ((_model.doc1?.succeeded ?? true)) {
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      content:
+                                          Text('Arquivo enviado com sucesso!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(alertDialogContext),
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                FFAppState().uploadedComprovante = true;
+                                safeSetState(() {});
+                              }
                             }
 
                             safeSetState(() {});
@@ -494,7 +617,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if (FFAppState().uploadedPAD == true)
+                      if ((_model.file2 != null && _model.file2 != '') ||
+                          (_model.submetidoPAD == true))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -515,7 +639,6 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                           onPressed: () async {
                             final selectedFiles = await selectFiles(
-                              allowedExtensions: ['pdf'],
                               multiFile: false,
                             );
                             if (selectedFiles != null) {
@@ -549,40 +672,42 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             _model.file2 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_uploadDataPhi,
                             );
-                            _model.doc2 =
-                                await FACConsigGroup.enviaDocumentoCall.call(
-                              arquivo: _model.file2,
-                              codigoArquivo: getJsonField(
-                                FFAppState()
-                                    .documentosPendentes
-                                    .elementAtOrNull(2),
-                                r'''$..codigo_documento''',
-                              ),
-                              nomeArquivo: _model
-                                  .uploadedLocalFile_uploadDataPhi
-                                  .originalFilename,
-                              extensaoArquivo: 'pdf',
-                            );
-
-                            if ((_model.doc2?.succeeded ?? true)) {
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    content:
-                                        Text('Arquivo enviado com sucesso!'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                            if (_model.file2 != null && _model.file2 != '') {
+                              _model.doc2 =
+                                  await FACConsigGroup.enviaDocumentoCall.call(
+                                arquivo: _model.file2,
+                                codigoArquivo: getJsonField(
+                                  FFAppState()
+                                      .documentosPendentes
+                                      .elementAtOrNull(2),
+                                  r'''$..codigo_documento''',
+                                ),
+                                nomeArquivo: _model
+                                    .uploadedLocalFile_uploadDataPhi
+                                    .originalFilename,
+                                extensaoArquivo: 'pdf',
                               );
-                              FFAppState().uploadedPAD = true;
-                              safeSetState(() {});
+
+                              if ((_model.doc2?.succeeded ?? true)) {
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      content:
+                                          Text('Arquivo enviado com sucesso!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(alertDialogContext),
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                FFAppState().uploadedPAD = true;
+                                safeSetState(() {});
+                              }
                             }
 
                             safeSetState(() {});
@@ -650,7 +775,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if (FFAppState().uploadedComprovanteBanco == true)
+                      if ((_model.file3 != null && _model.file3 != '') ||
+                          (_model.submetidoContaBancaria == true))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -671,7 +797,6 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                           onPressed: () async {
                             final selectedFiles = await selectFiles(
-                              allowedExtensions: ['pdf'],
                               multiFile: false,
                             );
                             if (selectedFiles != null) {
@@ -705,40 +830,42 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             _model.file3 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_uploadData64k,
                             );
-                            _model.doc3 =
-                                await FACConsigGroup.enviaDocumentoCall.call(
-                              arquivo: _model.file3,
-                              codigoArquivo: getJsonField(
-                                FFAppState()
-                                    .documentosPendentes
-                                    .elementAtOrNull(3),
-                                r'''$..codigo_documento''',
-                              ),
-                              nomeArquivo: _model
-                                  .uploadedLocalFile_uploadData64k
-                                  .originalFilename,
-                              extensaoArquivo: 'pdf',
-                            );
-
-                            if ((_model.doc3?.succeeded ?? true)) {
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    content:
-                                        Text('Arquivo enviado com sucesso!'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                            if (_model.file3 != null && _model.file3 != '') {
+                              _model.doc3 =
+                                  await FACConsigGroup.enviaDocumentoCall.call(
+                                arquivo: _model.file3,
+                                codigoArquivo: getJsonField(
+                                  FFAppState()
+                                      .documentosPendentes
+                                      .elementAtOrNull(3),
+                                  r'''$..codigo_documento''',
+                                ),
+                                nomeArquivo: _model
+                                    .uploadedLocalFile_uploadData64k
+                                    .originalFilename,
+                                extensaoArquivo: 'pdf',
                               );
-                              FFAppState().uploadedComprovanteBanco = true;
-                              safeSetState(() {});
+
+                              if ((_model.doc3?.succeeded ?? true)) {
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      content:
+                                          Text('Arquivo enviado com sucesso!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(alertDialogContext),
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                FFAppState().uploadedComprovanteBanco = true;
+                                safeSetState(() {});
+                              }
                             }
 
                             safeSetState(() {});
@@ -806,7 +933,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if (FFAppState().uploadedContraCheque == true)
+                      if ((_model.file4 != null && _model.file4 != '') ||
+                          (_model.submetidoContraCheque == true))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -827,7 +955,6 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                           onPressed: () async {
                             final selectedFiles = await selectFiles(
-                              allowedExtensions: ['pdf'],
                               multiFile: false,
                             );
                             if (selectedFiles != null) {
@@ -861,40 +988,42 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             _model.file4 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_uploadData4yz,
                             );
-                            _model.doc4 =
-                                await FACConsigGroup.enviaDocumentoCall.call(
-                              arquivo: _model.file4,
-                              codigoArquivo: getJsonField(
-                                FFAppState()
-                                    .documentosPendentes
-                                    .elementAtOrNull(4),
-                                r'''$..codigo_documento''',
-                              ),
-                              nomeArquivo: _model
-                                  .uploadedLocalFile_uploadData4yz
-                                  .originalFilename,
-                              extensaoArquivo: 'pdf',
-                            );
-
-                            if ((_model.doc4?.succeeded ?? true)) {
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    content:
-                                        Text('Arquivo enviado com sucesso!'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                            if (_model.file4 != null && _model.file4 != '') {
+                              _model.doc4 =
+                                  await FACConsigGroup.enviaDocumentoCall.call(
+                                arquivo: _model.file4,
+                                codigoArquivo: getJsonField(
+                                  FFAppState()
+                                      .documentosPendentes
+                                      .elementAtOrNull(4),
+                                  r'''$..codigo_documento''',
+                                ),
+                                nomeArquivo: _model
+                                    .uploadedLocalFile_uploadData4yz
+                                    .originalFilename,
+                                extensaoArquivo: 'pdf',
                               );
-                              FFAppState().uploadedContraCheque = true;
-                              safeSetState(() {});
+
+                              if ((_model.doc4?.succeeded ?? true)) {
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      content:
+                                          Text('Arquivo enviado com sucesso!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(alertDialogContext),
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                FFAppState().uploadedContraCheque = true;
+                                safeSetState(() {});
+                              }
                             }
 
                             safeSetState(() {});
@@ -962,7 +1091,8 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                         ),
                       ),
-                      if (FFAppState().uploadedRecompra == true)
+                      if ((_model.file5 != null && _model.file5 != '') ||
+                          (_model.submetidoRecompra == true))
                         Icon(
                           Icons.check,
                           color: FlutterFlowTheme.of(context).primary,
@@ -983,7 +1113,6 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                           ),
                           onPressed: () async {
                             final selectedFiles = await selectFiles(
-                              allowedExtensions: ['pdf'],
                               multiFile: false,
                             );
                             if (selectedFiles != null) {
@@ -1017,40 +1146,42 @@ class _Card11OptionsWidgetState extends State<Card11OptionsWidget> {
                             _model.file5 = await actions.uploadedFileToBase64(
                               _model.uploadedLocalFile_uploadDataGf5,
                             );
-                            _model.doc5 =
-                                await FACConsigGroup.enviaDocumentoCall.call(
-                              arquivo: _model.file5,
-                              codigoArquivo: getJsonField(
-                                FFAppState()
-                                    .documentosPendentes
-                                    .elementAtOrNull(5),
-                                r'''$..codigo_documento''',
-                              ),
-                              nomeArquivo: _model
-                                  .uploadedLocalFile_uploadDataGf5
-                                  .originalFilename,
-                              extensaoArquivo: 'pdf',
-                            );
-
-                            if ((_model.doc5?.succeeded ?? true)) {
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    content:
-                                        Text('Arquivo enviado com sucesso!'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                            if (_model.file5 != null && _model.file5 != '') {
+                              _model.doc5 =
+                                  await FACConsigGroup.enviaDocumentoCall.call(
+                                arquivo: _model.file5,
+                                codigoArquivo: getJsonField(
+                                  FFAppState()
+                                      .documentosPendentes
+                                      .elementAtOrNull(5),
+                                  r'''$..codigo_documento''',
+                                ),
+                                nomeArquivo: _model
+                                    .uploadedLocalFile_uploadDataGf5
+                                    .originalFilename,
+                                extensaoArquivo: 'pdf',
                               );
-                              FFAppState().uploadedRecompra = true;
-                              safeSetState(() {});
+
+                              if ((_model.doc5?.succeeded ?? true)) {
+                                await showDialog(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      content:
+                                          Text('Arquivo enviado com sucesso!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(alertDialogContext),
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                FFAppState().uploadedRecompra = true;
+                                safeSetState(() {});
+                              }
                             }
 
                             safeSetState(() {});

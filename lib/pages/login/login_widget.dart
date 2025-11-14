@@ -1103,7 +1103,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 Align(
                                   alignment: AlignmentDirectional(0.0, -0.5),
                                   child: Text(
-                                    'Entre com seu CFP e senha para continuar',
+                                    'Entre com seu CPF e senha para continuar',
                                     textAlign: TextAlign.center,
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium

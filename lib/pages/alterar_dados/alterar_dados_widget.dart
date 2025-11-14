@@ -2636,248 +2636,340 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                                             10.0, 0.0, 10.0, 0.0),
                                         child: FFButtonWidget(
                                           onPressed: () async {
-                                            _model.atualizaDados = true;
-                                            if (_model.formKey.currentState ==
-                                                    null ||
-                                                !_model.formKey.currentState!
-                                                    .validate()) {
-                                              safeSetState(() =>
-                                                  _model.atualizaDados = false);
-                                              return;
-                                            }
-                                            if (_model.atualizaDados!) {
-                                              _model.atualiza =
-                                                  await FACConsigGroup
-                                                      .atualizaDadosCall
-                                                      .call(
-                                                cep: _model
-                                                    .cepTextController.text,
-                                                endereco: _model
-                                                    .enderecoTextController
-                                                    .text,
-                                                bairro: _model
-                                                    .bairroTextController.text,
-                                                uf: _model.ufValue,
-                                                cidade: _model
-                                                    .cidadeTextController.text,
-                                                telefone: _model
-                                                    .telefoneTextController
-                                                    .text,
-                                                email: _model
-                                                    .emailTextController.text,
-                                                banco: _model.bancoValue,
-                                                agencia: _model
-                                                    .agenciaTextController.text,
-                                                conta: _model
-                                                    .contTextController.text,
-                                                tipoConta:
-                                                    _model.tipoContaValue,
-                                                dataNascimento: _model
-                                                    .dtaNascimentoTextController
-                                                    .text,
-                                                cpf: functions.stringTolnt(
-                                                    FFAppState().cpf),
-                                                matricula: functions
-                                                    .cleanAndConvertToInt(
-                                                        getJsonField(
-                                                  FFAppState()
-                                                      .contratante
-                                                      .firstOrNull,
-                                                  r'''$..Matricula''',
-                                                ).toString()),
-                                              );
-
-                                              if ((_model.atualiza?.succeeded ??
-                                                  true)) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                      getJsonField(
-                                                        (_model.atualiza
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$..message''',
-                                                      ).toString(),
-                                                      style: TextStyle(
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .primaryText,
-                                                      ),
-                                                    ),
-                                                    duration: Duration(
-                                                        milliseconds: 4000),
-                                                    backgroundColor:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .primary,
-                                                  ),
-                                                );
+                                            var confirmDialogResponse =
+                                                await showDialog<bool>(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title:
+                                                              Text('Atenção!'),
+                                                          content: Text(
+                                                              'Deseja realmente alterar seus dados?'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext,
+                                                                      false),
+                                                              child: Text(
+                                                                  'Cancel'),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext,
+                                                                      true),
+                                                              child: Text(
+                                                                  'Confirm'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    ) ??
+                                                    false;
+                                            if (confirmDialogResponse) {
+                                              _model.atualizaDados = true;
+                                              if (_model.formKey.currentState ==
+                                                      null ||
+                                                  !_model.formKey.currentState!
+                                                      .validate()) {
+                                                safeSetState(() => _model
+                                                    .atualizaDados = false);
+                                                return;
                                               }
-                                              _model.dadosAtualizados =
-                                                  await FACConsigGroup
-                                                      .dadosContratanteConsigCall
-                                                      .call(
-                                                cpf: FFAppState().cpf,
-                                              );
-
-                                              if ((_model.dadosAtualizados
-                                                      ?.succeeded ??
-                                                  true)) {
-                                                _model.dados = getJsonField(
-                                                  (_model.dadosAtualizados
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$.dados''',
-                                                  true,
-                                                )!
-                                                    .toList()
-                                                    .cast<dynamic>();
-                                                _model.atualizados =
-                                                    _model.dados
-                                                        .where((e) =>
-                                                            getJsonField(
-                                                              e,
-                                                              r'''$.Matricula''',
-                                                            ) ==
-                                                            getJsonField(
-                                                              FFAppState()
-                                                                  .contratante
-                                                                  .firstOrNull,
-                                                              r'''$.Matricula''',
-                                                            ))
-                                                        .toList()
-                                                        .cast<dynamic>();
-                                                safeSetState(() {});
-                                                _model.cep = getJsonField(
-                                                  _model
-                                                      .atualizados.firstOrNull,
-                                                  r'''$..Cep''',
-                                                ).toString();
-                                                _model.endereco = getJsonField(
-                                                  _model
-                                                      .atualizados.firstOrNull,
-                                                  r'''$..Endereco''',
-                                                ).toString();
-                                                _model.bairro = getJsonField(
-                                                  _model
-                                                      .atualizados.firstOrNull,
-                                                  r'''$..Bairro''',
-                                                ).toString();
-                                                _model.uf = getJsonField(
-                                                  _model
-                                                      .atualizados.firstOrNull,
-                                                  r'''$..UF''',
-                                                ).toString();
-                                                _model.cidade = getJsonField(
-                                                  _model
-                                                      .atualizados.firstOrNull,
-                                                  r'''$..Cidade''',
-                                                ).toString();
-                                                _model.tipoConta = getJsonField(
-                                                  _model
-                                                      .atualizados.firstOrNull,
-                                                  r'''$..TipoConta''',
-                                                ).toString();
-                                                safeSetState(() {});
-                                                safeSetState(() {
-                                                  _model.ufValueController
-                                                      ?.value = _model.uf;
-                                                });
-                                                safeSetState(() {
-                                                  _model
-                                                      .tipoContaValueController
-                                                      ?.value = _model.tipoConta;
-                                                });
-                                                safeSetState(() {
-                                                  _model.cidadeTextController
-                                                      ?.text = _model.cidade;
-                                                });
-                                                safeSetState(() {
-                                                  _model.cepTextController
-                                                      ?.text = _model.cep;
-                                                  _model.cepMask.updateMask(
-                                                    newValue: TextEditingValue(
-                                                      text: _model
-                                                          .cepTextController!
-                                                          .text,
-                                                    ),
-                                                  );
-                                                });
-                                                safeSetState(() {
-                                                  _model.bairroTextController
-                                                      ?.text = _model.bairro;
-                                                });
-                                                safeSetState(() {
-                                                  _model.enderecoTextController
-                                                      ?.text = _model.endereco;
-                                                });
-                                                safeSetState(() {
-                                                  _model.telefoneTextController
-                                                      ?.text = getJsonField(
-                                                    _model.atualizados
-                                                        .firstOrNull,
-                                                    r'''$..Telefone''',
-                                                  ).toString();
-                                                  _model.telefoneMask
-                                                      .updateMask(
-                                                    newValue: TextEditingValue(
-                                                      text: _model
-                                                          .telefoneTextController!
-                                                          .text,
-                                                    ),
-                                                  );
-                                                });
-                                                safeSetState(() {
-                                                  _model.emailTextController
-                                                      ?.text = getJsonField(
-                                                    _model.atualizados
-                                                        .firstOrNull,
-                                                    r'''$..Email''',
-                                                  ).toString();
-                                                });
-                                                safeSetState(() {
-                                                  _model
+                                              if (_model.atualizaDados!) {
+                                                _model.atualiza =
+                                                    await FACConsigGroup
+                                                        .atualizaDadosCall
+                                                        .call(
+                                                  cep: _model
+                                                      .cepTextController.text,
+                                                  endereco: _model
+                                                      .enderecoTextController
+                                                      .text,
+                                                  bairro: _model
+                                                      .bairroTextController
+                                                      .text,
+                                                  uf: _model.ufValue,
+                                                  cidade: _model
+                                                      .cidadeTextController
+                                                      .text,
+                                                  telefone: _model
+                                                      .telefoneTextController
+                                                      .text,
+                                                  email: _model
+                                                      .emailTextController.text,
+                                                  banco: _model.bancoValue,
+                                                  agencia: _model
+                                                      .agenciaTextController
+                                                      .text,
+                                                  conta: _model
+                                                      .contTextController.text,
+                                                  tipoConta:
+                                                      _model.tipoContaValue,
+                                                  dataNascimento: _model
                                                       .dtaNascimentoTextController
-                                                      ?.text = getJsonField(
-                                                    _model.atualizados
+                                                      .text,
+                                                  cpf: functions.stringTolnt(
+                                                      FFAppState().cpf),
+                                                  matricula: functions
+                                                      .cleanAndConvertToInt(
+                                                          getJsonField(
+                                                    FFAppState()
+                                                        .contratante
                                                         .firstOrNull,
-                                                    r'''$..DataNascimento''',
-                                                  ).toString();
-                                                  _model.dtaNascimentoMask
-                                                      .updateMask(
-                                                    newValue: TextEditingValue(
-                                                      text: _model
-                                                          .dtaNascimentoTextController!
-                                                          .text,
-                                                    ),
+                                                    r'''$..Matricula''',
+                                                  ).toString()),
+                                                );
+
+                                                if ((_model
+                                                        .atualiza?.succeeded ??
+                                                    true)) {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        content:
+                                                            Text(getJsonField(
+                                                          (_model.atualiza
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$.message''',
+                                                        ).toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: Text('Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
                                                   );
-                                                });
-                                                safeSetState(() {
-                                                  _model.bancoValueController
-                                                      ?.value = getJsonField(
+                                                } else {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        content:
+                                                            Text(getJsonField(
+                                                          (_model.atualiza
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$.message''',
+                                                        ).toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: Text('Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                }
+
+                                                _model.dadosAtualizados =
+                                                    await FACConsigGroup
+                                                        .dadosContratanteConsigCall
+                                                        .call(
+                                                  cpf: FFAppState().cpf,
+                                                );
+
+                                                if ((_model.dadosAtualizados
+                                                        ?.succeeded ??
+                                                    true)) {
+                                                  _model.dados = getJsonField(
+                                                    (_model.dadosAtualizados
+                                                            ?.jsonBody ??
+                                                        ''),
+                                                    r'''$.dados''',
+                                                    true,
+                                                  )!
+                                                      .toList()
+                                                      .cast<dynamic>();
+                                                  _model.atualizados =
+                                                      _model.dados
+                                                          .where((e) =>
+                                                              getJsonField(
+                                                                e,
+                                                                r'''$.Matricula''',
+                                                              ) ==
+                                                              getJsonField(
+                                                                FFAppState()
+                                                                    .contratante
+                                                                    .firstOrNull,
+                                                                r'''$.Matricula''',
+                                                              ))
+                                                          .toList()
+                                                          .cast<dynamic>();
+                                                  safeSetState(() {});
+                                                  _model.cep = getJsonField(
                                                     _model.atualizados
                                                         .firstOrNull,
-                                                    r'''$..Banco''',
+                                                    r'''$..Cep''',
                                                   ).toString();
-                                                });
-                                                safeSetState(() {
-                                                  _model.agenciaTextController
-                                                      ?.text = getJsonField(
+                                                  _model.endereco =
+                                                      getJsonField(
                                                     _model.atualizados
                                                         .firstOrNull,
-                                                    r'''$..Agencia''',
+                                                    r'''$..Endereco''',
                                                   ).toString();
-                                                });
-                                                safeSetState(() {
-                                                  _model.contTextController
-                                                      ?.text = getJsonField(
+                                                  _model.bairro = getJsonField(
                                                     _model.atualizados
                                                         .firstOrNull,
-                                                    r'''$..Conta''',
+                                                    r'''$..Bairro''',
                                                   ).toString();
-                                                });
+                                                  _model.uf = getJsonField(
+                                                    _model.atualizados
+                                                        .firstOrNull,
+                                                    r'''$..UF''',
+                                                  ).toString();
+                                                  _model.cidade = getJsonField(
+                                                    _model.atualizados
+                                                        .firstOrNull,
+                                                    r'''$..Cidade''',
+                                                  ).toString();
+                                                  _model.tipoConta =
+                                                      getJsonField(
+                                                    _model.atualizados
+                                                        .firstOrNull,
+                                                    r'''$..TipoConta''',
+                                                  ).toString();
+                                                  safeSetState(() {});
+                                                  safeSetState(() {
+                                                    _model.ufValueController
+                                                        ?.value = _model.uf;
+                                                  });
+                                                  safeSetState(() {
+                                                    _model.tipoContaValueController
+                                                            ?.value =
+                                                        _model.tipoConta;
+                                                  });
+                                                  safeSetState(() {
+                                                    _model.cidadeTextController
+                                                        ?.text = _model.cidade;
+                                                  });
+                                                  safeSetState(() {
+                                                    _model.cepTextController
+                                                        ?.text = _model.cep;
+                                                    _model.cepMask.updateMask(
+                                                      newValue:
+                                                          TextEditingValue(
+                                                        text: _model
+                                                            .cepTextController!
+                                                            .text,
+                                                      ),
+                                                    );
+                                                  });
+                                                  safeSetState(() {
+                                                    _model.bairroTextController
+                                                        ?.text = _model.bairro;
+                                                  });
+                                                  safeSetState(() {
+                                                    _model
+                                                        .enderecoTextController
+                                                        ?.text = _model.endereco;
+                                                  });
+                                                  safeSetState(() {
+                                                    _model
+                                                        .telefoneTextController
+                                                        ?.text = getJsonField(
+                                                      _model.atualizados
+                                                          .firstOrNull,
+                                                      r'''$..Telefone''',
+                                                    ).toString();
+                                                    _model.telefoneMask
+                                                        .updateMask(
+                                                      newValue:
+                                                          TextEditingValue(
+                                                        text: _model
+                                                            .telefoneTextController!
+                                                            .text,
+                                                      ),
+                                                    );
+                                                  });
+                                                  safeSetState(() {
+                                                    _model.emailTextController
+                                                        ?.text = getJsonField(
+                                                      _model.atualizados
+                                                          .firstOrNull,
+                                                      r'''$..Email''',
+                                                    ).toString();
+                                                  });
+                                                  safeSetState(() {
+                                                    _model
+                                                        .dtaNascimentoTextController
+                                                        ?.text = getJsonField(
+                                                      _model.atualizados
+                                                          .firstOrNull,
+                                                      r'''$..DataNascimento''',
+                                                    ).toString();
+                                                    _model.dtaNascimentoMask
+                                                        .updateMask(
+                                                      newValue:
+                                                          TextEditingValue(
+                                                        text: _model
+                                                            .dtaNascimentoTextController!
+                                                            .text,
+                                                      ),
+                                                    );
+                                                  });
+                                                  safeSetState(() {
+                                                    _model.bancoValueController
+                                                        ?.value = getJsonField(
+                                                      _model.atualizados
+                                                          .firstOrNull,
+                                                      r'''$..Banco''',
+                                                    ).toString();
+                                                  });
+                                                  safeSetState(() {
+                                                    _model.agenciaTextController
+                                                        ?.text = getJsonField(
+                                                      _model.atualizados
+                                                          .firstOrNull,
+                                                      r'''$..Agencia''',
+                                                    ).toString();
+                                                  });
+                                                  safeSetState(() {
+                                                    _model.contTextController
+                                                        ?.text = getJsonField(
+                                                      _model.atualizados
+                                                          .firstOrNull,
+                                                      r'''$..Conta''',
+                                                    ).toString();
+                                                  });
+                                                } else {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        content:
+                                                            Text(getJsonField(
+                                                          (_model.dadosAtualizados
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$.message''',
+                                                        ).toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: Text('Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                }
                                               }
                                             }
 

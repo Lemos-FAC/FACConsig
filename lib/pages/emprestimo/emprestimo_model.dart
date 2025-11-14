@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
   ///  Local state fields for this page.
 
-  DateTime? lastSliderRequestTime;
+  bool? canLoad;
 
   ///  State fields for stateful widgets in this page.
 
@@ -21,9 +21,11 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
   TextEditingController? totalTextController;
   String? Function(BuildContext, String?)? totalTextControllerValidator;
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in total widget.
-  ApiCallResponse? apiResultl9cCopyCopy;
+  ApiCallResponse? apiResultl9cCopyCopyCopy;
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in total widget.
-  ApiCallResponse? total2CopyCopy;
+  ApiCallResponse? total2CopyCopyCopy;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in Button widget.
+  ApiCallResponse? home2;
   // State field(s) for parcelas widget.
   String? parcelasValue;
   FormFieldController<String>? parcelasValueController;
@@ -36,7 +38,9 @@ class EmprestimoModel extends FlutterFlowModel<EmprestimoWidget> {
   TextEditingController? valorParcelaTextController;
   String? Function(BuildContext, String?)? valorParcelaTextControllerValidator;
   // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in valorParcela widget.
-  ApiCallResponse? apiResultrqrCopyCopy;
+  ApiCallResponse? apiResultrqrCopyCopyCopy;
+  // Stores action output result for [Backend Call - API (simulaEmprestimoConsig)] action in IconButton widget.
+  ApiCallResponse? home2Copy;
 
   @override
   void initState(BuildContext context) {

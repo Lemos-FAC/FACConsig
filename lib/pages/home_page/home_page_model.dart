@@ -16,7 +16,7 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
 
   String cpfContratante = '00.000.000-00';
 
-  bool valorVisivel = true;
+  bool canTap = true;
 
   ///  State fields for stateful widgets in this page.
 

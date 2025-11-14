@@ -52,45 +52,6 @@ class _ContaWidgetState extends State<ContaWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            if (FFAppState().lembrarCPF == false) {
-              FFAppState().storedCPF = '';
-              FFAppState().storedSenha = '';
-              FFAppState().update(() {});
-            }
-            GoRouter.of(context).prepareAuthEvent();
-            await authManager.signOut();
-            GoRouter.of(context).clearRedirectLocation();
-
-            context.goNamedAuth(LoginWidget.routeName, context.mounted);
-          },
-          backgroundColor: FlutterFlowTheme.of(context).primary,
-          elevation: 8.0,
-          child: InkWell(
-            splashColor: Colors.transparent,
-            focusColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: () async {
-              if (FFAppState().lembrarCPF == false) {
-                FFAppState().storedCPF = '';
-                FFAppState().storedSenha = '';
-                FFAppState().update(() {});
-              }
-              GoRouter.of(context).prepareAuthEvent();
-              await authManager.signOut();
-              GoRouter.of(context).clearRedirectLocation();
-
-              context.goNamedAuth(LoginWidget.routeName, context.mounted);
-            },
-            child: Icon(
-              Icons.logout,
-              color: FlutterFlowTheme.of(context).info,
-              size: 24.0,
-            ),
-          ),
-        ),
         appBar: AppBar(
           backgroundColor: FlutterFlowTheme.of(context).primary,
           automaticallyImplyLeading: false,
@@ -218,15 +179,12 @@ class _ContaWidgetState extends State<ContaWidget> {
                                           .fontStyle,
                                     ),
                               ),
-                              SizedBox(
-                                width: 350.0,
-                                child: Divider(
-                                  thickness: 2.0,
-                                  color: FlutterFlowTheme.of(context).alternate,
-                                ),
+                              Divider(
+                                thickness: 2.0,
+                                color: FlutterFlowTheme.of(context).alternate,
                               ),
                               Container(
-                                width: 350.0,
+                                width: MediaQuery.sizeOf(context).width * 0.8,
                                 height: 183.5,
                                 decoration: BoxDecoration(
                                   color: FlutterFlowTheme.of(context)
@@ -315,13 +273,10 @@ class _ContaWidgetState extends State<ContaWidget> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 300.0,
-                                      child: Divider(
-                                        thickness: 2.0,
-                                        color: FlutterFlowTheme.of(context)
-                                            .alternate,
-                                      ),
+                                    Divider(
+                                      thickness: 2.0,
+                                      color: FlutterFlowTheme.of(context)
+                                          .alternate,
                                     ),
                                     Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
@@ -394,13 +349,10 @@ class _ContaWidgetState extends State<ContaWidget> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 300.0,
-                                      child: Divider(
-                                        thickness: 2.0,
-                                        color: FlutterFlowTheme.of(context)
-                                            .alternate,
-                                      ),
+                                    Divider(
+                                      thickness: 2.0,
+                                      color: FlutterFlowTheme.of(context)
+                                          .alternate,
                                     ),
                                     Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
@@ -485,7 +437,7 @@ class _ContaWidgetState extends State<ContaWidget> {
                                 },
                                 text: 'Alterar Dados',
                                 options: FFButtonOptions(
-                                  width: 350.0,
+                                  width: MediaQuery.sizeOf(context).width * 0.8,
                                   height: 45.0,
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),
@@ -528,7 +480,7 @@ class _ContaWidgetState extends State<ContaWidget> {
                                               return AlertDialog(
                                                 title: Text('ATENÇÃO!'),
                                                 content: Text(
-                                                    'Deseja realmente continuar?'),
+                                                    'Deseja realmente excluir sua conta?'),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () =>
@@ -618,7 +570,7 @@ class _ContaWidgetState extends State<ContaWidget> {
                                 },
                                 text: 'Excluir Conta',
                                 options: FFButtonOptions(
-                                  width: 350.0,
+                                  width: MediaQuery.sizeOf(context).width * 0.8,
                                   height: 45.0,
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 16.0, 0.0),

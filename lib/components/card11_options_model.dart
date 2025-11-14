@@ -8,8 +8,22 @@ class Card11OptionsModel extends FlutterFlowModel<Card11OptionsWidget> {
 
   FFUploadedFile? documento;
 
+  bool? submetidoIdentificacao;
+
+  bool? submetidoComprovante;
+
+  bool? submetidoPAD;
+
+  bool? submetidoContaBancaria;
+
+  bool? submetidoContraCheque;
+
+  bool? submetidoRecompra;
+
   ///  State fields for stateful widgets in this component.
 
+  // Stores action output result for [Backend Call - API (documentosPendentes)] action in Card11Options widget.
+  ApiCallResponse? checkUploadArquivo;
   // State field(s) for Column widget.
   ScrollController? columnController;
   bool isDataUploading_identificacao = false;
@@ -19,7 +33,7 @@ class Card11OptionsModel extends FlutterFlowModel<Card11OptionsWidget> {
   // Stores action output result for [Custom Action - uploadedFileToBase64] action in IconButton widget.
   String? file0;
   // Stores action output result for [Backend Call - API (enviaDocumento)] action in IconButton widget.
-  ApiCallResponse? apiResultcqf;
+  ApiCallResponse? doc0;
   bool isDataUploading_comprovanteResidencia = false;
   FFUploadedFile uploadedLocalFile_comprovanteResidencia =
       FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
