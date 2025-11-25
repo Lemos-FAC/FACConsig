@@ -1,10 +1,10 @@
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'card11_options_widget.dart' show Card11OptionsWidget;
+import 'anexar_doc_widget.dart' show AnexarDocWidget;
 import 'package:flutter/material.dart';
 
-class Card11OptionsModel extends FlutterFlowModel<Card11OptionsWidget> {
-  ///  Local state fields for this component.
+class AnexarDocModel extends FlutterFlowModel<AnexarDocWidget> {
+  ///  Local state fields for this page.
 
   FFUploadedFile? documento;
 
@@ -22,9 +22,9 @@ class Card11OptionsModel extends FlutterFlowModel<Card11OptionsWidget> {
 
   bool? submetidoAutorizacaoDesconto;
 
-  ///  State fields for stateful widgets in this component.
+  ///  State fields for stateful widgets in this page.
 
-  // Stores action output result for [Backend Call - API (documentosPendentes)] action in Card11Options widget.
+  // Stores action output result for [Backend Call - API (documentosPendentes)] action in AnexarDoc widget.
   ApiCallResponse? checkUploadArquivo;
   // State field(s) for Column widget.
   ScrollController? columnController;

@@ -19,3 +19,5 @@ export '/pages/minhas_propostas/minhas_propostas_widget.dart'
 export '/pages/confirmar_emprestimo/confirmar_emprestimo_widget.dart'
     show ConfirmarEmprestimoWidget;
 export '/pages/pdf/pdf_widget.dart' show PdfWidget;
+export '/pages/videos/videos_widget.dart' show VideosWidget;
+export '/pages/anexar_doc/anexar_doc_widget.dart' show AnexarDocWidget;

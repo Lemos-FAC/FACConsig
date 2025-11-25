@@ -192,6 +192,16 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               ParamType.String,
             ),
           ),
+        ),
+        FFRoute(
+          name: VideosWidget.routeName,
+          path: VideosWidget.routePath,
+          builder: (context, params) => VideosWidget(),
+        ),
+        FFRoute(
+          name: AnexarDocWidget.routeName,
+          path: AnexarDocWidget.routePath,
+          builder: (context, params) => AnexarDocWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

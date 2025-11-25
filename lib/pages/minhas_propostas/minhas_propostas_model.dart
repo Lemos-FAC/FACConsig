@@ -1,5 +1,6 @@
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/index.dart';
 import 'minhas_propostas_widget.dart' show MinhasPropostasWidget;
 import 'package:flutter/material.dart';
 

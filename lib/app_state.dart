@@ -202,13 +202,6 @@ class FFAppState extends ChangeNotifier {
     _customSliderValue = value;
   }
 
-  DateTime? _lastSliderRequestTime =
-      DateTime.fromMillisecondsSinceEpoch(1760106300000);
-  DateTime? get lastSliderRequestTime => _lastSliderRequestTime;
-  set lastSliderRequestTime(DateTime? value) {
-    _lastSliderRequestTime = value;
-  }
-
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   set isLoading(bool value) {
@@ -650,6 +643,35 @@ class FFAppState extends ChangeNotifier {
   set uploadedAutorizacaoDesconto(bool value) {
     _uploadedAutorizacaoDesconto = value;
     prefs.setBool('ff_uploadedAutorizacaoDesconto', value);
+  }
+
+  List<VideoItemStruct> _videoList = [];
+  List<VideoItemStruct> get videoList => _videoList;
+  set videoList(List<VideoItemStruct> value) {
+    _videoList = value;
+  }
+
+  void addToVideoList(VideoItemStruct value) {
+    videoList.add(value);
+  }
+
+  void removeFromVideoList(VideoItemStruct value) {
+    videoList.remove(value);
+  }
+
+  void removeAtIndexFromVideoList(int index) {
+    videoList.removeAt(index);
+  }
+
+  void updateVideoListAtIndex(
+    int index,
+    VideoItemStruct Function(VideoItemStruct) updateFn,
+  ) {
+    videoList[index] = updateFn(_videoList[index]);
+  }
+
+  void insertAtIndexInVideoList(int index, VideoItemStruct value) {
+    videoList.insert(index, value);
   }
 }
 
