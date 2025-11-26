@@ -673,6 +673,12 @@ class FFAppState extends ChangeNotifier {
   void insertAtIndexInVideoList(int index, VideoItemStruct value) {
     videoList.insert(index, value);
   }
+
+  bool _docCanLoad = false;
+  bool get docCanLoad => _docCanLoad;
+  set docCanLoad(bool value) {
+    _docCanLoad = value;
+  }
 }
 
 void _safeInit(Function() initializeField) {

@@ -1,3 +1,4 @@
+import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'modal_widget.dart' show ModalWidget;
 import 'package:flutter/material.dart';
@@ -7,21 +8,22 @@ class ModalModel extends FlutterFlowModel<ModalWidget> {
 
   // State field(s) for Column widget.
   ScrollController? columnController;
-  bool isDataUploading_uploadData2f8 = false;
-  FFUploadedFile uploadedLocalFile_uploadData2f8 =
+  bool isDataUploading_arquivoMidea = false;
+  FFUploadedFile uploadedLocalFile_arquivoMidea =
       FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
 
-  bool isDataUploading_uploadDataCj8 = false;
-  FFUploadedFile uploadedLocalFile_uploadDataCj8 =
+  // Stores action output result for [Custom Action - uploadedFileToBase64] action in contentView_1 widget.
+  String? arquivoMideaProcessado;
+  // Stores action output result for [Backend Call - API (enviaDocumento)] action in contentView_1 widget.
+  ApiCallResponse? retornoAPIArquivoMidea;
+  bool isDataUploading_arquivo = false;
+  FFUploadedFile uploadedLocalFile_arquivo =
       FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
 
-  bool isDataUploading_uploadDataDoy = false;
-  FFUploadedFile uploadedLocalFile_uploadDataDoy =
-      FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
-
-  bool isDataUploading_uploadData4hh = false;
-  FFUploadedFile uploadedLocalFile_uploadData4hh =
-      FFUploadedFile(bytes: Uint8List.fromList([]), originalFilename: '');
+  // Stores action output result for [Custom Action - uploadedFileToBase64] action in contentView_1 widget.
+  String? arquivoProcessado;
+  // Stores action output result for [Backend Call - API (enviaDocumento)] action in contentView_1 widget.
+  ApiCallResponse? retornoAPIArquivo;
 
   @override
   void initState(BuildContext context) {

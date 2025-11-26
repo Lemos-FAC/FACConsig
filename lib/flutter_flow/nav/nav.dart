@@ -202,6 +202,16 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: AnexarDocWidget.routeName,
           path: AnexarDocWidget.routePath,
           builder: (context, params) => AnexarDocWidget(),
+        ),
+        FFRoute(
+          name: AnexarDocCopyWidget.routeName,
+          path: AnexarDocCopyWidget.routePath,
+          builder: (context, params) => AnexarDocCopyWidget(),
+        ),
+        FFRoute(
+          name: AnexarDocCopy2Widget.routeName,
+          path: AnexarDocCopy2Widget.routePath,
+          builder: (context, params) => AnexarDocCopy2Widget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

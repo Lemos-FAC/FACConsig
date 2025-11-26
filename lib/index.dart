@@ -21,3 +21,7 @@ export '/pages/confirmar_emprestimo/confirmar_emprestimo_widget.dart'
 export '/pages/pdf/pdf_widget.dart' show PdfWidget;
 export '/pages/videos/videos_widget.dart' show VideosWidget;
 export '/pages/anexar_doc/anexar_doc_widget.dart' show AnexarDocWidget;
+export '/pages/anexar_doc_copy/anexar_doc_copy_widget.dart'
+    show AnexarDocCopyWidget;
+export '/pages/anexar_doc_copy2/anexar_doc_copy2_widget.dart'
+    show AnexarDocCopy2Widget;

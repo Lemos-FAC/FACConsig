@@ -1,16 +1,25 @@
+import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/upload_data.dart';
+import '/custom_code/actions/index.dart' as actions;
+import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'modal_model.dart';
 export 'modal_model.dart';
 
 class ModalWidget extends StatefulWidget {
-  const ModalWidget({super.key});
+  const ModalWidget({
+    super.key,
+    required this.codigoDocumento,
+  });
+
+  final int? codigoDocumento;
 
   @override
   State<ModalWidget> createState() => _ModalWidgetState();
@@ -58,6 +67,11 @@ class _ModalWidgetState extends State<ModalWidget>
 
   @override
   void dispose() {
+    // On component dispose action.
+    () async {
+      _model.updatePage(() {});
+    }();
+
     _model.maybeDispose();
 
     super.dispose();
@@ -65,6 +79,8 @@ class _ModalWidgetState extends State<ModalWidget>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -147,9 +163,9 @@ class _ModalWidgetState extends State<ModalWidget>
                   children: [
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 4.0),
+                          EdgeInsetsDirectional.fromSTEB(4.5, 8.0, 4.5, 4.0),
                       child: Column(
-                        mainAxisSize: MainAxisSize.max,
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
@@ -195,7 +211,7 @@ class _ModalWidgetState extends State<ModalWidget>
                                         validateFileFormat(
                                             m.storagePath, context))) {
                                   safeSetState(() => _model
-                                      .isDataUploading_uploadData2f8 = true);
+                                      .isDataUploading_arquivoMidea = true);
                                   var selectedUploadedFiles =
                                       <FFUploadedFile>[];
 
@@ -213,13 +229,12 @@ class _ModalWidgetState extends State<ModalWidget>
                                             ))
                                         .toList();
                                   } finally {
-                                    _model.isDataUploading_uploadData2f8 =
-                                        false;
+                                    _model.isDataUploading_arquivoMidea = false;
                                   }
                                   if (selectedUploadedFiles.length ==
                                       selectedMedia.length) {
                                     safeSetState(() {
-                                      _model.uploadedLocalFile_uploadData2f8 =
+                                      _model.uploadedLocalFile_arquivoMidea =
                                           selectedUploadedFiles.first;
                                     });
                                   } else {
@@ -227,6 +242,79 @@ class _ModalWidgetState extends State<ModalWidget>
                                     return;
                                   }
                                 }
+
+                                _model.arquivoMideaProcessado =
+                                    await actions.uploadedFileToBase64(
+                                  _model.uploadedLocalFile_arquivoMidea,
+                                );
+                                if (_model.arquivoMideaProcessado != null &&
+                                    _model.arquivoMideaProcessado != '') {
+                                  _model.retornoAPIArquivoMidea =
+                                      await FACConsigGroup.enviaDocumentoCall
+                                          .call(
+                                    arquivo: _model.arquivoMideaProcessado,
+                                    codigoArquivo: widget.codigoDocumento,
+                                    nomeArquivo: _model
+                                        .uploadedLocalFile_arquivoMidea
+                                        .originalFilename,
+                                    extensaoArquivo: 'pdf',
+                                  );
+
+                                  if ((_model
+                                          .retornoAPIArquivoMidea?.succeeded ??
+                                      true)) {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (alertDialogContext) {
+                                        return AlertDialog(
+                                          content: Text(getJsonField(
+                                            (_model.retornoAPIArquivoMidea
+                                                    ?.jsonBody ??
+                                                ''),
+                                            r'''$..message''',
+                                          ).toString()),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                  alertDialogContext),
+                                              child: Text('Ok'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                    FFAppState().uploadedIdentificacao = true;
+                                    safeSetState(() {});
+
+                                    context
+                                        .pushNamed(AnexarDocWidget.routeName);
+
+                                    Navigator.pop(context);
+                                  } else {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (alertDialogContext) {
+                                        return AlertDialog(
+                                          content: Text(getJsonField(
+                                            (_model.retornoAPIArquivoMidea
+                                                    ?.jsonBody ??
+                                                ''),
+                                            r'''$..message''',
+                                          ).toString()),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                  alertDialogContext),
+                                              child: Text('Ok'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                }
+
+                                safeSetState(() {});
                               },
                               child: Container(
                                 width: double.infinity,
@@ -323,13 +411,11 @@ class _ModalWidgetState extends State<ModalWidget>
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
                                     final selectedFiles = await selectFiles(
-                                      allowedExtensions: ['pdf'],
                                       multiFile: false,
                                     );
                                     if (selectedFiles != null) {
-                                      safeSetState(() =>
-                                          _model.isDataUploading_uploadDataCj8 =
-                                              true);
+                                      safeSetState(() => _model
+                                          .isDataUploading_arquivo = true);
                                       var selectedUploadedFiles =
                                           <FFUploadedFile>[];
 
@@ -345,13 +431,12 @@ class _ModalWidgetState extends State<ModalWidget>
                                                 ))
                                             .toList();
                                       } finally {
-                                        _model.isDataUploading_uploadDataCj8 =
-                                            false;
+                                        _model.isDataUploading_arquivo = false;
                                       }
                                       if (selectedUploadedFiles.length ==
                                           selectedFiles.length) {
                                         safeSetState(() {
-                                          _model.uploadedLocalFile_uploadDataCj8 =
+                                          _model.uploadedLocalFile_arquivo =
                                               selectedUploadedFiles.first;
                                         });
                                       } else {
@@ -359,134 +444,83 @@ class _ModalWidgetState extends State<ModalWidget>
                                         return;
                                       }
                                     }
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          blurRadius: 0.0,
-                                          color: FlutterFlowTheme.of(context)
-                                              .alternate,
-                                          offset: Offset(
-                                            0.0,
-                                            1.0,
-                                          ),
-                                        )
-                                      ],
-                                      borderRadius: BorderRadius.circular(0.0),
-                                      shape: BoxShape.rectangle,
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 12.0, 16.0, 12.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Icon(
-                                            Icons.picture_as_pdf,
-                                            color: FlutterFlowTheme.of(context)
-                                                .primary,
-                                            size: 24.0,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                      12.0, 0.0, 0.0, 0.0),
-                                              child: Text(
-                                                'PDF',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .labelMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .labelMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .labelMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .labelMedium
-                                                                  .fontStyle,
-                                                        ),
-                                              ),
-                                            ),
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 18.0,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 1.0),
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    final selectedFiles = await selectFiles(
-                                      multiFile: false,
-                                    );
-                                    if (selectedFiles != null) {
-                                      safeSetState(() =>
-                                          _model.isDataUploading_uploadDataDoy =
-                                              true);
-                                      var selectedUploadedFiles =
-                                          <FFUploadedFile>[];
 
-                                      try {
-                                        selectedUploadedFiles = selectedFiles
-                                            .map((m) => FFUploadedFile(
-                                                  name: m.storagePath
-                                                      .split('/')
-                                                      .last,
-                                                  bytes: m.bytes,
-                                                  originalFilename:
-                                                      m.originalFilename,
-                                                ))
-                                            .toList();
-                                      } finally {
-                                        _model.isDataUploading_uploadDataDoy =
-                                            false;
-                                      }
-                                      if (selectedUploadedFiles.length ==
-                                          selectedFiles.length) {
-                                        safeSetState(() {
-                                          _model.uploadedLocalFile_uploadDataDoy =
-                                              selectedUploadedFiles.first;
-                                        });
-                                      } else {
+                                    _model.arquivoProcessado =
+                                        await actions.uploadedFileToBase64(
+                                      _model.uploadedLocalFile_arquivo,
+                                    );
+                                    if (_model.arquivoProcessado != null &&
+                                        _model.arquivoProcessado != '') {
+                                      _model.retornoAPIArquivo =
+                                          await FACConsigGroup
+                                              .enviaDocumentoCall
+                                              .call(
+                                        arquivo: _model.arquivoProcessado,
+                                        codigoArquivo: widget.codigoDocumento,
+                                        nomeArquivo: _model
+                                            .uploadedLocalFile_arquivo
+                                            .originalFilename,
+                                        extensaoArquivo: 'png',
+                                      );
+
+                                      if ((_model
+                                              .retornoAPIArquivo?.succeeded ??
+                                          true)) {
+                                        await showDialog(
+                                          context: context,
+                                          builder: (alertDialogContext) {
+                                            return AlertDialog(
+                                              content: Text(getJsonField(
+                                                (_model.retornoAPIArquivo
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$..message''',
+                                              ).toString()),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          alertDialogContext),
+                                                  child: Text('Ok'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                        FFAppState().uploadedIdentificacao =
+                                            true;
                                         safeSetState(() {});
-                                        return;
+
+                                        context.pushNamed(
+                                            AnexarDocWidget.routeName);
+
+                                        Navigator.pop(context);
+                                      } else {
+                                        await showDialog(
+                                          context: context,
+                                          builder: (alertDialogContext) {
+                                            return AlertDialog(
+                                              content: Text(getJsonField(
+                                                (_model.retornoAPIArquivo
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$..message''',
+                                              ).toString()),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          alertDialogContext),
+                                                  child: Text('Ok'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       }
                                     }
+
+                                    safeSetState(() {});
                                   },
                                   child: Container(
                                     width: double.infinity,
@@ -525,128 +559,7 @@ class _ModalWidgetState extends State<ModalWidget>
                                                   .fromSTEB(
                                                       12.0, 0.0, 0.0, 0.0),
                                               child: Text(
-                                                'Documento',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .labelMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .labelMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .labelMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .labelMedium
-                                                                  .fontStyle,
-                                                        ),
-                                              ),
-                                            ),
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 18.0,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 1.0),
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    final selectedMedia = await selectMedia(
-                                      multiImage: false,
-                                    );
-                                    if (selectedMedia != null &&
-                                        selectedMedia.every((m) =>
-                                            validateFileFormat(
-                                                m.storagePath, context))) {
-                                      safeSetState(() =>
-                                          _model.isDataUploading_uploadData4hh =
-                                              true);
-                                      var selectedUploadedFiles =
-                                          <FFUploadedFile>[];
-
-                                      try {
-                                        selectedUploadedFiles = selectedMedia
-                                            .map((m) => FFUploadedFile(
-                                                  name: m.storagePath
-                                                      .split('/')
-                                                      .last,
-                                                  bytes: m.bytes,
-                                                  height: m.dimensions?.height,
-                                                  width: m.dimensions?.width,
-                                                  blurHash: m.blurHash,
-                                                  originalFilename:
-                                                      m.originalFilename,
-                                                ))
-                                            .toList();
-                                      } finally {
-                                        _model.isDataUploading_uploadData4hh =
-                                            false;
-                                      }
-                                      if (selectedUploadedFiles.length ==
-                                          selectedMedia.length) {
-                                        safeSetState(() {
-                                          _model.uploadedLocalFile_uploadData4hh =
-                                              selectedUploadedFiles.first;
-                                        });
-                                      } else {
-                                        safeSetState(() {});
-                                        return;
-                                      }
-                                    }
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(0.0),
-                                      shape: BoxShape.rectangle,
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 12.0, 16.0, 12.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Icon(
-                                            Icons.camera_alt,
-                                            color: FlutterFlowTheme.of(context)
-                                                .primary,
-                                            size: 24.0,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                      12.0, 0.0, 0.0, 0.0),
-                                              child: Text(
-                                                'Tirar foto',
+                                                'PDF',
                                                 style:
                                                     FlutterFlowTheme.of(context)
                                                         .labelMedium

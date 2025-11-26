@@ -1,10 +1,9 @@
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/index.dart';
-import 'anexar_doc_widget.dart' show AnexarDocWidget;
+import 'anexar_doc_copy2_widget.dart' show AnexarDocCopy2Widget;
 import 'package:flutter/material.dart';
 
-class AnexarDocModel extends FlutterFlowModel<AnexarDocWidget> {
+class AnexarDocCopy2Model extends FlutterFlowModel<AnexarDocCopy2Widget> {
   ///  Local state fields for this page.
 
   FFUploadedFile? documento;
@@ -23,17 +22,9 @@ class AnexarDocModel extends FlutterFlowModel<AnexarDocWidget> {
 
   bool submetidoAutorizacaoDesconto = true;
 
-  List<dynamic> docs = [];
-  void addToDocs(dynamic item) => docs.add(item);
-  void removeFromDocs(dynamic item) => docs.remove(item);
-  void removeAtIndexFromDocs(int index) => docs.removeAt(index);
-  void insertAtIndexInDocs(int index, dynamic item) => docs.insert(index, item);
-  void updateDocsAtIndex(int index, Function(dynamic) updateFn) =>
-      docs[index] = updateFn(docs[index]);
-
   ///  State fields for stateful widgets in this page.
 
-  // Stores action output result for [Backend Call - API (documentosPendentes)] action in AnexarDoc widget.
+  // Stores action output result for [Backend Call - API (documentosPendentes)] action in AnexarDocCopy2 widget.
   ApiCallResponse? checkUploadArquivo;
   // State field(s) for Column widget.
   ScrollController? columnController;

@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import '/index.dart';
 import 'duvidas_widget.dart' show DuvidasWidget;
 import 'package:flutter/material.dart';
 
