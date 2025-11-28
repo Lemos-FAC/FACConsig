@@ -196,7 +196,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: VideosWidget.routeName,
           path: VideosWidget.routePath,
-          builder: (context, params) => VideosWidget(),
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Videos')
+              : VideosWidget(),
         ),
         FFRoute(
           name: AnexarDocWidget.routeName,

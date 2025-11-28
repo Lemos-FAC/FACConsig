@@ -148,6 +148,7 @@ class _NavBarPageState extends State<NavBarPage> {
       'HomePage': HomePageWidget(),
       'Mensagem': MensagemWidget(),
       'Conta': ContaWidget(),
+      'Videos': VideosWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
 
@@ -195,6 +196,14 @@ class _NavBarPageState extends State<NavBarPage> {
                 size: 24.0,
               ),
               label: 'Conta',
+              tooltip: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.videocam_sharp,
+                size: 24.0,
+              ),
+              label: 'Vídeos',
               tooltip: '',
             )
           ],

@@ -98,6 +98,11 @@ class FFAppState extends ChangeNotifier {
           prefs.getBool('ff_uploadedAutorizacaoDesconto') ??
               _uploadedAutorizacaoDesconto;
     });
+    _safeInit(() {
+      _videosAssistidos =
+          prefs.getStringList('ff_videosAssistidos')?.map(int.parse).toList() ??
+              _videosAssistidos;
+    });
   }
 
   void update(VoidCallback callback) {
@@ -645,7 +650,18 @@ class FFAppState extends ChangeNotifier {
     prefs.setBool('ff_uploadedAutorizacaoDesconto', value);
   }
 
-  List<VideoItemStruct> _videoList = [];
+  bool _docCanLoad = false;
+  bool get docCanLoad => _docCanLoad;
+  set docCanLoad(bool value) {
+    _docCanLoad = value;
+  }
+
+  List<VideoItemStruct> _videoList = [
+    VideoItemStruct.fromSerializableMap(jsonDecode(
+        '{\"url\":\"https://www.youtube.com/watch?v=_4kHxtiuML0\",\"nome\":\"teste\",\"id\":\"0\"}')),
+    VideoItemStruct.fromSerializableMap(jsonDecode(
+        '{\"url\":\"https://www.youtube.com/watch?v=PmExb0A9NVE\",\"nome\":\"Hello World\",\"id\":\"1\"}'))
+  ];
   List<VideoItemStruct> get videoList => _videoList;
   set videoList(List<VideoItemStruct> value) {
     _videoList = value;
@@ -674,10 +690,45 @@ class FFAppState extends ChangeNotifier {
     videoList.insert(index, value);
   }
 
-  bool _docCanLoad = false;
-  bool get docCanLoad => _docCanLoad;
-  set docCanLoad(bool value) {
-    _docCanLoad = value;
+  List<int> _videosAssistidos = [];
+  List<int> get videosAssistidos => _videosAssistidos;
+  set videosAssistidos(List<int> value) {
+    _videosAssistidos = value;
+    prefs.setStringList(
+        'ff_videosAssistidos', value.map((x) => x.toString()).toList());
+  }
+
+  void addToVideosAssistidos(int value) {
+    videosAssistidos.add(value);
+    prefs.setStringList('ff_videosAssistidos',
+        _videosAssistidos.map((x) => x.toString()).toList());
+  }
+
+  void removeFromVideosAssistidos(int value) {
+    videosAssistidos.remove(value);
+    prefs.setStringList('ff_videosAssistidos',
+        _videosAssistidos.map((x) => x.toString()).toList());
+  }
+
+  void removeAtIndexFromVideosAssistidos(int index) {
+    videosAssistidos.removeAt(index);
+    prefs.setStringList('ff_videosAssistidos',
+        _videosAssistidos.map((x) => x.toString()).toList());
+  }
+
+  void updateVideosAssistidosAtIndex(
+    int index,
+    int Function(int) updateFn,
+  ) {
+    videosAssistidos[index] = updateFn(_videosAssistidos[index]);
+    prefs.setStringList('ff_videosAssistidos',
+        _videosAssistidos.map((x) => x.toString()).toList());
+  }
+
+  void insertAtIndexInVideosAssistidos(int index, int value) {
+    videosAssistidos.insert(index, value);
+    prefs.setStringList('ff_videosAssistidos',
+        _videosAssistidos.map((x) => x.toString()).toList());
   }
 }
 
