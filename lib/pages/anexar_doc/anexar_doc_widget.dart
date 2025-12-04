@@ -281,48 +281,124 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
                                         borderRadius:
                                             BorderRadius.circular(8.0),
-                                        border: Border.all(
-                                          color: Color(0xFFE6E6E6),
-                                        ),
                                       ),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 8.0, 12.0, 8.0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Icon(
-                                              Icons.edit_document,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primary,
-                                              size: 32.0,
-                                            ),
-                                            Expanded(
-                                              child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        12.0, 0.0, 8.0, 0.0),
-                                                child: Column(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    12.0, 8.0, 12.0, 8.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Column(
                                                   mainAxisSize:
                                                       MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      getJsonField(
-                                                        docsPendentesItem,
-                                                        r'''$..nome_documento''',
-                                                      ).toString(),
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
+                                                    Align(
+                                                      alignment:
+                                                          AlignmentDirectional(
+                                                              0.0, 0.0),
+                                                      child: Container(
+                                                        width: 40.0,
+                                                        height: 40.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      40.0),
+                                                        ),
+                                                        child: Align(
+                                                          alignment:
+                                                              AlignmentDirectional(
+                                                                  0.0, 0.0),
+                                                          child: Text(
+                                                            docsPendentesIndex
+                                                                .toString(),
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  font:
+                                                                      GoogleFonts
+                                                                          .inter(
+                                                                    fontWeight: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .fontWeight,
+                                                                    fontStyle: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .fontStyle,
+                                                                  ),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .fontWeight,
+                                                                  fontStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .fontStyle,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Align(
+                                                      alignment:
+                                                          AlignmentDirectional(
+                                                              -0.84, 0.0),
+                                                      child: Container(
+                                                        width: 2.0,
+                                                        height:
+                                                            MediaQuery.sizeOf(
+                                                                        context)
+                                                                    .height *
+                                                                0.08,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(12.0, 0.0,
+                                                                8.0, 0.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          getJsonField(
+                                                            docsPendentesItem,
+                                                            r'''$..nome_documento''',
+                                                          ).toString(),
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
                                                               .bodyLarge
                                                               .override(
                                                                 font:
@@ -348,40 +424,14 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                                                     .bodyLarge
                                                                     .fontStyle,
                                                               ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                            if ((String var1) {
-                                              return var1 == "R";
-                                            }(getJsonField(
-                                              _model.docs
-                                                  .where((e) =>
-                                                      getJsonField(
-                                                        e,
-                                                        r'''$..codigo_documento''',
-                                                      ) ==
-                                                      getJsonField(
-                                                        docsPendentesItem,
-                                                        r'''$..codigo_documento''',
-                                                      ))
-                                                  .toList()
-                                                  .firstOrNull,
-                                              r'''$..status_documento''',
-                                            ).toString()))
-                                              Icon(
-                                                Icons.close,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .error,
-                                                size: 24.0,
-                                              ),
-                                            if ((String var1, String var2) {
-                                              return var1 == "E" &&
-                                                  var2 != "null";
-                                            }(
-                                                getJsonField(
+                                                if ((String var1) {
+                                                  return var1 == "R";
+                                                }(getJsonField(
                                                   _model.docs
                                                       .where((e) =>
                                                           getJsonField(
@@ -395,86 +445,119 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                                       .toList()
                                                       .firstOrNull,
                                                   r'''$..status_documento''',
-                                                ).toString(),
-                                                getJsonField(
-                                                  _model.docs
-                                                      .where((e) =>
-                                                          getJsonField(
-                                                            e,
-                                                            r'''$..codigo_documento''',
-                                                          ) ==
-                                                          getJsonField(
-                                                            docsPendentesItem,
-                                                            r'''$..codigo_documento''',
-                                                          ))
-                                                      .toList()
-                                                      .firstOrNull,
-                                                  r'''$..nome_arquivo''',
                                                 ).toString()))
-                                              Icon(
-                                                Icons.check,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
+                                                  Icon(
+                                                    Icons.close,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .error,
+                                                    size: 24.0,
+                                                  ),
+                                                if ((String var1, String var2) {
+                                                  return var1 == "E" &&
+                                                      var2 != "null";
+                                                }(
+                                                    getJsonField(
+                                                      _model.docs
+                                                          .where((e) =>
+                                                              getJsonField(
+                                                                e,
+                                                                r'''$..codigo_documento''',
+                                                              ) ==
+                                                              getJsonField(
+                                                                docsPendentesItem,
+                                                                r'''$..codigo_documento''',
+                                                              ))
+                                                          .toList()
+                                                          .firstOrNull,
+                                                      r'''$..status_documento''',
+                                                    ).toString(),
+                                                    getJsonField(
+                                                      _model.docs
+                                                          .where((e) =>
+                                                              getJsonField(
+                                                                e,
+                                                                r'''$..codigo_documento''',
+                                                              ) ==
+                                                              getJsonField(
+                                                                docsPendentesItem,
+                                                                r'''$..codigo_documento''',
+                                                              ))
+                                                          .toList()
+                                                          .firstOrNull,
+                                                      r'''$..nome_arquivo''',
+                                                    ).toString()))
+                                                  Icon(
+                                                    Icons.check,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
                                                         .primary,
-                                                size: 24.0,
-                                              ),
-                                            Builder(
-                                              builder: (context) =>
-                                                  FlutterFlowIconButton(
-                                                borderColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .alternate,
-                                                borderRadius: 8.0,
-                                                buttonSize: 40.0,
-                                                icon: Icon(
-                                                  Icons.upload,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primary,
-                                                  size: 24.0,
-                                                ),
-                                                onPressed: () async {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder: (dialogContext) {
-                                                      return Dialog(
-                                                        elevation: 0,
-                                                        insetPadding:
-                                                            EdgeInsets.zero,
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        alignment:
-                                                            AlignmentDirectional(
+                                                    size: 24.0,
+                                                  ),
+                                                Builder(
+                                                  builder: (context) =>
+                                                      FlutterFlowIconButton(
+                                                    borderColor:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .alternate,
+                                                    borderRadius: 8.0,
+                                                    buttonSize: 40.0,
+                                                    icon: Icon(
+                                                      Icons.upload,
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primary,
+                                                      size: 24.0,
+                                                    ),
+                                                    onPressed: () async {
+                                                      await showDialog(
+                                                        context: context,
+                                                        builder:
+                                                            (dialogContext) {
+                                                          return Dialog(
+                                                            elevation: 0,
+                                                            insetPadding:
+                                                                EdgeInsets.zero,
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .transparent,
+                                                            alignment: AlignmentDirectional(
                                                                     0.0, 0.0)
                                                                 .resolve(
                                                                     Directionality.of(
                                                                         context)),
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            FocusScope.of(
-                                                                    dialogContext)
-                                                                .unfocus();
-                                                            FocusManager
-                                                                .instance
-                                                                .primaryFocus
-                                                                ?.unfocus();
-                                                          },
-                                                          child: ModalWidget(
-                                                            codigoDocumento:
-                                                                getJsonField(
-                                                              docsPendentesItem,
-                                                              r'''$..codigo_documento''',
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                FocusScope.of(
+                                                                        dialogContext)
+                                                                    .unfocus();
+                                                                FocusManager
+                                                                    .instance
+                                                                    .primaryFocus
+                                                                    ?.unfocus();
+                                                              },
+                                                              child:
+                                                                  ModalWidget(
+                                                                codigoDocumento:
+                                                                    getJsonField(
+                                                                  docsPendentesItem,
+                                                                  r'''$..codigo_documento''',
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ),
+                                                          );
+                                                        },
                                                       );
                                                     },
-                                                  );
-                                                },
-                                              ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   );

@@ -214,6 +214,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: AnexarDocCopy2Widget.routeName,
           path: AnexarDocCopy2Widget.routePath,
           builder: (context, params) => AnexarDocCopy2Widget(),
+        ),
+        FFRoute(
+          name: ArquivosWidget.routeName,
+          path: ArquivosWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Arquivos')
+              : ArquivosWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

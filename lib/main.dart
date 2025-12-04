@@ -149,6 +149,7 @@ class _NavBarPageState extends State<NavBarPage> {
       'Mensagem': MensagemWidget(),
       'Conta': ContaWidget(),
       'Videos': VideosWidget(),
+      'Arquivos': ArquivosWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
 
@@ -204,6 +205,14 @@ class _NavBarPageState extends State<NavBarPage> {
                 size: 24.0,
               ),
               label: 'Vídeos',
+              tooltip: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home_outlined,
+                size: 24.0,
+              ),
+              label: 'Home',
               tooltip: '',
             )
           ],

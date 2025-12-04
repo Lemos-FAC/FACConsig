@@ -25,3 +25,4 @@ export '/pages/anexar_doc_copy/anexar_doc_copy_widget.dart'
     show AnexarDocCopyWidget;
 export '/pages/anexar_doc_copy2/anexar_doc_copy2_widget.dart'
     show AnexarDocCopy2Widget;
+export '/pages/arquivos/arquivos_widget.dart' show ArquivosWidget;
