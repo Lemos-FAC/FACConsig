@@ -44,6 +44,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
       if (FFAppState().canLoad == true) {
         FFAppState().contratante = [];
         FFAppState().margemDisponivel = '';
+        FFAppState().listaArquivos = [];
         safeSetState(() {});
         _model.canTap = false;
         safeSetState(() {});
@@ -254,6 +255,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                 FFAppState().update(() {});
               }
 
+              FFAppState().listaArquivos = [];
+              safeSetState(() {});
               GoRouter.of(context).prepareAuthEvent();
               await authManager.signOut();
               GoRouter.of(context).clearRedirectLocation();

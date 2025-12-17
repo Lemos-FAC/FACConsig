@@ -409,19 +409,14 @@ class EnviaDocumentoCall {
     int? codigoArquivo,
     String? nomeArquivo = '',
     String? extensaoArquivo = '',
+    dynamic listaArquivosJson,
   }) async {
     final baseUrl = FACConsigGroup.getBaseUrl();
 
+    final listaArquivos = _serializeJson(listaArquivosJson, true);
     final ffApiRequestBody = '''
 {
-  "arquivos": [
-    {
-      "arquivo": "${escapeStringForJson(arquivo)}",
-      "codigoArquivo": ${codigoArquivo},
-      "nomeArquivo": "${escapeStringForJson(nomeArquivo)}",
-      "extensaoArquivo": "${escapeStringForJson(extensaoArquivo)}"
-    }
-  ]
+  "arquivos": ${listaArquivos}
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'enviaDocumento',

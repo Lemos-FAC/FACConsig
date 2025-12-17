@@ -509,7 +509,8 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       ?.unfocus();
                                                 },
                                                 child: ModalWidget(
-                                                  codigoDocumento: getJsonField(
+                                                  codigoDocPendente:
+                                                      getJsonField(
                                                     FFAppState()
                                                         .documentosPendentes
                                                         .firstOrNull,
@@ -761,7 +762,8 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       ?.unfocus();
                                                 },
                                                 child: ModalWidget(
-                                                  codigoDocumento: getJsonField(
+                                                  codigoDocPendente:
+                                                      getJsonField(
                                                     FFAppState()
                                                         .documentosPendentes
                                                         .elementAtOrNull(1),
@@ -1012,7 +1014,8 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       ?.unfocus();
                                                 },
                                                 child: ModalWidget(
-                                                  codigoDocumento: getJsonField(
+                                                  codigoDocPendente:
+                                                      getJsonField(
                                                     FFAppState()
                                                         .documentosPendentes
                                                         .elementAtOrNull(2),
@@ -1265,7 +1268,8 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       ?.unfocus();
                                                 },
                                                 child: ModalWidget(
-                                                  codigoDocumento: getJsonField(
+                                                  codigoDocPendente:
+                                                      getJsonField(
                                                     FFAppState()
                                                         .documentosPendentes
                                                         .elementAtOrNull(3),
@@ -1518,7 +1522,8 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       ?.unfocus();
                                                 },
                                                 child: ModalWidget(
-                                                  codigoDocumento: getJsonField(
+                                                  codigoDocPendente:
+                                                      getJsonField(
                                                     FFAppState()
                                                         .documentosPendentes
                                                         .elementAtOrNull(4),
@@ -1770,7 +1775,8 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       ?.unfocus();
                                                 },
                                                 child: ModalWidget(
-                                                  codigoDocumento: getJsonField(
+                                                  codigoDocPendente:
+                                                      getJsonField(
                                                     FFAppState()
                                                         .documentosPendentes
                                                         .elementAtOrNull(5),
@@ -2022,7 +2028,8 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       ?.unfocus();
                                                 },
                                                 child: ModalWidget(
-                                                  codigoDocumento: getJsonField(
+                                                  codigoDocPendente:
+                                                      getJsonField(
                                                     FFAppState()
                                                         .documentosPendentes
                                                         .elementAtOrNull(6),

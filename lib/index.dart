@@ -26,3 +26,7 @@ export '/pages/anexar_doc_copy/anexar_doc_copy_widget.dart'
 export '/pages/anexar_doc_copy2/anexar_doc_copy2_widget.dart'
     show AnexarDocCopy2Widget;
 export '/pages/arquivos/arquivos_widget.dart' show ArquivosWidget;
+export '/camera/camera_widget.dart' show CameraWidget;
+export '/pages/exibir_p_d_f/exibir_p_d_f_widget.dart' show ExibirPDFWidget;
+export '/pages/exibir_galeria/exibir_galeria_widget.dart'
+    show ExibirGaleriaWidget;

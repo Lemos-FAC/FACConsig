@@ -169,3 +169,29 @@ String? aplicarMascara(
   }
   return resultado.toString();
 }
+
+int displayStepNumber(int index) {
+  return index + 1;
+}
+
+FFUploadedFile? base64toFile(String base64Img) {
+  final bytes = base64Decode(base64Img);
+  final file = FFUploadedFile(bytes: bytes);
+  return file;
+}
+
+bool containsAllRequiredCodes(
+  List<ItemArquivoStruct> submittedFiles,
+  List<int> requiredCodes,
+) {
+  final submittedCodesSet =
+      submittedFiles.map((item) => item.codigoArquivo).toSet();
+
+  // 2. Convert the required codes list to a Set
+  final requiredCodesSet = requiredCodes.toSet();
+
+  // 3. CORRECT CHECK: Use .containsAll() to verify if the submittedCodesSet
+  // contains every single element from the requiredCodesSet.
+  // This correctly performs the "Is SubSet Of" logic.
+  return submittedCodesSet.containsAll(requiredCodesSet);
+}

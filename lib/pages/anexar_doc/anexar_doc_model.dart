@@ -37,6 +37,14 @@ class AnexarDocModel extends FlutterFlowModel<AnexarDocWidget> {
   ApiCallResponse? checkUploadArquivo;
   // State field(s) for Column widget.
   ScrollController? columnController;
+  // Stores action output result for [Custom Action - montarCorpoJson] action in Button widget.
+  String? custom;
+  // Stores action output result for [Backend Call - API (enviaDocumento)] action in Button widget.
+  ApiCallResponse? enviaDocumento;
+  // Stores action output result for [Backend Call - API (documentosPendentes)] action in Button widget.
+  ApiCallResponse? checkUploadArquivo2;
+  // Stores action output result for [Custom Action - teste] action in Button widget.
+  String? teste;
 
   @override
   void initState(BuildContext context) {

@@ -196,9 +196,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: VideosWidget.routeName,
           path: VideosWidget.routePath,
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'Videos')
-              : VideosWidget(),
+          builder: (context, params) => VideosWidget(),
         ),
         FFRoute(
           name: AnexarDocWidget.routeName,
@@ -218,9 +216,47 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ArquivosWidget.routeName,
           path: ArquivosWidget.routePath,
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'Arquivos')
-              : ArquivosWidget(),
+          builder: (context, params) => ArquivosWidget(),
+        ),
+        FFRoute(
+          name: CameraWidget.routeName,
+          path: CameraWidget.routePath,
+          builder: (context, params) => CameraWidget(
+            codDocPendente: params.getParam(
+              'codDocPendente',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: ExibirPDFWidget.routeName,
+          path: ExibirPDFWidget.routePath,
+          builder: (context, params) => ExibirPDFWidget(
+            listaPDF: params.getParam<FFUploadedFile>(
+              'listaPDF',
+              ParamType.FFUploadedFile,
+              isList: true,
+            ),
+            codDoc: params.getParam(
+              'codDoc',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: ExibirGaleriaWidget.routeName,
+          path: ExibirGaleriaWidget.routePath,
+          builder: (context, params) => ExibirGaleriaWidget(
+            listaGaleria: params.getParam<FFUploadedFile>(
+              'listaGaleria',
+              ParamType.FFUploadedFile,
+              isList: true,
+            ),
+            codDoc: params.getParam(
+              'codDoc',
+              ParamType.int,
+            ),
+          ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

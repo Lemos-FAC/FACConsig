@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '/backend/schema/structs/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
-import 'dart:convert';
 
 class FFAppState extends ChangeNotifier {
   static FFAppState _instance = FFAppState._internal();
@@ -102,6 +101,21 @@ class FFAppState extends ChangeNotifier {
       _videosAssistidos =
           prefs.getStringList('ff_videosAssistidos')?.map(int.parse).toList() ??
               _videosAssistidos;
+    });
+    _safeInit(() {
+      _listaArquivos = prefs
+              .getStringList('ff_listaArquivos')
+              ?.map((x) {
+                try {
+                  return ItemArquivoStruct.fromSerializableMap(jsonDecode(x));
+                } catch (e) {
+                  print("Can't decode persisted data type. Error: $e.");
+                  return null;
+                }
+              })
+              .withoutNulls
+              .toList() ??
+          _listaArquivos;
     });
   }
 
@@ -729,6 +743,88 @@ class FFAppState extends ChangeNotifier {
     videosAssistidos.insert(index, value);
     prefs.setStringList('ff_videosAssistidos',
         _videosAssistidos.map((x) => x.toString()).toList());
+  }
+
+  bool _makePhoto = false;
+  bool get makePhoto => _makePhoto;
+  set makePhoto(bool value) {
+    _makePhoto = value;
+  }
+
+  String _fileBase64 = '';
+  String get fileBase64 => _fileBase64;
+  set fileBase64(String value) {
+    _fileBase64 = value;
+  }
+
+  List<ItemArquivoStruct> _listaArquivos = [];
+  List<ItemArquivoStruct> get listaArquivos => _listaArquivos;
+  set listaArquivos(List<ItemArquivoStruct> value) {
+    _listaArquivos = value;
+    prefs.setStringList(
+        'ff_listaArquivos', value.map((x) => x.serialize()).toList());
+  }
+
+  void addToListaArquivos(ItemArquivoStruct value) {
+    listaArquivos.add(value);
+    prefs.setStringList(
+        'ff_listaArquivos', _listaArquivos.map((x) => x.serialize()).toList());
+  }
+
+  void removeFromListaArquivos(ItemArquivoStruct value) {
+    listaArquivos.remove(value);
+    prefs.setStringList(
+        'ff_listaArquivos', _listaArquivos.map((x) => x.serialize()).toList());
+  }
+
+  void removeAtIndexFromListaArquivos(int index) {
+    listaArquivos.removeAt(index);
+    prefs.setStringList(
+        'ff_listaArquivos', _listaArquivos.map((x) => x.serialize()).toList());
+  }
+
+  void updateListaArquivosAtIndex(
+    int index,
+    ItemArquivoStruct Function(ItemArquivoStruct) updateFn,
+  ) {
+    listaArquivos[index] = updateFn(_listaArquivos[index]);
+    prefs.setStringList(
+        'ff_listaArquivos', _listaArquivos.map((x) => x.serialize()).toList());
+  }
+
+  void insertAtIndexInListaArquivos(int index, ItemArquivoStruct value) {
+    listaArquivos.insert(index, value);
+    prefs.setStringList(
+        'ff_listaArquivos', _listaArquivos.map((x) => x.serialize()).toList());
+  }
+
+  List<int> _arquivosObrigatorios = [];
+  List<int> get arquivosObrigatorios => _arquivosObrigatorios;
+  set arquivosObrigatorios(List<int> value) {
+    _arquivosObrigatorios = value;
+  }
+
+  void addToArquivosObrigatorios(int value) {
+    arquivosObrigatorios.add(value);
+  }
+
+  void removeFromArquivosObrigatorios(int value) {
+    arquivosObrigatorios.remove(value);
+  }
+
+  void removeAtIndexFromArquivosObrigatorios(int index) {
+    arquivosObrigatorios.removeAt(index);
+  }
+
+  void updateArquivosObrigatoriosAtIndex(
+    int index,
+    int Function(int) updateFn,
+  ) {
+    arquivosObrigatorios[index] = updateFn(_arquivosObrigatorios[index]);
+  }
+
+  void insertAtIndexInArquivosObrigatorios(int index, int value) {
+    arquivosObrigatorios.insert(index, value);
   }
 }
 

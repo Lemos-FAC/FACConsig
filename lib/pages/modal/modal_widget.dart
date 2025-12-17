@@ -1,25 +1,22 @@
-import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/upload_data.dart';
-import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'modal_model.dart';
 export 'modal_model.dart';
 
 class ModalWidget extends StatefulWidget {
   const ModalWidget({
     super.key,
-    required this.codigoDocumento,
+    required this.codigoDocPendente,
   });
 
-  final int? codigoDocumento;
+  final int? codigoDocPendente;
 
   @override
   State<ModalWidget> createState() => _ModalWidgetState();
@@ -79,8 +76,6 @@ class _ModalWidgetState extends State<ModalWidget>
 
   @override
   Widget build(BuildContext context) {
-    context.watch<FFAppState>();
-
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -200,18 +195,16 @@ class _ModalWidgetState extends State<ModalWidget>
                               hoverColor: Colors.transparent,
                               highlightColor: Colors.transparent,
                               onTap: () async {
-                                final selectedMedia =
-                                    await selectMediaWithSourceBottomSheet(
-                                  context: context,
-                                  allowPhoto: true,
-                                  allowVideo: true,
+                                final selectedMedia = await selectMedia(
+                                  mediaSource: MediaSource.photoGallery,
+                                  multiImage: true,
                                 );
                                 if (selectedMedia != null &&
                                     selectedMedia.every((m) =>
                                         validateFileFormat(
                                             m.storagePath, context))) {
                                   safeSetState(() => _model
-                                      .isDataUploading_arquivoMidea = true);
+                                      .isDataUploading_arquivoMidia = true);
                                   var selectedUploadedFiles =
                                       <FFUploadedFile>[];
 
@@ -229,13 +222,13 @@ class _ModalWidgetState extends State<ModalWidget>
                                             ))
                                         .toList();
                                   } finally {
-                                    _model.isDataUploading_arquivoMidea = false;
+                                    _model.isDataUploading_arquivoMidia = false;
                                   }
                                   if (selectedUploadedFiles.length ==
                                       selectedMedia.length) {
                                     safeSetState(() {
-                                      _model.uploadedLocalFile_arquivoMidea =
-                                          selectedUploadedFiles.first;
+                                      _model.uploadedLocalFiles_arquivoMidia =
+                                          selectedUploadedFiles;
                                     });
                                   } else {
                                     safeSetState(() {});
@@ -243,78 +236,20 @@ class _ModalWidgetState extends State<ModalWidget>
                                   }
                                 }
 
-                                _model.arquivoMideaProcessado =
-                                    await actions.uploadedFileToBase64(
-                                  _model.uploadedLocalFile_arquivoMidea,
+                                context.pushNamed(
+                                  ExibirGaleriaWidget.routeName,
+                                  queryParameters: {
+                                    'listaGaleria': serializeParam(
+                                      _model.uploadedLocalFiles_arquivoMidia,
+                                      ParamType.FFUploadedFile,
+                                      isList: true,
+                                    ),
+                                    'codDoc': serializeParam(
+                                      widget.codigoDocPendente,
+                                      ParamType.int,
+                                    ),
+                                  }.withoutNulls,
                                 );
-                                if (_model.arquivoMideaProcessado != null &&
-                                    _model.arquivoMideaProcessado != '') {
-                                  _model.retornoAPIArquivoMidea =
-                                      await FACConsigGroup.enviaDocumentoCall
-                                          .call(
-                                    arquivo: _model.arquivoMideaProcessado,
-                                    codigoArquivo: widget.codigoDocumento,
-                                    nomeArquivo: _model
-                                        .uploadedLocalFile_arquivoMidea
-                                        .originalFilename,
-                                    extensaoArquivo: 'pdf',
-                                  );
-
-                                  if ((_model
-                                          .retornoAPIArquivoMidea?.succeeded ??
-                                      true)) {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (alertDialogContext) {
-                                        return AlertDialog(
-                                          content: Text(getJsonField(
-                                            (_model.retornoAPIArquivoMidea
-                                                    ?.jsonBody ??
-                                                ''),
-                                            r'''$..message''',
-                                          ).toString()),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  alertDialogContext),
-                                              child: Text('Ok'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                    FFAppState().uploadedIdentificacao = true;
-                                    safeSetState(() {});
-
-                                    context
-                                        .pushNamed(AnexarDocWidget.routeName);
-
-                                    Navigator.pop(context);
-                                  } else {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (alertDialogContext) {
-                                        return AlertDialog(
-                                          content: Text(getJsonField(
-                                            (_model.retornoAPIArquivoMidea
-                                                    ?.jsonBody ??
-                                                ''),
-                                            r'''$..message''',
-                                          ).toString()),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  alertDialogContext),
-                                              child: Text('Ok'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                }
-
-                                safeSetState(() {});
                               },
                               child: Container(
                                 width: double.infinity,
@@ -353,7 +288,106 @@ class _ModalWidgetState extends State<ModalWidget>
                                               EdgeInsetsDirectional.fromSTEB(
                                                   12.0, 0.0, 0.0, 0.0),
                                           child: Text(
-                                            'Imagem/Vídeo',
+                                            'Imagem',
+                                            style: FlutterFlowTheme.of(context)
+                                                .labelMedium
+                                                .override(
+                                                  font: GoogleFonts.inter(
+                                                    fontWeight:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .labelMedium
+                                                            .fontWeight,
+                                                    fontStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .labelMedium
+                                                            .fontStyle,
+                                                  ),
+                                                  letterSpacing: 0.0,
+                                                  fontWeight:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelMedium
+                                                          .fontWeight,
+                                                  fontStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelMedium
+                                                          .fontStyle,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                        size: 18.0,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                0.0, 0.0, 0.0, 1.0),
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                context.pushNamed(
+                                  CameraWidget.routeName,
+                                  queryParameters: {
+                                    'codDocPendente': serializeParam(
+                                      widget.codigoDocPendente,
+                                      ParamType.int,
+                                    ),
+                                  }.withoutNulls,
+                                );
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 0.0,
+                                      color: FlutterFlowTheme.of(context)
+                                          .alternate,
+                                      offset: Offset(
+                                        0.0,
+                                        1.0,
+                                      ),
+                                    )
+                                  ],
+                                  borderRadius: BorderRadius.circular(0.0),
+                                  shape: BoxShape.rectangle,
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      24.0, 12.0, 16.0, 12.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Icon(
+                                        Icons.camera_alt,
+                                        color: FlutterFlowTheme.of(context)
+                                            .primary,
+                                        size: 24.0,
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  12.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                            'Câmera',
                                             style: FlutterFlowTheme.of(context)
                                                 .labelMedium
                                                 .override(
@@ -411,7 +445,8 @@ class _ModalWidgetState extends State<ModalWidget>
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
                                     final selectedFiles = await selectFiles(
-                                      multiFile: false,
+                                      allowedExtensions: ['pdf'],
+                                      multiFile: true,
                                     );
                                     if (selectedFiles != null) {
                                       safeSetState(() => _model
@@ -436,8 +471,8 @@ class _ModalWidgetState extends State<ModalWidget>
                                       if (selectedUploadedFiles.length ==
                                           selectedFiles.length) {
                                         safeSetState(() {
-                                          _model.uploadedLocalFile_arquivo =
-                                              selectedUploadedFiles.first;
+                                          _model.uploadedLocalFiles_arquivo =
+                                              selectedUploadedFiles;
                                         });
                                       } else {
                                         safeSetState(() {});
@@ -445,82 +480,20 @@ class _ModalWidgetState extends State<ModalWidget>
                                       }
                                     }
 
-                                    _model.arquivoProcessado =
-                                        await actions.uploadedFileToBase64(
-                                      _model.uploadedLocalFile_arquivo,
+                                    context.pushNamed(
+                                      ExibirPDFWidget.routeName,
+                                      queryParameters: {
+                                        'listaPDF': serializeParam(
+                                          _model.uploadedLocalFiles_arquivo,
+                                          ParamType.FFUploadedFile,
+                                          isList: true,
+                                        ),
+                                        'codDoc': serializeParam(
+                                          widget.codigoDocPendente,
+                                          ParamType.int,
+                                        ),
+                                      }.withoutNulls,
                                     );
-                                    if (_model.arquivoProcessado != null &&
-                                        _model.arquivoProcessado != '') {
-                                      _model.retornoAPIArquivo =
-                                          await FACConsigGroup
-                                              .enviaDocumentoCall
-                                              .call(
-                                        arquivo: _model.arquivoProcessado,
-                                        codigoArquivo: widget.codigoDocumento,
-                                        nomeArquivo: _model
-                                            .uploadedLocalFile_arquivo
-                                            .originalFilename,
-                                        extensaoArquivo: 'png',
-                                      );
-
-                                      if ((_model
-                                              .retornoAPIArquivo?.succeeded ??
-                                          true)) {
-                                        await showDialog(
-                                          context: context,
-                                          builder: (alertDialogContext) {
-                                            return AlertDialog(
-                                              content: Text(getJsonField(
-                                                (_model.retornoAPIArquivo
-                                                        ?.jsonBody ??
-                                                    ''),
-                                                r'''$..message''',
-                                              ).toString()),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          alertDialogContext),
-                                                  child: Text('Ok'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                        FFAppState().uploadedIdentificacao =
-                                            true;
-                                        safeSetState(() {});
-
-                                        context.pushNamed(
-                                            AnexarDocWidget.routeName);
-
-                                        Navigator.pop(context);
-                                      } else {
-                                        await showDialog(
-                                          context: context,
-                                          builder: (alertDialogContext) {
-                                            return AlertDialog(
-                                              content: Text(getJsonField(
-                                                (_model.retornoAPIArquivo
-                                                        ?.jsonBody ??
-                                                    ''),
-                                                r'''$..message''',
-                                              ).toString()),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          alertDialogContext),
-                                                  child: Text('Ok'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      }
-                                    }
-
-                                    safeSetState(() {});
                                   },
                                   child: Container(
                                     width: double.infinity,
