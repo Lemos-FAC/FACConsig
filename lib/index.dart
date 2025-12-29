@@ -19,7 +19,6 @@ export '/pages/minhas_propostas/minhas_propostas_widget.dart'
 export '/pages/confirmar_emprestimo/confirmar_emprestimo_widget.dart'
     show ConfirmarEmprestimoWidget;
 export '/pages/pdf/pdf_widget.dart' show PdfWidget;
-export '/pages/videos/videos_widget.dart' show VideosWidget;
 export '/pages/anexar_doc/anexar_doc_widget.dart' show AnexarDocWidget;
 export '/pages/anexar_doc_copy/anexar_doc_copy_widget.dart'
     show AnexarDocCopyWidget;
@@ -30,3 +29,5 @@ export '/camera/camera_widget.dart' show CameraWidget;
 export '/pages/exibir_p_d_f/exibir_p_d_f_widget.dart' show ExibirPDFWidget;
 export '/pages/exibir_galeria/exibir_galeria_widget.dart'
     show ExibirGaleriaWidget;
+export '/video/video_widget.dart' show VideoWidget;
+export '/pages/gravar_video/gravar_video_widget.dart' show GravarVideoWidget;

@@ -38,6 +38,7 @@ class _PrimeiroAcessoWidgetState extends State<PrimeiroAcessoWidget> {
     _model.dataNascimentoFocusNode ??= FocusNode();
 
     _model.dataNascimentoMask = MaskTextInputFormatter(mask: '##/##/####');
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

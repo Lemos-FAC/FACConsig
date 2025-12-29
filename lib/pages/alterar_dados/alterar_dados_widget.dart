@@ -15,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'alterar_dados_model.dart';
 export 'alterar_dados_model.dart';
 
@@ -239,6 +240,8 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
 
     _model.contTextController ??= TextEditingController();
     _model.contFocusNode ??= FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -1678,18 +1681,21 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                                                     context: context,
                                                     builder:
                                                         (alertDialogContext) {
-                                                      return AlertDialog(
-                                                        title: Text('Atenção!'),
-                                                        content: Text(
-                                                            'Email inválido!'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: Text('Ok'),
-                                                          ),
-                                                        ],
+                                                      return WebViewAware(
+                                                        child: AlertDialog(
+                                                          title:
+                                                              Text('Atenção!'),
+                                                          content: Text(
+                                                              'Email inválido!'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: Text('Ok'),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       );
                                                     },
                                                   );
@@ -2804,29 +2810,31 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                                                         context: context,
                                                         builder:
                                                             (alertDialogContext) {
-                                                          return AlertDialog(
-                                                            title: Text(
-                                                                'Atenção!'),
-                                                            content: Text(
-                                                                'Deseja realmente alterar seus dados?'),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.pop(
-                                                                        alertDialogContext,
-                                                                        false),
-                                                                child: Text(
-                                                                    'Cancel'),
-                                                              ),
-                                                              TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.pop(
-                                                                        alertDialogContext,
-                                                                        true),
-                                                                child: Text(
-                                                                    'Confirm'),
-                                                              ),
-                                                            ],
+                                                          return WebViewAware(
+                                                            child: AlertDialog(
+                                                              title: Text(
+                                                                  'Atenção!'),
+                                                              content: Text(
+                                                                  'Deseja realmente alterar seus dados?'),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          alertDialogContext,
+                                                                          false),
+                                                                  child: Text(
+                                                                      'Cancel'),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          alertDialogContext,
+                                                                          true),
+                                                                  child: Text(
+                                                                      'Confirm'),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           );
                                                         },
                                                       ) ??
@@ -2897,22 +2905,25 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                                                       context: context,
                                                       builder:
                                                           (alertDialogContext) {
-                                                        return AlertDialog(
-                                                          content:
-                                                              Text(getJsonField(
-                                                            (_model.atualiza
-                                                                    ?.jsonBody ??
-                                                                ''),
-                                                            r'''$.message''',
-                                                          ).toString()),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () =>
-                                                                  Navigator.pop(
-                                                                      alertDialogContext),
-                                                              child: Text('Ok'),
-                                                            ),
-                                                          ],
+                                                        return WebViewAware(
+                                                          child: AlertDialog(
+                                                            content: Text(
+                                                                getJsonField(
+                                                              (_model.atualiza
+                                                                      ?.jsonBody ??
+                                                                  ''),
+                                                              r'''$.message''',
+                                                            ).toString()),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        alertDialogContext),
+                                                                child:
+                                                                    Text('Ok'),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         );
                                                       },
                                                     );
@@ -2921,22 +2932,25 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                                                       context: context,
                                                       builder:
                                                           (alertDialogContext) {
-                                                        return AlertDialog(
-                                                          content:
-                                                              Text(getJsonField(
-                                                            (_model.atualiza
-                                                                    ?.jsonBody ??
-                                                                ''),
-                                                            r'''$.message''',
-                                                          ).toString()),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () =>
-                                                                  Navigator.pop(
-                                                                      alertDialogContext),
-                                                              child: Text('Ok'),
-                                                            ),
-                                                          ],
+                                                        return WebViewAware(
+                                                          child: AlertDialog(
+                                                            content: Text(
+                                                                getJsonField(
+                                                              (_model.atualiza
+                                                                      ?.jsonBody ??
+                                                                  ''),
+                                                              r'''$.message''',
+                                                            ).toString()),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        alertDialogContext),
+                                                                child:
+                                                                    Text('Ok'),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         );
                                                       },
                                                     );
@@ -3133,22 +3147,25 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                                                       context: context,
                                                       builder:
                                                           (alertDialogContext) {
-                                                        return AlertDialog(
-                                                          content:
-                                                              Text(getJsonField(
-                                                            (_model.dadosAtualizados
-                                                                    ?.jsonBody ??
-                                                                ''),
-                                                            r'''$.message''',
-                                                          ).toString()),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () =>
-                                                                  Navigator.pop(
-                                                                      alertDialogContext),
-                                                              child: Text('Ok'),
-                                                            ),
-                                                          ],
+                                                        return WebViewAware(
+                                                          child: AlertDialog(
+                                                            content: Text(
+                                                                getJsonField(
+                                                              (_model.dadosAtualizados
+                                                                      ?.jsonBody ??
+                                                                  ''),
+                                                              r'''$.message''',
+                                                            ).toString()),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        alertDialogContext),
+                                                                child:
+                                                                    Text('Ok'),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         );
                                                       },
                                                     );

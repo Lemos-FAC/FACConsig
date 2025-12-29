@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'minhas_propostas_model.dart';
 export 'minhas_propostas_model.dart';
 
@@ -56,18 +57,20 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
           await showDialog(
             context: context,
             builder: (alertDialogContext) {
-              return AlertDialog(
-                title: Text('Atenção!'),
-                content: Text(getJsonField(
-                  (_model.proposta?.jsonBody ?? ''),
-                  r'''$.message''',
-                ).toString()),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(alertDialogContext),
-                    child: Text('Ok'),
-                  ),
-                ],
+              return WebViewAware(
+                child: AlertDialog(
+                  title: Text('Atenção!'),
+                  content: Text(getJsonField(
+                    (_model.proposta?.jsonBody ?? ''),
+                    r'''$.message''',
+                  ).toString()),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(alertDialogContext),
+                      child: Text('Ok'),
+                    ),
+                  ],
+                ),
               );
             },
           );
@@ -99,18 +102,20 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
             await showDialog(
               context: context,
               builder: (alertDialogContext) {
-                return AlertDialog(
-                  title: Text('Atenção!'),
-                  content: Text(getJsonField(
-                    (_model.documentosPendentes?.jsonBody ?? ''),
-                    r'''$..message''',
-                  ).toString()),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(alertDialogContext),
-                      child: Text('Ok'),
-                    ),
-                  ],
+                return WebViewAware(
+                  child: AlertDialog(
+                    title: Text('Atenção!'),
+                    content: Text(getJsonField(
+                      (_model.documentosPendentes?.jsonBody ?? ''),
+                      r'''$..message''',
+                    ).toString()),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(alertDialogContext),
+                        child: Text('Ok'),
+                      ),
+                    ],
+                  ),
                 );
               },
             );
@@ -126,18 +131,20 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
         await showDialog(
           context: context,
           builder: (alertDialogContext) {
-            return AlertDialog(
-              title: Text('Atenção!'),
-              content: Text(getJsonField(
-                (_model.proposta?.jsonBody ?? ''),
-                r'''$.message''',
-              ).toString()),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(alertDialogContext),
-                  child: Text('Ok'),
-                ),
-              ],
+            return WebViewAware(
+              child: AlertDialog(
+                title: Text('Atenção!'),
+                content: Text(getJsonField(
+                  (_model.proposta?.jsonBody ?? ''),
+                  r'''$.message''',
+                ).toString()),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(alertDialogContext),
+                    child: Text('Ok'),
+                  ),
+                ],
+              ),
             );
           },
         );
@@ -146,6 +153,8 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
       FFAppState().isLoading = false;
       safeSetState(() {});
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -598,7 +607,17 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                     FFButtonWidget(
                                       onPressed: () async {
                                         context.pushNamed(
-                                            AnexarDocWidget.routeName);
+                                          AnexarDocWidget.routeName,
+                                          queryParameters: {
+                                            'codProposta': serializeParam(
+                                              getJsonField(
+                                                propostasItem,
+                                                r'''$.CodigoProposta''',
+                                              ),
+                                              ParamType.int,
+                                            ),
+                                          }.withoutNulls,
+                                        );
                                       },
                                       text: 'Anexar documentos',
                                       options: FFButtonOptions(

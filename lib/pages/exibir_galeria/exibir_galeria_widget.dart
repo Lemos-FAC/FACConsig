@@ -44,6 +44,8 @@ class _ExibirGaleriaWidgetState extends State<ExibirGaleriaWidget> {
           widget.listaGaleria!.toList().cast<FFUploadedFile>();
       safeSetState(() {});
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

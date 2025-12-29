@@ -195,3 +195,23 @@ bool containsAllRequiredCodes(
   // This correctly performs the "Is SubSet Of" logic.
   return submittedCodesSet.containsAll(requiredCodesSet);
 }
+
+List<dynamic> filterByStatus(
+  String searchTerm,
+  List<dynamic> jsonList,
+) {
+// If the search term is empty, return the original list
+  if (searchTerm.isEmpty) {
+    return jsonList;
+  }
+
+  return jsonList.where((item) {
+    // Treat 'item' as a Map so we can access keys using Strings
+    final mapItem = item as Map<String, dynamic>;
+
+    // Get the value and convert to string safely
+    final status = mapItem['StatusContrato']?.toString() ?? '';
+
+    return status.toLowerCase().contains(searchTerm.toLowerCase());
+  }).toList();
+}

@@ -60,6 +60,8 @@ class _ModalWidgetState extends State<ModalWidget>
           !anim.applyInitialState),
       this,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -151,6 +153,7 @@ class _ModalWidgetState extends State<ModalWidget>
                 borderRadius: BorderRadius.circular(16.0),
               ),
               child: SingleChildScrollView(
+                primary: false,
                 controller: _model.columnController,
                 child: Column(
                   mainAxisSize: MainAxisSize.max,

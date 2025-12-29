@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'anexar_doc_copy2_model.dart';
 export 'anexar_doc_copy2_model.dart';
 
@@ -165,6 +166,8 @@ class _AnexarDocCopy2WidgetState extends State<AnexarDocCopy2Widget> {
         }
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -368,21 +371,23 @@ class _AnexarDocCopy2WidgetState extends State<AnexarDocCopy2Widget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .firstOrNull,
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .firstOrNull,
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -515,21 +520,23 @@ class _AnexarDocCopy2WidgetState extends State<AnexarDocCopy2Widget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(1),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(1),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -662,21 +669,23 @@ class _AnexarDocCopy2WidgetState extends State<AnexarDocCopy2Widget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(2),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(2),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -809,21 +818,23 @@ class _AnexarDocCopy2WidgetState extends State<AnexarDocCopy2Widget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(3),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(3),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -956,21 +967,23 @@ class _AnexarDocCopy2WidgetState extends State<AnexarDocCopy2Widget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(4),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(4),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1103,21 +1116,23 @@ class _AnexarDocCopy2WidgetState extends State<AnexarDocCopy2Widget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(5),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(5),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1250,21 +1265,23 @@ class _AnexarDocCopy2WidgetState extends State<AnexarDocCopy2Widget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(6),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(6),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),

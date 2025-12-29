@@ -9,6 +9,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'conta_model.dart';
 export 'conta_model.dart';
 
@@ -31,6 +32,8 @@ class _ContaWidgetState extends State<ContaWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ContaModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -494,26 +497,29 @@ class _ContaWidgetState extends State<ContaWidget> {
                                         await showDialog<bool>(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  title: Text('ATENÇÃO!'),
-                                                  content: Text(
-                                                      'Deseja realmente excluir sua conta?'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext,
-                                                              false),
-                                                      child: Text('Cancelar'),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext,
-                                                              true),
-                                                      child: Text('Confirmar'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    title: Text('ATENÇÃO!'),
+                                                    content: Text(
+                                                        'Deseja realmente excluir sua conta?'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext,
+                                                                false),
+                                                        child: Text('Cancelar'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext,
+                                                                true),
+                                                        child:
+                                                            Text('Confirmar'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             ) ??

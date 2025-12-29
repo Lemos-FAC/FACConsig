@@ -18,6 +18,8 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
 
   bool canTap = true;
 
+  String? margemTotal;
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - API (DadosContratante)] action in HomePage widget.
@@ -26,11 +28,18 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   ApiCallResponse? home;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode;
-  TextEditingController? textController;
+  TextEditingController? textController1;
   late bool passwordVisibility;
-  String? Function(BuildContext, String?)? textControllerValidator;
+  String? Function(BuildContext, String?)? textController1Validator;
+  // State field(s) for margemTotal widget.
+  FocusNode? margemTotalFocusNode;
+  TextEditingController? margemTotalTextController;
+  late bool margemTotalVisibility;
+  String? Function(BuildContext, String?)? margemTotalTextControllerValidator;
   // State field(s) for Column widget.
   ScrollController? columnController;
+  // Stores action output result for [Backend Call - API (buscaNotificacoes)] action in RichText widget.
+  ApiCallResponse? notificacao;
   // State field(s) for DropDown widget.
   String? dropDownValue;
   FormFieldController<String>? dropDownValueController;
@@ -40,13 +49,17 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   @override
   void initState(BuildContext context) {
     passwordVisibility = false;
+    margemTotalVisibility = false;
     columnController = ScrollController();
   }
 
   @override
   void dispose() {
     textFieldFocusNode?.dispose();
-    textController?.dispose();
+    textController1?.dispose();
+
+    margemTotalFocusNode?.dispose();
+    margemTotalTextController?.dispose();
 
     columnController?.dispose();
   }

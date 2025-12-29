@@ -4,3 +4,4 @@ export 'faq_item_struct.dart';
 export 'user_struct.dart';
 export 'video_item_struct.dart';
 export 'item_arquivo_struct.dart';
+export 'item_prova_vida_struct.dart';

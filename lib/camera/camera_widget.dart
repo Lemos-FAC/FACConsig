@@ -47,6 +47,8 @@ class _CameraWidgetState extends State<CameraWidget> {
       FFAppState().makePhoto = false;
       safeSetState(() {});
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -311,6 +313,8 @@ class _CameraWidgetState extends State<CameraWidget> {
                     onPressed: () async {
                       _model.imageList = [];
                       safeSetState(() {});
+
+                      context.pushNamed(AnexarDocWidget.routeName);
                     },
                     text: 'Cancelar',
                     options: FFButtonOptions(

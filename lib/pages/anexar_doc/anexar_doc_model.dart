@@ -31,6 +31,8 @@ class AnexarDocModel extends FlutterFlowModel<AnexarDocWidget> {
   void updateDocsAtIndex(int index, Function(dynamic) updateFn) =>
       docs[index] = updateFn(docs[index]);
 
+  int? propostaCod;
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - API (documentosPendentes)] action in AnexarDoc widget.
@@ -39,7 +41,7 @@ class AnexarDocModel extends FlutterFlowModel<AnexarDocWidget> {
   ScrollController? columnController;
   // Stores action output result for [Custom Action - montarCorpoJson] action in Button widget.
   String? custom;
-  // Stores action output result for [Backend Call - API (enviaDocumento)] action in Button widget.
+  // Stores action output result for [Backend Call - API (atualizaMultiplosDocumentosCodigo)] action in Button widget.
   ApiCallResponse? enviaDocumento;
   // Stores action output result for [Backend Call - API (documentosPendentes)] action in Button widget.
   ApiCallResponse? checkUploadArquivo2;

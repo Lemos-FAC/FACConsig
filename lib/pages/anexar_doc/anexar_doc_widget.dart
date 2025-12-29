@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/pages/modal/modal_widget.dart';
+import '/pages/modal_prova_video/modal_prova_video_widget.dart';
 import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
@@ -11,11 +12,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'anexar_doc_model.dart';
 export 'anexar_doc_model.dart';
 
 class AnexarDocWidget extends StatefulWidget {
-  const AnexarDocWidget({super.key});
+  const AnexarDocWidget({
+    super.key,
+    this.codProposta,
+  });
+
+  final int? codProposta;
 
   static String routeName = 'AnexarDoc';
   static String routePath = '/anexarDoc';
@@ -36,6 +43,8 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      FFAppState().proposta = widget.codProposta!;
+      safeSetState(() {});
       _model.checkUploadArquivo =
           await FACConsigGroup.documentosPendentesCall.call(
         cpf: FFAppState().cpf,
@@ -194,6 +203,8 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
         }
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -448,7 +459,7 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                                                           .fontStyle,
                                                                     ),
                                                                     fontSize:
-                                                                        14.0,
+                                                                        12.0,
                                                                     letterSpacing:
                                                                         0.0,
                                                                     fontWeight: FlutterFlowTheme.of(
@@ -605,22 +616,25 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                                               .resolve(
                                                                   Directionality.of(
                                                                       context)),
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              FocusScope.of(
-                                                                      dialogContext)
-                                                                  .unfocus();
-                                                              FocusManager
-                                                                  .instance
-                                                                  .primaryFocus
-                                                                  ?.unfocus();
-                                                            },
-                                                            child: ModalWidget(
-                                                              codigoDocPendente:
-                                                                  getJsonField(
-                                                                docsPendentesItem,
-                                                                r'''$..codigo_documento''',
+                                                          child: WebViewAware(
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                FocusScope.of(
+                                                                        dialogContext)
+                                                                    .unfocus();
+                                                                FocusManager
+                                                                    .instance
+                                                                    .primaryFocus
+                                                                    ?.unfocus();
+                                                              },
+                                                              child:
+                                                                  ModalWidget(
+                                                                codigoDocPendente:
+                                                                    getJsonField(
+                                                                  docsPendentesItem,
+                                                                  r'''$..codigo_documento''',
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
@@ -649,299 +663,370 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        FFButtonWidget(
-                          onPressed: ((FFAppState().listaArquivos.isNotEmpty) ==
-                                  false)
-                              ? null
-                              : () async {
-                                  if (!functions.containsAllRequiredCodes(
-                                      FFAppState().listaArquivos.toList(),
-                                      FFAppState()
-                                          .arquivosObrigatorios
-                                          .toList())) {
-                                    _model.custom =
-                                        await actions.montarCorpoJson(
-                                      FFAppState()
-                                          .listaArquivos
-                                          .map((e) => e.toMap())
-                                          .toList(),
-                                    );
-                                    _model.enviaDocumento = await FACConsigGroup
-                                        .enviaDocumentoCall
-                                        .call(
-                                      listaArquivosJson: FFAppState()
-                                          .listaArquivos
-                                          .map((e) => e.toMap())
-                                          .toList(),
-                                    );
-
-                                    if ((_model.enviaDocumento?.succeeded ??
-                                        true)) {
-                                      await showDialog(
-                                        context: context,
-                                        builder: (alertDialogContext) {
-                                          return AlertDialog(
-                                            content: Text(getJsonField(
-                                              (_model.enviaDocumento
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$..message''',
-                                            ).toString()),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                    alertDialogContext),
-                                                child: Text('Ok'),
-                                              ),
-                                            ],
-                                          );
-                                        },
+                        Builder(
+                          builder: (context) => FFButtonWidget(
+                            onPressed: ((FFAppState()
+                                        .listaArquivos
+                                        .isNotEmpty) ==
+                                    false)
+                                ? null
+                                : () async {
+                                    if (functions.containsAllRequiredCodes(
+                                        FFAppState().listaArquivos.toList(),
+                                        FFAppState()
+                                            .arquivosObrigatorios
+                                            .toList())) {
+                                      _model.custom =
+                                          await actions.montarCorpoJson(
+                                        FFAppState()
+                                            .listaArquivos
+                                            .map((e) => e.toMap())
+                                            .toList(),
                                       );
-                                      _model.checkUploadArquivo2 =
-                                          await FACConsigGroup
-                                              .documentosPendentesCall
-                                              .call(
-                                        cpf: FFAppState().cpf,
+                                      _model.enviaDocumento = await FACConsigGroup
+                                          .atualizaMultiplosDocumentosCodigoCall
+                                          .call(
+                                        listaArquivosJson: FFAppState()
+                                            .listaArquivos
+                                            .map((e) => e.toMap())
+                                            .toList(),
                                       );
 
-                                      if ((_model
-                                              .checkUploadArquivo2?.succeeded ??
+                                      if ((_model.enviaDocumento?.succeeded ??
                                           true)) {
-                                        _model.docs = getJsonField(
-                                          (_model.checkUploadArquivo2
-                                                  ?.jsonBody ??
-                                              ''),
-                                          r'''$.dados''',
-                                          true,
-                                        )!
-                                            .toList()
-                                            .cast<dynamic>();
+                                        await showDialog(
+                                          context: context,
+                                          builder: (alertDialogContext) {
+                                            return WebViewAware(
+                                              child: AlertDialog(
+                                                content: Text(getJsonField(
+                                                  (_model.enviaDocumento
+                                                          ?.jsonBody ??
+                                                      ''),
+                                                  r'''$..message''',
+                                                ).toString()),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                            alertDialogContext),
+                                                    child: Text('Ok'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                        _model.checkUploadArquivo2 =
+                                            await FACConsigGroup
+                                                .documentosPendentesCall
+                                                .call(
+                                          cpf: FFAppState().cpf,
+                                        );
+
+                                        if ((_model.checkUploadArquivo2
+                                                ?.succeeded ??
+                                            true)) {
+                                          _model.docs = getJsonField(
+                                            (_model.checkUploadArquivo2
+                                                    ?.jsonBody ??
+                                                ''),
+                                            r'''$.dados''',
+                                            true,
+                                          )!
+                                              .toList()
+                                              .cast<dynamic>();
+                                          safeSetState(() {});
+                                          if ((String var1, String var2) {
+                                            return var1 != "null" ||
+                                                var2 == "E";
+                                          }(
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[0].nome_arquivo''',
+                                              ).toString(),
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[0].status_documento''',
+                                              ).toString())) {
+                                            _model.submetidoIdentificacao =
+                                                true;
+                                            safeSetState(() {});
+                                          } else {
+                                            _model.submetidoIdentificacao =
+                                                false;
+                                            safeSetState(() {});
+                                          }
+
+                                          if ((String var1, String var2) {
+                                            return var1 != "null" ||
+                                                var2 == "E";
+                                          }(
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[1].nome_arquivo''',
+                                              ).toString(),
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[1].status_documento''',
+                                              ).toString())) {
+                                            _model.submetidoComprovante = true;
+                                            safeSetState(() {});
+                                          } else {
+                                            _model.submetidoComprovante = false;
+                                            safeSetState(() {});
+                                          }
+
+                                          if ((String var1, String var2) {
+                                            return var1 != "null" ||
+                                                var2 == "E";
+                                          }(
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[2].nome_arquivo''',
+                                              ).toString(),
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[2].status_documento''',
+                                              ).toString())) {
+                                            _model.submetidoPAD = true;
+                                            safeSetState(() {});
+                                          } else {
+                                            _model.submetidoPAD = false;
+                                            safeSetState(() {});
+                                          }
+
+                                          if ((String var1, String var2) {
+                                            return var1 != "null" ||
+                                                var2 == "E";
+                                          }(
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[3].nome_arquivo''',
+                                              ).toString(),
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[3].status_documento''',
+                                              ).toString())) {
+                                            _model.submetidoAutorizacaoDesconto =
+                                                true;
+                                            safeSetState(() {});
+                                          } else {
+                                            _model.submetidoAutorizacaoDesconto =
+                                                false;
+                                            safeSetState(() {});
+                                          }
+
+                                          if ((String var1, String var2) {
+                                            return var1 != "null" ||
+                                                var2 == "E";
+                                          }(
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[4].nome_arquivo''',
+                                              ).toString(),
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[4].status_documento''',
+                                              ).toString())) {
+                                            _model.submetidoContaBancaria =
+                                                true;
+                                            safeSetState(() {});
+                                          } else {
+                                            _model.submetidoContaBancaria =
+                                                false;
+                                            safeSetState(() {});
+                                          }
+
+                                          if ((String var1, String var2) {
+                                            return var1 != "null" ||
+                                                var2 == "E";
+                                          }(
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[5].nome_arquivo''',
+                                              ).toString(),
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[5].status_documento''',
+                                              ).toString())) {
+                                            _model.submetidoContraCheque = true;
+                                            safeSetState(() {});
+                                          } else {
+                                            _model.submetidoContraCheque =
+                                                false;
+                                            safeSetState(() {});
+                                          }
+
+                                          if ((String var1, String var2) {
+                                            return var1 != "null" ||
+                                                var2 == "E";
+                                          }(
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[6].nome_arquivo''',
+                                              ).toString(),
+                                              getJsonField(
+                                                (_model.checkUploadArquivo2
+                                                        ?.jsonBody ??
+                                                    ''),
+                                                r'''$.dados[6].status_documento''',
+                                              ).toString())) {
+                                            _model.submetidoRecompra = true;
+                                            safeSetState(() {});
+                                          } else {
+                                            _model.submetidoRecompra = false;
+                                            safeSetState(() {});
+                                          }
+
+                                          await showDialog(
+                                            context: context,
+                                            builder: (dialogContext) {
+                                              return Dialog(
+                                                elevation: 0,
+                                                insetPadding: EdgeInsets.zero,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                alignment: AlignmentDirectional(
+                                                        0.0, 0.0)
+                                                    .resolve(Directionality.of(
+                                                        context)),
+                                                child: WebViewAware(
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      FocusScope.of(
+                                                              dialogContext)
+                                                          .unfocus();
+                                                      FocusManager
+                                                          .instance.primaryFocus
+                                                          ?.unfocus();
+                                                    },
+                                                    child: Container(
+                                                      height: MediaQuery.sizeOf(
+                                                                  context)
+                                                              .height *
+                                                          0.3,
+                                                      child:
+                                                          ModalProvaVideoWidget(
+                                                        proposta: FFAppState()
+                                                            .proposta,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }
+                                        FFAppState().proposta = 0;
                                         safeSetState(() {});
-                                        if ((String var1, String var2) {
-                                          return var1 != "null" ||
-                                              var2 == "E";
-                                        }(
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[0].nome_arquivo''',
-                                            ).toString(),
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[0].status_documento''',
-                                            ).toString())) {
-                                          _model.submetidoIdentificacao = true;
-                                          safeSetState(() {});
-                                        } else {
-                                          _model.submetidoIdentificacao = false;
-                                          safeSetState(() {});
-                                        }
-
-                                        if ((String var1, String var2) {
-                                          return var1 != "null" ||
-                                              var2 == "E";
-                                        }(
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[1].nome_arquivo''',
-                                            ).toString(),
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[1].status_documento''',
-                                            ).toString())) {
-                                          _model.submetidoComprovante = true;
-                                          safeSetState(() {});
-                                        } else {
-                                          _model.submetidoComprovante = false;
-                                          safeSetState(() {});
-                                        }
-
-                                        if ((String var1, String var2) {
-                                          return var1 != "null" ||
-                                              var2 == "E";
-                                        }(
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[2].nome_arquivo''',
-                                            ).toString(),
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[2].status_documento''',
-                                            ).toString())) {
-                                          _model.submetidoPAD = true;
-                                          safeSetState(() {});
-                                        } else {
-                                          _model.submetidoPAD = false;
-                                          safeSetState(() {});
-                                        }
-
-                                        if ((String var1, String var2) {
-                                          return var1 != "null" ||
-                                              var2 == "E";
-                                        }(
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[3].nome_arquivo''',
-                                            ).toString(),
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[3].status_documento''',
-                                            ).toString())) {
-                                          _model.submetidoAutorizacaoDesconto =
-                                              true;
-                                          safeSetState(() {});
-                                        } else {
-                                          _model.submetidoAutorizacaoDesconto =
-                                              false;
-                                          safeSetState(() {});
-                                        }
-
-                                        if ((String var1, String var2) {
-                                          return var1 != "null" ||
-                                              var2 == "E";
-                                        }(
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[4].nome_arquivo''',
-                                            ).toString(),
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[4].status_documento''',
-                                            ).toString())) {
-                                          _model.submetidoContaBancaria = true;
-                                          safeSetState(() {});
-                                        } else {
-                                          _model.submetidoContaBancaria = false;
-                                          safeSetState(() {});
-                                        }
-
-                                        if ((String var1, String var2) {
-                                          return var1 != "null" ||
-                                              var2 == "E";
-                                        }(
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[5].nome_arquivo''',
-                                            ).toString(),
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[5].status_documento''',
-                                            ).toString())) {
-                                          _model.submetidoContraCheque = true;
-                                          safeSetState(() {});
-                                        } else {
-                                          _model.submetidoContraCheque = false;
-                                          safeSetState(() {});
-                                        }
-
-                                        if ((String var1, String var2) {
-                                          return var1 != "null" ||
-                                              var2 == "E";
-                                        }(
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[6].nome_arquivo''',
-                                            ).toString(),
-                                            getJsonField(
-                                              (_model.checkUploadArquivo2
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$.dados[6].status_documento''',
-                                            ).toString())) {
-                                          _model.submetidoRecompra = true;
-                                          safeSetState(() {});
-                                        } else {
-                                          _model.submetidoRecompra = false;
-                                          safeSetState(() {});
-                                        }
-
-                                        safeSetState(() {});
+                                      } else {
+                                        _model.teste = await actions.teste(
+                                          _model.custom!,
+                                        );
+                                        await showDialog(
+                                          context: context,
+                                          builder: (alertDialogContext) {
+                                            return WebViewAware(
+                                              child: AlertDialog(
+                                                content: Text(getJsonField(
+                                                  (_model.enviaDocumento
+                                                          ?.jsonBody ??
+                                                      ''),
+                                                  r'''$..message''',
+                                                ).toString()),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                            alertDialogContext),
+                                                    child: Text('Ok'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
                                       }
+
+                                      FFAppState().proposta = 0;
+                                      safeSetState(() {});
                                     } else {
-                                      _model.teste = await actions.teste(
-                                        _model.custom!,
-                                      );
                                       await showDialog(
                                         context: context,
                                         builder: (alertDialogContext) {
-                                          return AlertDialog(
-                                            content: Text(getJsonField(
-                                              (_model.enviaDocumento
-                                                      ?.jsonBody ??
-                                                  ''),
-                                              r'''$..message''',
-                                            ).toString()),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                    alertDialogContext),
-                                                child: Text('Ok'),
-                                              ),
-                                            ],
+                                          return WebViewAware(
+                                            child: AlertDialog(
+                                              title: Text('Atenção!'),
+                                              content: Text(
+                                                  'Favor anexar todos os documentos obrigatórios!'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          alertDialogContext),
+                                                  child: Text('Ok'),
+                                                ),
+                                              ],
+                                            ),
                                           );
                                         },
                                       );
                                     }
-                                  } else {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (alertDialogContext) {
-                                        return AlertDialog(
-                                          title: Text('Atenção!'),
-                                          content: Text(
-                                              'Favor anexar todos os documentos obrigatórios!'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  alertDialogContext),
-                                              child: Text('Ok'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
 
-                                  safeSetState(() {});
-                                },
-                          text: 'Enviar documentos',
-                          options: FFButtonOptions(
-                            width: 150.0,
-                            height: 45.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                16.0, 0.0, 16.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 0.0, 0.0),
-                            color: FlutterFlowTheme.of(context).primary,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleSmall
-                                .override(
-                                  font: GoogleFonts.interTight(
+                                    FFAppState().proposta = 0;
+                                    safeSetState(() {});
+
+                                    safeSetState(() {});
+                                  },
+                            text: 'Enviar documentos',
+                            options: FFButtonOptions(
+                              width: 150.0,
+                              height: 45.0,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16.0, 0.0, 16.0, 0.0),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              color: FlutterFlowTheme.of(context).primary,
+                              textStyle: FlutterFlowTheme.of(context)
+                                  .titleSmall
+                                  .override(
+                                    font: GoogleFonts.interTight(
+                                      fontWeight: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .fontWeight,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .fontStyle,
+                                    ),
+                                    color: Colors.white,
+                                    letterSpacing: 0.0,
                                     fontWeight: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .fontWeight,
@@ -949,18 +1034,10 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                         .titleSmall
                                         .fontStyle,
                                   ),
-                                  color: Colors.white,
-                                  letterSpacing: 0.0,
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontStyle,
-                                ),
-                            elevation: 0.0,
-                            borderRadius: BorderRadius.circular(8.0),
-                            disabledColor: Color(0x4D33B46E),
+                              elevation: 0.0,
+                              borderRadius: BorderRadius.circular(8.0),
+                              disabledColor: Color(0x4D33B46E),
+                            ),
                           ),
                         ),
                         FFButtonWidget(

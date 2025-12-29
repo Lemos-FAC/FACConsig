@@ -31,9 +31,16 @@ class FACConsigGroup {
   static PropostasCall propostasCall = PropostasCall();
   static DocumentosPendentesCall documentosPendentesCall =
       DocumentosPendentesCall();
-  static EnviaDocumentoCall enviaDocumentoCall = EnviaDocumentoCall();
+  static AtualizaMultiplosDocumentosCodigoCall
+      atualizaMultiplosDocumentosCodigoCall =
+      AtualizaMultiplosDocumentosCodigoCall();
   static ContratoCall contratoCall = ContratoCall();
   static RegistraSimulacaoCall registraSimulacaoCall = RegistraSimulacaoCall();
+  static BuscaVideosEducacaoFinanceiraCall buscaVideosEducacaoFinanceiraCall =
+      BuscaVideosEducacaoFinanceiraCall();
+  static DocumentosTesteDeVidaCall documentosTesteDeVidaCall =
+      DocumentosTesteDeVidaCall();
+  static BuscaNotificacoesCall buscaNotificacoesCall = BuscaNotificacoesCall();
 }
 
 class SimulaEmprestimoConsigCall {
@@ -403,7 +410,7 @@ class DocumentosPendentesCall {
   }
 }
 
-class EnviaDocumentoCall {
+class AtualizaMultiplosDocumentosCodigoCall {
   Future<ApiCallResponse> call({
     String? arquivo = '',
     int? codigoArquivo,
@@ -419,8 +426,8 @@ class EnviaDocumentoCall {
   "arquivos": ${listaArquivos}
 }''';
     return ApiManager.instance.makeApiCall(
-      callName: 'enviaDocumento',
-      apiUrl: '${baseUrl}enviaDocumento',
+      callName: 'atualizaMultiplosDocumentosCodigo',
+      apiUrl: '${baseUrl}atualizaMultiplosDocumentosCodigo',
       callType: ApiCallType.POST,
       headers: {
         'Authorization':
@@ -493,6 +500,85 @@ class RegistraSimulacaoCall {
       params: {},
       body: ffApiRequestBody,
       bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class BuscaVideosEducacaoFinanceiraCall {
+  Future<ApiCallResponse> call() async {
+    final baseUrl = FACConsigGroup.getBaseUrl();
+
+    return ApiManager.instance.makeApiCall(
+      callName: 'buscaVideosEducacaoFinanceira',
+      apiUrl: '${baseUrl}buscaVideosEducacaoFinanceira',
+      callType: ApiCallType.GET,
+      headers: {
+        'Authorization':
+            'Basic ZmFjQ29udHJhdGFudGU6ODhiMzMyODNiOTEzYjY1Mzc3NGMyODZjNzkxN2Y1ZmQ=',
+      },
+      params: {},
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class DocumentosTesteDeVidaCall {
+  Future<ApiCallResponse> call({
+    int? proposta,
+    String? video = '',
+  }) async {
+    final baseUrl = FACConsigGroup.getBaseUrl();
+
+    final ffApiRequestBody = '''
+{
+  "proposta": ${proposta},
+  "video": "${escapeStringForJson(video)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'documentosTesteDeVida',
+      apiUrl: '${baseUrl}documentosTesteDeVida',
+      callType: ApiCallType.POST,
+      headers: {
+        'Authorization':
+            'Basic ZmFjQ29udHJhdGFudGU6ODhiMzMyODNiOTEzYjY1Mzc3NGMyODZjNzkxN2Y1ZmQ=',
+      },
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class BuscaNotificacoesCall {
+  Future<ApiCallResponse> call() async {
+    final baseUrl = FACConsigGroup.getBaseUrl();
+
+    return ApiManager.instance.makeApiCall(
+      callName: 'buscaNotificacoes',
+      apiUrl: '${baseUrl}buscaNotificacoes',
+      callType: ApiCallType.GET,
+      headers: {
+        'Authorization':
+            'Basic ZmFjQ29udHJhdGFudGU6ODhiMzMyODNiOTEzYjY1Mzc3NGMyODZjNzkxN2Y1ZmQ=',
+      },
+      params: {},
       returnBody: true,
       encodeBodyUtf8: false,
       decodeUtf8: false,

@@ -71,6 +71,8 @@ class _DuvidasWidgetState extends State<DuvidasWidget>
           !anim.applyInitialState),
       this,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

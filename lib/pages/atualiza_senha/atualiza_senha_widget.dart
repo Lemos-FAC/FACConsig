@@ -7,6 +7,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'atualiza_senha_model.dart';
 export 'atualiza_senha_model.dart';
 
@@ -34,6 +35,7 @@ class _AtualizaSenhaWidgetState extends State<AtualizaSenhaWidget> {
     _model.textFieldFocusNode ??= FocusNode();
 
     _model.textFieldMask = MaskTextInputFormatter(mask: '###.###.###-##');
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -302,18 +304,20 @@ class _AtualizaSenhaWidgetState extends State<AtualizaSenhaWidget> {
                                         await showDialog(
                                           context: context,
                                           builder: (alertDialogContext) {
-                                            return AlertDialog(
-                                              title: Text('Atenção!'),
-                                              content: Text(
-                                                  'Link de recuperação de senha enviado para seu email!'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          alertDialogContext),
-                                                  child: Text('Ok'),
-                                                ),
-                                              ],
+                                            return WebViewAware(
+                                              child: AlertDialog(
+                                                title: Text('Atenção!'),
+                                                content: Text(
+                                                    'Link de recuperação de senha enviado para seu email!'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                            alertDialogContext),
+                                                    child: Text('Ok'),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           },
                                         );

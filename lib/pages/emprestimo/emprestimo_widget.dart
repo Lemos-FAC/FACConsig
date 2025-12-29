@@ -15,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'emprestimo_model.dart';
 export 'emprestimo_model.dart';
 
@@ -128,18 +129,20 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
               await showDialog(
                 context: context,
                 builder: (alertDialogContext) {
-                  return AlertDialog(
-                    title: Text('Atenção!'),
-                    content: Text(getJsonField(
-                      (_model.apiResultl9cCopyCopyCopy?.jsonBody ?? ''),
-                      r'''$..alerta''',
-                    ).toString()),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(alertDialogContext),
-                        child: Text('Ok'),
-                      ),
-                    ],
+                  return WebViewAware(
+                    child: AlertDialog(
+                      title: Text('Atenção!'),
+                      content: Text(getJsonField(
+                        (_model.apiResultl9cCopyCopyCopy?.jsonBody ?? ''),
+                        r'''$..alerta''',
+                      ).toString()),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(alertDialogContext),
+                          child: Text('Ok'),
+                        ),
+                      ],
+                    ),
                   );
                 },
               );
@@ -238,18 +241,20 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
               await showDialog(
                 context: context,
                 builder: (alertDialogContext) {
-                  return AlertDialog(
-                    title: Text('Atenção!'),
-                    content: Text(getJsonField(
-                      (_model.apiResultrqrCopyCopyCopy?.jsonBody ?? ''),
-                      r'''$..alerta''',
-                    ).toString()),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(alertDialogContext),
-                        child: Text('Ok'),
-                      ),
-                    ],
+                  return WebViewAware(
+                    child: AlertDialog(
+                      title: Text('Atenção!'),
+                      content: Text(getJsonField(
+                        (_model.apiResultrqrCopyCopyCopy?.jsonBody ?? ''),
+                        r'''$..alerta''',
+                      ).toString()),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(alertDialogContext),
+                          child: Text('Ok'),
+                        ),
+                      ],
+                    ),
                   );
                 },
               );
@@ -292,6 +297,7 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
         safeSetState(() {});
       },
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -687,18 +693,20 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                         await showDialog(
                                           context: context,
                                           builder: (alertDialogContext) {
-                                            return AlertDialog(
-                                              title: Text('Atenção!'),
-                                              content: Text(
-                                                  'Valor insuficiente para solicitar emprestimo!'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          alertDialogContext),
-                                                  child: Text('Ok'),
-                                                ),
-                                              ],
+                                            return WebViewAware(
+                                              child: AlertDialog(
+                                                title: Text('Atenção!'),
+                                                content: Text(
+                                                    'Valor insuficiente para solicitar emprestimo!'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                            alertDialogContext),
+                                                    child: Text('Ok'),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           },
                                         );
@@ -765,21 +773,23 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                           await showDialog(
                                             context: context,
                                             builder: (alertDialogContext) {
-                                              return AlertDialog(
-                                                title: Text('Atenção!'),
-                                                content: Text(getJsonField(
-                                                  (_model.home2?.jsonBody ??
-                                                      ''),
-                                                  r'''$..message''',
-                                                ).toString()),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                            alertDialogContext),
-                                                    child: Text('Ok'),
-                                                  ),
-                                                ],
+                                              return WebViewAware(
+                                                child: AlertDialog(
+                                                  title: Text('Atenção!'),
+                                                  content: Text(getJsonField(
+                                                    (_model.home2?.jsonBody ??
+                                                        ''),
+                                                    r'''$..message''',
+                                                  ).toString()),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              alertDialogContext),
+                                                      child: Text('Ok'),
+                                                    ),
+                                                  ],
+                                                ),
                                               );
                                             },
                                           );
@@ -967,25 +977,27 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                                         context: context,
                                                         builder:
                                                             (alertDialogContext) {
-                                                          return AlertDialog(
-                                                            title: Text(
-                                                                'Atenção!'),
-                                                            content: Text(
-                                                                getJsonField(
-                                                              (_model.parcela
-                                                                      ?.jsonBody ??
-                                                                  ''),
-                                                              r'''$..alerta''',
-                                                            ).toString()),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.pop(
-                                                                        alertDialogContext),
-                                                                child:
-                                                                    Text('Ok'),
-                                                              ),
-                                                            ],
+                                                          return WebViewAware(
+                                                            child: AlertDialog(
+                                                              title: Text(
+                                                                  'Atenção!'),
+                                                              content: Text(
+                                                                  getJsonField(
+                                                                (_model.parcela
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$..alerta''',
+                                                              ).toString()),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          alertDialogContext),
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           );
                                                         },
                                                       );
@@ -1480,21 +1492,23 @@ class _EmprestimoWidgetState extends State<EmprestimoWidget> {
                                         await showDialog(
                                           context: context,
                                           builder: (alertDialogContext) {
-                                            return AlertDialog(
-                                              title: Text('Atenção!'),
-                                              content: Text(getJsonField(
-                                                (_model.home2Copy?.jsonBody ??
-                                                    ''),
-                                                r'''$..message''',
-                                              ).toString()),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          alertDialogContext),
-                                                  child: Text('Ok'),
-                                                ),
-                                              ],
+                                            return WebViewAware(
+                                              child: AlertDialog(
+                                                title: Text('Atenção!'),
+                                                content: Text(getJsonField(
+                                                  (_model.home2Copy?.jsonBody ??
+                                                      ''),
+                                                  r'''$..message''',
+                                                ).toString()),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                            alertDialogContext),
+                                                    child: Text('Ok'),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           },
                                         );

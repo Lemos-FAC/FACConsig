@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'anexar_doc_copy_model.dart';
 export 'anexar_doc_copy_model.dart';
 
@@ -167,6 +168,8 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
         }
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -406,7 +409,7 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                         if (_model.file0 != null &&
                                             _model.file0 != '') {
                                           _model.doc0 = await FACConsigGroup
-                                              .enviaDocumentoCall
+                                              .atualizaMultiplosDocumentosCodigoCall
                                               .call(
                                             arquivo: _model.file0,
                                             codigoArquivo: getJsonField(
@@ -426,20 +429,22 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(getJsonField(
-                                                    (_model.doc0?.jsonBody ??
-                                                        ''),
-                                                    r'''$..message''',
-                                                  ).toString()),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    content: Text(getJsonField(
+                                                      (_model.doc0?.jsonBody ??
+                                                          ''),
+                                                      r'''$..message''',
+                                                    ).toString()),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -450,20 +455,22 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(getJsonField(
-                                                    (_model.doc0?.jsonBody ??
-                                                        ''),
-                                                    r'''$..message''',
-                                                  ).toString()),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    content: Text(getJsonField(
+                                                      (_model.doc0?.jsonBody ??
+                                                          ''),
+                                                      r'''$..message''',
+                                                    ).toString()),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -500,21 +507,23 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .firstOrNull,
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .firstOrNull,
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -683,7 +692,7 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                         if (_model.file1 != null &&
                                             _model.file1 != '') {
                                           _model.doc1 = await FACConsigGroup
-                                              .enviaDocumentoCall
+                                              .atualizaMultiplosDocumentosCodigoCall
                                               .call(
                                             arquivo: _model.file1,
                                             codigoArquivo: getJsonField(
@@ -703,17 +712,19 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(
-                                                      'Arquivo enviado com sucesso!'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    content: Text(
+                                                        'Arquivo enviado com sucesso!'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -753,21 +764,23 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(1),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(1),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -936,7 +949,7 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                         if (_model.file2 != null &&
                                             _model.file2 != '') {
                                           _model.doc2 = await FACConsigGroup
-                                              .enviaDocumentoCall
+                                              .atualizaMultiplosDocumentosCodigoCall
                                               .call(
                                             arquivo: _model.file2,
                                             codigoArquivo: getJsonField(
@@ -956,17 +969,19 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(
-                                                      'Arquivo enviado com sucesso!'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    content: Text(
+                                                        'Arquivo enviado com sucesso!'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -1005,21 +1020,23 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(2),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(2),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1188,7 +1205,7 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                         if (_model.file03 != null &&
                                             _model.file03 != '') {
                                           _model.doc03 = await FACConsigGroup
-                                              .enviaDocumentoCall
+                                              .atualizaMultiplosDocumentosCodigoCall
                                               .call(
                                             arquivo: _model.file03,
                                             codigoArquivo: getJsonField(
@@ -1208,17 +1225,19 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(
-                                                      'Arquivo enviado com sucesso!'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    content: Text(
+                                                        'Arquivo enviado com sucesso!'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -1259,21 +1278,23 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(3),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(3),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1442,7 +1463,7 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                         if (_model.file04 != null &&
                                             _model.file04 != '') {
                                           _model.doc04 = await FACConsigGroup
-                                              .enviaDocumentoCall
+                                              .atualizaMultiplosDocumentosCodigoCall
                                               .call(
                                             arquivo: _model.file04,
                                             codigoArquivo: getJsonField(
@@ -1462,17 +1483,19 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(
-                                                      'Arquivo enviado com sucesso!'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    content: Text(
+                                                        'Arquivo enviado com sucesso!'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -1513,21 +1536,23 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(4),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(4),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1696,7 +1721,7 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                         if (_model.file05 != null &&
                                             _model.file05 != '') {
                                           _model.doc05 = await FACConsigGroup
-                                              .enviaDocumentoCall
+                                              .atualizaMultiplosDocumentosCodigoCall
                                               .call(
                                             arquivo: _model.file05,
                                             codigoArquivo: getJsonField(
@@ -1716,17 +1741,19 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(
-                                                      'Arquivo enviado com sucesso!'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    content: Text(
+                                                        'Arquivo enviado com sucesso!'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -1766,21 +1793,23 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(5),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(5),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1949,7 +1978,7 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                         if (_model.file06 != null &&
                                             _model.file06 != '') {
                                           _model.doc06 = await FACConsigGroup
-                                              .enviaDocumentoCall
+                                              .atualizaMultiplosDocumentosCodigoCall
                                               .call(
                                             arquivo: _model.file06,
                                             codigoArquivo: getJsonField(
@@ -1969,17 +1998,19 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  content: Text(
-                                                      'Arquivo enviado com sucesso!'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    content: Text(
+                                                        'Arquivo enviado com sucesso!'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -2019,21 +2050,23 @@ class _AnexarDocCopyWidgetState extends State<AnexarDocCopyWidget> {
                                                       .resolve(
                                                           Directionality.of(
                                                               context)),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  FocusScope.of(dialogContext)
-                                                      .unfocus();
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                                child: ModalWidget(
-                                                  codigoDocPendente:
-                                                      getJsonField(
-                                                    FFAppState()
-                                                        .documentosPendentes
-                                                        .elementAtOrNull(6),
-                                                    r'''$..codigo_documento''',
+                                              child: WebViewAware(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    FocusScope.of(dialogContext)
+                                                        .unfocus();
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                  child: ModalWidget(
+                                                    codigoDocPendente:
+                                                        getJsonField(
+                                                      FFAppState()
+                                                          .documentosPendentes
+                                                          .elementAtOrNull(6),
+                                                      r'''$..codigo_documento''',
+                                                    ),
                                                   ),
                                                 ),
                                               ),

@@ -28,6 +28,8 @@ class _ImageWidgetState extends State<ImageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ImageModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

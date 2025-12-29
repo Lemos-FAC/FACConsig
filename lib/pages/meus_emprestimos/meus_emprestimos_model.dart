@@ -28,10 +28,26 @@ class MeusEmprestimosModel extends FlutterFlowModel<MeusEmprestimosWidget> {
   void updateDadosAtIndex(int index, Function(dynamic) updateFn) =>
       dados[index] = updateFn(dados[index]);
 
+  String? pesquisa = '';
+
+  List<dynamic> contratosLista = [];
+  void addToContratosLista(dynamic item) => contratosLista.add(item);
+  void removeFromContratosLista(dynamic item) => contratosLista.remove(item);
+  void removeAtIndexFromContratosLista(int index) =>
+      contratosLista.removeAt(index);
+  void insertAtIndexInContratosLista(int index, dynamic item) =>
+      contratosLista.insert(index, item);
+  void updateContratosListaAtIndex(int index, Function(dynamic) updateFn) =>
+      contratosLista[index] = updateFn(contratosLista[index]);
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - API (contratos)] action in MeusEmprestimos widget.
   ApiCallResponse? contratos;
+  // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode;
+  TextEditingController? textController;
+  String? Function(BuildContext, String?)? textControllerValidator;
   // Stores action output result for [Backend Call - API (contrato)] action in Button widget.
   ApiCallResponse? contratoPDF;
   // Stores action output result for [Custom Action - base64UploadedFile] action in Button widget.
@@ -41,5 +57,8 @@ class MeusEmprestimosModel extends FlutterFlowModel<MeusEmprestimosWidget> {
   void initState(BuildContext context) {}
 
   @override
-  void dispose() {}
+  void dispose() {
+    textFieldFocusNode?.dispose();
+    textController?.dispose();
+  }
 }

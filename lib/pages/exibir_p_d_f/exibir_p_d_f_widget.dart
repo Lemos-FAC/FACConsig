@@ -44,6 +44,8 @@ class _ExibirPDFWidgetState extends State<ExibirPDFWidget> {
       _model.listpdfs = widget.listaPDF!.toList().cast<FFUploadedFile>();
       safeSetState(() {});
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

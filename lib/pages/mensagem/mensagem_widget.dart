@@ -26,6 +26,8 @@ class _MensagemWidgetState extends State<MensagemWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => MensagemModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

@@ -8,6 +8,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'confirmar_emprestimo_model.dart';
 export 'confirmar_emprestimo_model.dart';
 
@@ -48,6 +49,8 @@ class _ConfirmarEmprestimoWidgetState extends State<ConfirmarEmprestimoWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ConfirmarEmprestimoModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -680,22 +683,24 @@ class _ConfirmarEmprestimoWidgetState extends State<ConfirmarEmprestimoWidget> {
                                                   context: context,
                                                   builder:
                                                       (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      content:
-                                                          Text(getJsonField(
-                                                        (_model.confirmaEmprestimo
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.message''',
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child: Text('Ok'),
-                                                        ),
-                                                      ],
+                                                    return WebViewAware(
+                                                      child: AlertDialog(
+                                                        content:
+                                                            Text(getJsonField(
+                                                          (_model.confirmaEmprestimo
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$.message''',
+                                                        ).toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: Text('Ok'),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     );
                                                   },
                                                 );
@@ -707,26 +712,31 @@ class _ConfirmarEmprestimoWidgetState extends State<ConfirmarEmprestimoWidget> {
                                                   context: context,
                                                   builder:
                                                       (alertDialogContext) {
-                                                    return AlertDialog(
-                                                      title: Text('Atenção!'),
-                                                      content:
-                                                          Text(getJsonField(
-                                                        (_model.confirmaEmprestimo
-                                                                ?.jsonBody ??
-                                                            ''),
-                                                        r'''$.message''',
-                                                      ).toString()),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  alertDialogContext),
-                                                          child: Text('Ok'),
-                                                        ),
-                                                      ],
+                                                    return WebViewAware(
+                                                      child: AlertDialog(
+                                                        title: Text('Atenção!'),
+                                                        content:
+                                                            Text(getJsonField(
+                                                          (_model.confirmaEmprestimo
+                                                                  ?.jsonBody ??
+                                                              ''),
+                                                          r'''$.message''',
+                                                        ).toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: Text('Ok'),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     );
                                                   },
                                                 );
+
+                                                context.pushNamed(
+                                                    HomePageWidget.routeName);
                                               }
 
                                               safeSetState(() {});

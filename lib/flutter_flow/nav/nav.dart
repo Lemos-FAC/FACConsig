@@ -98,9 +98,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: MensagemWidget.routeName,
           path: MensagemWidget.routePath,
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'Mensagem')
-              : MensagemWidget(),
+          builder: (context, params) => MensagemWidget(),
         ),
         FFRoute(
           name: ContaWidget.routeName,
@@ -194,14 +192,14 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: VideosWidget.routeName,
-          path: VideosWidget.routePath,
-          builder: (context, params) => VideosWidget(),
-        ),
-        FFRoute(
           name: AnexarDocWidget.routeName,
           path: AnexarDocWidget.routePath,
-          builder: (context, params) => AnexarDocWidget(),
+          builder: (context, params) => AnexarDocWidget(
+            codProposta: params.getParam(
+              'codProposta',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
           name: AnexarDocCopyWidget.routeName,
@@ -257,8 +255,25 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               ParamType.int,
             ),
           ),
+        ),
+        FFRoute(
+          name: VideoWidget.routeName,
+          path: VideoWidget.routePath,
+          builder: (context, params) =>
+              params.isEmpty ? NavBarPage(initialPage: 'Video') : VideoWidget(),
+        ),
+        FFRoute(
+          name: GravarVideoWidget.routeName,
+          path: GravarVideoWidget.routePath,
+          builder: (context, params) => GravarVideoWidget(
+            codProp: params.getParam(
+              'codProp',
+              ParamType.int,
+            ),
+          ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
+      observers: [routeObserver],
     );
 
 extension NavParamExtensions on Map<String, String?> {

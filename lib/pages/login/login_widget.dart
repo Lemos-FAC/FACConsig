@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'login_model.dart';
 export 'login_model.dart';
 
@@ -70,6 +71,7 @@ class _LoginWidgetState extends State<LoginWidget> {
 
     _model.cpfToggleValue = FFAppState().lembrarCPF;
     _model.biometriaValue = FFAppState().loginBiometria;
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -713,19 +715,22 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                       context: context,
                                                       builder:
                                                           (alertDialogContext) {
-                                                        return AlertDialog(
-                                                          title:
-                                                              Text('Atenção!'),
-                                                          content: Text(
-                                                              'O acesso pela biometria será possível a partir do próximo login!'),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () =>
-                                                                  Navigator.pop(
-                                                                      alertDialogContext),
-                                                              child: Text('Ok'),
-                                                            ),
-                                                          ],
+                                                        return WebViewAware(
+                                                          child: AlertDialog(
+                                                            title: Text(
+                                                                'Atenção!'),
+                                                            content: Text(
+                                                                'O acesso pela biometria será possível a partir do próximo login!'),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        alertDialogContext),
+                                                                child:
+                                                                    Text('Ok'),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         );
                                                       },
                                                     );
@@ -887,18 +892,20 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             await showDialog(
                                               context: context,
                                               builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  title: Text('Atenção!'),
-                                                  content: Text(
-                                                      'Biomatria inválida!'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              alertDialogContext),
-                                                      child: Text('Ok'),
-                                                    ),
-                                                  ],
+                                                return WebViewAware(
+                                                  child: AlertDialog(
+                                                    title: Text('Atenção!'),
+                                                    content: Text(
+                                                        'Biomatria inválida!'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                             );
@@ -919,20 +926,23 @@ class _LoginWidgetState extends State<LoginWidget> {
                                         await showDialog(
                                           context: context,
                                           builder: (alertDialogContext) {
-                                            return AlertDialog(
-                                              title: Text('Atenção!'),
-                                              content: Text(getJsonField(
-                                                (_model.login?.jsonBody ?? ''),
-                                                r'''$..message''',
-                                              ).toString()),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          alertDialogContext),
-                                                  child: Text('Ok'),
-                                                ),
-                                              ],
+                                            return WebViewAware(
+                                              child: AlertDialog(
+                                                title: Text('Atenção!'),
+                                                content: Text(getJsonField(
+                                                  (_model.login?.jsonBody ??
+                                                      ''),
+                                                  r'''$..message''',
+                                                ).toString()),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                            alertDialogContext),
+                                                    child: Text('Ok'),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           },
                                         );

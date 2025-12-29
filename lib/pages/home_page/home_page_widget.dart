@@ -5,6 +5,7 @@ import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'home_page_model.dart';
 export 'home_page_model.dart';
 
@@ -45,6 +47,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
         FFAppState().contratante = [];
         FFAppState().margemDisponivel = '';
         FFAppState().listaArquivos = [];
+        FFAppState().margemTotal = '';
         safeSetState(() {});
         _model.canTap = false;
         safeSetState(() {});
@@ -148,18 +151,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
           await showDialog(
             context: context,
             builder: (alertDialogContext) {
-              return AlertDialog(
-                title: Text('Atenção!'),
-                content: Text(getJsonField(
-                  (_model.contratante?.jsonBody ?? ''),
-                  r'''$.message''',
-                ).toString()),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(alertDialogContext),
-                    child: Text('Ok'),
-                  ),
-                ],
+              return WebViewAware(
+                child: AlertDialog(
+                  title: Text('Atenção!'),
+                  content: Text(getJsonField(
+                    (_model.contratante?.jsonBody ?? ''),
+                    r'''$.message''',
+                  ).toString()),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(alertDialogContext),
+                      child: Text('Ok'),
+                    ),
+                  ],
+                ),
               );
             },
           );
@@ -186,9 +191,16 @@ class _HomePageWidgetState extends State<HomePageWidget>
             format: '#,##0.00',
             locale: 'pt_BR',
           );
+          FFAppState().margemTotal = getJsonField(
+            (_model.home?.jsonBody ?? ''),
+            r'''$..ValorMensalConsignavelBruto''',
+          ).toString();
           safeSetState(() {});
           safeSetState(() {
-            _model.textController?.text = FFAppState().margemDisponivel;
+            _model.textController1?.text = FFAppState().margemDisponivel;
+          });
+          safeSetState(() {
+            _model.margemTotalTextController?.text = FFAppState().margemTotal;
           });
         } else {
           FFAppState().margemDisponivel = '0,00';
@@ -200,11 +212,16 @@ class _HomePageWidgetState extends State<HomePageWidget>
         _model.canTap = true;
         safeSetState(() {});
       }
+      await actions.requestNotificationPermissions();
     });
 
-    _model.textController ??=
+    _model.textController1 ??=
         TextEditingController(text: FFAppState().margemDisponivel);
     _model.textFieldFocusNode ??= FocusNode();
+
+    _model.margemTotalTextController ??=
+        TextEditingController(text: FFAppState().margemTotal);
+    _model.margemTotalFocusNode ??= FocusNode();
 
     animationsMap.addAll({
       'textOnPageLoadAnimation': AnimationInfo(
@@ -220,6 +237,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
         ],
       ),
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -330,7 +349,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                   child: SafeArea(
                                     child: Container(
                                       width: double.infinity,
-                                      height: 75.55,
+                                      height: 68.19,
                                       decoration: BoxDecoration(),
                                       child: Card(
                                         clipBehavior:
@@ -456,7 +475,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                         }(),
                                                         child: TextFormField(
                                                           controller: _model
-                                                              .textController,
+                                                              .textController1,
                                                           focusNode: _model
                                                               .textFieldFocusNode,
                                                           autofocus: false,
@@ -629,7 +648,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           enableInteractiveSelection:
                                                               true,
                                                           validator: _model
-                                                              .textControllerValidator
+                                                              .textController1Validator
                                                               .asValidator(
                                                                   context),
                                                         ),
@@ -651,7 +670,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                 alignment: AlignmentDirectional(0.0, 0.0),
                                 child: Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
-                                      20.0, 0.0, 20.0, 0.0),
+                                      20.0, 130.0, 20.0, 0.0),
                                   child: GridView(
                                     padding: EdgeInsets.fromLTRB(
                                       0,
@@ -727,25 +746,27 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                         context: context,
                                                         builder:
                                                             (alertDialogContext) {
-                                                          return AlertDialog(
-                                                            title: Text(
-                                                                'Atenção!'),
-                                                            content: Text(
-                                                                getJsonField(
-                                                              (_model.home
-                                                                      ?.jsonBody ??
-                                                                  ''),
-                                                              r'''$.message''',
-                                                            ).toString()),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.pop(
-                                                                        alertDialogContext),
-                                                                child:
-                                                                    Text('Ok'),
-                                                              ),
-                                                            ],
+                                                          return WebViewAware(
+                                                            child: AlertDialog(
+                                                              title: Text(
+                                                                  'Atenção!'),
+                                                              content: Text(
+                                                                  getJsonField(
+                                                                (_model.home
+                                                                        ?.jsonBody ??
+                                                                    ''),
+                                                                r'''$.message''',
+                                                              ).toString()),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          alertDialogContext),
+                                                                  child: Text(
+                                                                      'Ok'),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           );
                                                         },
                                                       );
@@ -773,20 +794,23 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           context: context,
                                                           builder:
                                                               (alertDialogContext) {
-                                                            return AlertDialog(
-                                                              title: Text(
-                                                                  'Atenção!'),
-                                                              content: Text(
-                                                                  'Valor insuficiente para solicitar empréstimo!'),
-                                                              actions: [
-                                                                TextButton(
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          alertDialogContext),
-                                                                  child: Text(
-                                                                      'Ok'),
-                                                                ),
-                                                              ],
+                                                            return WebViewAware(
+                                                              child:
+                                                                  AlertDialog(
+                                                                title: Text(
+                                                                    'Atenção!'),
+                                                                content: Text(
+                                                                    'Valor insuficiente para solicitar empréstimo!'),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.pop(
+                                                                            alertDialogContext),
+                                                                    child: Text(
+                                                                        'Ok'),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             );
                                                           },
                                                         );
@@ -837,23 +861,26 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       context,
                                                                   builder:
                                                                       (alertDialogContext) {
-                                                                    return AlertDialog(
-                                                                      title: Text(
-                                                                          'Atenção!'),
-                                                                      content: Text(
-                                                                          getJsonField(
-                                                                        (_model.home?.jsonBody ??
-                                                                            ''),
-                                                                        r'''$.message''',
-                                                                      ).toString()),
-                                                                      actions: [
-                                                                        TextButton(
-                                                                          onPressed: () =>
-                                                                              Navigator.pop(alertDialogContext),
-                                                                          child:
-                                                                              Text('Ok'),
-                                                                        ),
-                                                                      ],
+                                                                    return WebViewAware(
+                                                                      child:
+                                                                          AlertDialog(
+                                                                        title: Text(
+                                                                            'Atenção!'),
+                                                                        content:
+                                                                            Text(getJsonField(
+                                                                          (_model.home?.jsonBody ??
+                                                                              ''),
+                                                                          r'''$.message''',
+                                                                        ).toString()),
+                                                                        actions: [
+                                                                          TextButton(
+                                                                            onPressed: () =>
+                                                                                Navigator.pop(alertDialogContext),
+                                                                            child:
+                                                                                Text('Ok'),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     );
                                                                   },
                                                                 );
@@ -883,19 +910,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                         context,
                                                                     builder:
                                                                         (alertDialogContext) {
-                                                                      return AlertDialog(
-                                                                        title: Text(
-                                                                            'Atenção!'),
-                                                                        content:
-                                                                            Text('Valor insuficiente para solicitar empréstimo!'),
-                                                                        actions: [
-                                                                          TextButton(
-                                                                            onPressed: () =>
-                                                                                Navigator.pop(alertDialogContext),
-                                                                            child:
-                                                                                Text('Ok'),
-                                                                          ),
-                                                                        ],
+                                                                      return WebViewAware(
+                                                                        child:
+                                                                            AlertDialog(
+                                                                          title:
+                                                                              Text('Atenção!'),
+                                                                          content:
+                                                                              Text('Valor insuficiente para solicitar empréstimo!'),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              onPressed: () => Navigator.pop(alertDialogContext),
+                                                                              child: Text('Ok'),
+                                                                            ),
+                                                                          ],
+                                                                        ),
                                                                       );
                                                                     },
                                                                   );
@@ -949,25 +977,28 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                               context: context,
                                                               builder:
                                                                   (alertDialogContext) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      'Atenção!'),
-                                                                  content: Text(
-                                                                      getJsonField(
-                                                                    (_model.home
-                                                                            ?.jsonBody ??
-                                                                        ''),
-                                                                    r'''$.message''',
-                                                                  ).toString()),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(alertDialogContext),
-                                                                      child: Text(
-                                                                          'Ok'),
-                                                                    ),
-                                                                  ],
+                                                                return WebViewAware(
+                                                                  child:
+                                                                      AlertDialog(
+                                                                    title: Text(
+                                                                        'Atenção!'),
+                                                                    content: Text(
+                                                                        getJsonField(
+                                                                      (_model.home
+                                                                              ?.jsonBody ??
+                                                                          ''),
+                                                                      r'''$.message''',
+                                                                    ).toString()),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.pop(alertDialogContext),
+                                                                        child: Text(
+                                                                            'Ok'),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 );
                                                               },
                                                             );
@@ -996,20 +1027,22 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                     context,
                                                                 builder:
                                                                     (alertDialogContext) {
-                                                                  return AlertDialog(
-                                                                    title: Text(
-                                                                        'Atenção!'),
-                                                                    content: Text(
-                                                                        'Valor insuficiente para solicitar empréstimo!'),
-                                                                    actions: [
-                                                                      TextButton(
-                                                                        onPressed:
-                                                                            () =>
-                                                                                Navigator.pop(alertDialogContext),
-                                                                        child: Text(
-                                                                            'Ok'),
-                                                                      ),
-                                                                    ],
+                                                                  return WebViewAware(
+                                                                    child:
+                                                                        AlertDialog(
+                                                                      title: Text(
+                                                                          'Atenção!'),
+                                                                      content: Text(
+                                                                          'Valor insuficiente para solicitar empréstimo!'),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                          onPressed: () =>
+                                                                              Navigator.pop(alertDialogContext),
+                                                                          child:
+                                                                              Text('Ok'),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   );
                                                                 },
                                                               );
@@ -1571,6 +1604,331 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                   ),
                                 ),
                               ),
+                              Align(
+                                alignment: AlignmentDirectional(-0.05, -0.85),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      16.0, 22.0, 16.0, 0.0),
+                                  child: SafeArea(
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 63.18,
+                                      decoration: BoxDecoration(),
+                                      child: Card(
+                                        clipBehavior:
+                                            Clip.antiAliasWithSaveLayer,
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                        elevation: 0.0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        child: Align(
+                                          alignment:
+                                              AlignmentDirectional(-0.9, 0.0),
+                                          child: Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    10.0,
+                                                    0.0,
+                                                    valueOrDefault<double>(
+                                                      MediaQuery.sizeOf(context)
+                                                                  .width >
+                                                              360.0
+                                                          ? 10.0
+                                                          : 0.0,
+                                                      0.0,
+                                                    ),
+                                                    0.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                Text(
+                                                  'Valor total',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        font: GoogleFonts.inter(
+                                                          fontWeight:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontWeight,
+                                                          fontStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontStyle,
+                                                        ),
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .fontWeight,
+                                                        fontStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .fontStyle,
+                                                      ),
+                                                ),
+                                                Flexible(
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        'R\$',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  font:
+                                                                      GoogleFonts
+                                                                          .inter(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontStyle: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .fontStyle,
+                                                                  ),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .fontStyle,
+                                                                ),
+                                                      ),
+                                                      Container(
+                                                        width: () {
+                                                          if (MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .width <=
+                                                              360.0) {
+                                                            return 280.0;
+                                                          } else if (MediaQuery
+                                                                      .sizeOf(
+                                                                          context)
+                                                                  .width >=
+                                                              412.0) {
+                                                            return 330.0;
+                                                          } else if (MediaQuery
+                                                                      .sizeOf(
+                                                                          context)
+                                                                  .width >=
+                                                              448.0) {
+                                                            return 340.0;
+                                                          } else {
+                                                            return 310.0;
+                                                          }
+                                                        }(),
+                                                        child: TextFormField(
+                                                          controller: _model
+                                                              .margemTotalTextController,
+                                                          focusNode: _model
+                                                              .margemTotalFocusNode,
+                                                          autofocus: false,
+                                                          enabled: true,
+                                                          readOnly: true,
+                                                          obscureText: !_model
+                                                              .margemTotalVisibility,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            isDense: true,
+                                                            labelText: '',
+                                                            labelStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      font: GoogleFonts
+                                                                          .inter(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        fontStyle: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .fontStyle,
+                                                                      ),
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontStyle,
+                                                                    ),
+                                                            hintStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .labelMedium
+                                                                    .override(
+                                                                      font: GoogleFonts
+                                                                          .inter(
+                                                                        fontWeight: FlutterFlowTheme.of(context)
+                                                                            .labelMedium
+                                                                            .fontWeight,
+                                                                        fontStyle: FlutterFlowTheme.of(context)
+                                                                            .labelMedium
+                                                                            .fontStyle,
+                                                                      ),
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .labelMedium
+                                                                          .fontWeight,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .labelMedium
+                                                                          .fontStyle,
+                                                                    ),
+                                                            enabledBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: Color(
+                                                                    0x00000000),
+                                                                width: 1.0,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                            ),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: Color(
+                                                                    0x00000000),
+                                                                width: 1.0,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                            ),
+                                                            errorBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .error,
+                                                                width: 1.0,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                            ),
+                                                            focusedErrorBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .error,
+                                                                width: 1.0,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                            ),
+                                                            filled: true,
+                                                            fillColor: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                            hoverColor: Colors
+                                                                .transparent,
+                                                            suffixIcon: InkWell(
+                                                              onTap: () =>
+                                                                  safeSetState(
+                                                                () => _model
+                                                                        .margemTotalVisibility =
+                                                                    !_model
+                                                                        .margemTotalVisibility,
+                                                              ),
+                                                              focusNode: FocusNode(
+                                                                  skipTraversal:
+                                                                      true),
+                                                              child: Icon(
+                                                                _model.margemTotalVisibility
+                                                                    ? Icons
+                                                                        .visibility_outlined
+                                                                    : Icons
+                                                                        .visibility_off_outlined,
+                                                                size: 22,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                font:
+                                                                    GoogleFonts
+                                                                        .inter(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .fontStyle,
+                                                                ),
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontStyle: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontStyle,
+                                                              ),
+                                                          cursorColor:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .primaryText,
+                                                          enableInteractiveSelection:
+                                                              true,
+                                                          validator: _model
+                                                              .margemTotalTextControllerValidator
+                                                              .asValidator(
+                                                                  context),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ].addToStart(
+                                                  SizedBox(height: 5.0)),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -1599,7 +1957,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                     child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           0.0,
-                                          0.0,
+                                          5.0,
                                           valueOrDefault<double>(
                                             () {
                                               if (MediaQuery.sizeOf(context)
@@ -1618,18 +1976,63 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                             0.0,
                                           ),
                                           0.0),
-                                      child: RichText(
-                                        textScaler:
-                                            MediaQuery.of(context).textScaler,
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: 'Olá, ',
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        font: GoogleFonts.inter(
+                                      child: InkWell(
+                                        splashColor: Colors.transparent,
+                                        focusColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () async {
+                                          _model.notificacao =
+                                              await FACConsigGroup
+                                                  .buscaNotificacoesCall
+                                                  .call();
+
+                                          if ((_model.notificacao?.succeeded ??
+                                              true)) {
+                                            await actions.localNotification(
+                                              getJsonField(
+                                                (_model.notificacao?.jsonBody ??
+                                                    ''),
+                                                r'''$..titulo''',
+                                              ).toString(),
+                                              getJsonField(
+                                                (_model.notificacao?.jsonBody ??
+                                                    ''),
+                                                r'''$..descricao''',
+                                              ).toString(),
+                                            );
+                                          }
+
+                                          safeSetState(() {});
+                                        },
+                                        child: RichText(
+                                          textScaler:
+                                              MediaQuery.of(context).textScaler,
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Olá, ',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          font:
+                                                              GoogleFonts.inter(
+                                                            fontWeight:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontWeight,
+                                                            fontStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontStyle,
+                                                          ),
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .secondaryBackground,
+                                                          letterSpacing: 0.0,
                                                           fontWeight:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -1641,32 +2044,33 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   .bodyMedium
                                                                   .fontStyle,
                                                         ),
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .secondaryBackground,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .fontWeight,
-                                                        fontStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .fontStyle,
-                                                      ),
-                                            ),
-                                            TextSpan(
-                                              text: valueOrDefault<String>(
-                                                FFAppState().nomContratante,
-                                                'DANIELE MARTINS ALCANTARA APRESENTAÇÃO FAC',
                                               ),
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        font: GoogleFonts.inter(
+                                              TextSpan(
+                                                text: valueOrDefault<String>(
+                                                  FFAppState().nomContratante,
+                                                  'DANIELE MARTINS ALCANTARA APRESENTAÇÃO FAC',
+                                                ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          font:
+                                                              GoogleFonts.inter(
+                                                            fontWeight:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontWeight,
+                                                            fontStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontStyle,
+                                                          ),
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .secondaryBackground,
+                                                          letterSpacing: 0.0,
                                                           fontWeight:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -1678,27 +2082,21 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   .bodyMedium
                                                                   .fontStyle,
                                                         ),
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .secondaryBackground,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .fontWeight,
-                                                        fontStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .fontStyle,
-                                                      ),
-                                            )
-                                          ],
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                font: GoogleFonts.inter(
+                                              )
+                                            ],
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  font: GoogleFonts.inter(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .fontStyle,
+                                                  ),
+                                                  letterSpacing: 0.0,
                                                   fontWeight: FontWeight.normal,
                                                   fontStyle:
                                                       FlutterFlowTheme.of(
@@ -1706,15 +2104,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.normal,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontStyle,
-                                              ),
+                                          ),
+                                          maxLines: 3,
                                         ),
-                                        maxLines: 3,
                                       ),
                                     ),
                                   ),
@@ -1854,7 +2246,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                         ).toString();
                                         safeSetState(() {});
                                         safeSetState(() {
-                                          _model.textController?.text =
+                                          _model.textController1?.text =
                                               formatNumber(
                                             functions.stringDoubleSFomart(
                                                 FFAppState().margemDisponivel),

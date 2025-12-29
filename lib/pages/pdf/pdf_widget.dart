@@ -36,6 +36,8 @@ class _PdfWidgetState extends State<PdfWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => PdfModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

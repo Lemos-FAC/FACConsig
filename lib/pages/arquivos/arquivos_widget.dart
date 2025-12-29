@@ -26,6 +26,8 @@ class _ArquivosWidgetState extends State<ArquivosWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ArquivosModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

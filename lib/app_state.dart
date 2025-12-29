@@ -117,6 +117,12 @@ class FFAppState extends ChangeNotifier {
               .toList() ??
           _listaArquivos;
     });
+    _safeInit(() {
+      _proposta = prefs.getInt('ff_proposta') ?? _proposta;
+    });
+    _safeInit(() {
+      _margemTotal = prefs.getString('ff_margemTotal') ?? _margemTotal;
+    });
   }
 
   void update(VoidCallback callback) {
@@ -825,6 +831,90 @@ class FFAppState extends ChangeNotifier {
 
   void insertAtIndexInArquivosObrigatorios(int index, int value) {
     arquivosObrigatorios.insert(index, value);
+  }
+
+  bool _isRecording = false;
+  bool get isRecording => _isRecording;
+  set isRecording(bool value) {
+    _isRecording = value;
+  }
+
+  List<ItemProvaVidaStruct> _listaVideos = [];
+  List<ItemProvaVidaStruct> get listaVideos => _listaVideos;
+  set listaVideos(List<ItemProvaVidaStruct> value) {
+    _listaVideos = value;
+  }
+
+  void addToListaVideos(ItemProvaVidaStruct value) {
+    listaVideos.add(value);
+  }
+
+  void removeFromListaVideos(ItemProvaVidaStruct value) {
+    listaVideos.remove(value);
+  }
+
+  void removeAtIndexFromListaVideos(int index) {
+    listaVideos.removeAt(index);
+  }
+
+  void updateListaVideosAtIndex(
+    int index,
+    ItemProvaVidaStruct Function(ItemProvaVidaStruct) updateFn,
+  ) {
+    listaVideos[index] = updateFn(_listaVideos[index]);
+  }
+
+  void insertAtIndexInListaVideos(int index, ItemProvaVidaStruct value) {
+    listaVideos.insert(index, value);
+  }
+
+  List<String> _urlVideos = [
+    'https://youtu.be/O_Cr2XgzU2U',
+    'https://youtu.be/sexa0SwuCms',
+    'https://youtu.be/1cjqQ17ySE0',
+    'https://youtu.be/P2xLZrutjHQ',
+    'https://youtu.be/PZj43Cc-Y3c'
+  ];
+  List<String> get urlVideos => _urlVideos;
+  set urlVideos(List<String> value) {
+    _urlVideos = value;
+  }
+
+  void addToUrlVideos(String value) {
+    urlVideos.add(value);
+  }
+
+  void removeFromUrlVideos(String value) {
+    urlVideos.remove(value);
+  }
+
+  void removeAtIndexFromUrlVideos(int index) {
+    urlVideos.removeAt(index);
+  }
+
+  void updateUrlVideosAtIndex(
+    int index,
+    String Function(String) updateFn,
+  ) {
+    urlVideos[index] = updateFn(_urlVideos[index]);
+  }
+
+  void insertAtIndexInUrlVideos(int index, String value) {
+    urlVideos.insert(index, value);
+  }
+
+  int _proposta = 0;
+  int get proposta => _proposta;
+  set proposta(int value) {
+    _proposta = value;
+    prefs.setInt('ff_proposta', value);
+  }
+
+  String _margemTotal = '';
+  String get margemTotal => _margemTotal;
+  set margemTotal(String value) {
+    _margemTotal = value;
+    prefs.setString('ff_margemTotal', value);
   }
 }
 
