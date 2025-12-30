@@ -98,17 +98,20 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: MensagemWidget.routeName,
           path: MensagemWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => MensagemWidget(),
         ),
         FFRoute(
           name: ContaWidget.routeName,
           path: ContaWidget.routePath,
+          requireAuth: true,
           builder: (context, params) =>
               params.isEmpty ? NavBarPage(initialPage: 'Conta') : ContaWidget(),
         ),
         FFRoute(
           name: EmprestimoWidget.routeName,
           path: EmprestimoWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => EmprestimoWidget(),
         ),
         FFRoute(
@@ -124,6 +127,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: DuvidasWidget.routeName,
           path: DuvidasWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => DuvidasWidget(),
         ),
         FFRoute(
@@ -134,6 +138,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: AlterarDadosWidget.routeName,
           path: AlterarDadosWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => AlterarDadosWidget(),
         ),
         FFRoute(
@@ -144,16 +149,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: MeusEmprestimosWidget.routeName,
           path: MeusEmprestimosWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => MeusEmprestimosWidget(),
         ),
         FFRoute(
           name: MinhasPropostasWidget.routeName,
           path: MinhasPropostasWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => MinhasPropostasWidget(),
         ),
         FFRoute(
           name: ConfirmarEmprestimoWidget.routeName,
           path: ConfirmarEmprestimoWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => ConfirmarEmprestimoWidget(
             valorSolicitado: params.getParam(
               'valorSolicitado',
@@ -180,6 +188,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: PdfWidget.routeName,
           path: PdfWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => PdfWidget(
             doc: params.getParam(
               'doc',
@@ -194,6 +203,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: AnexarDocWidget.routeName,
           path: AnexarDocWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => AnexarDocWidget(
             codProposta: params.getParam(
               'codProposta',
@@ -202,23 +212,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: AnexarDocCopyWidget.routeName,
-          path: AnexarDocCopyWidget.routePath,
-          builder: (context, params) => AnexarDocCopyWidget(),
-        ),
-        FFRoute(
-          name: AnexarDocCopy2Widget.routeName,
-          path: AnexarDocCopy2Widget.routePath,
-          builder: (context, params) => AnexarDocCopy2Widget(),
-        ),
-        FFRoute(
-          name: ArquivosWidget.routeName,
-          path: ArquivosWidget.routePath,
-          builder: (context, params) => ArquivosWidget(),
-        ),
-        FFRoute(
           name: CameraWidget.routeName,
           path: CameraWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => CameraWidget(
             codDocPendente: params.getParam(
               'codDocPendente',
@@ -229,6 +225,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ExibirPDFWidget.routeName,
           path: ExibirPDFWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => ExibirPDFWidget(
             listaPDF: params.getParam<FFUploadedFile>(
               'listaPDF',
@@ -244,6 +241,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ExibirGaleriaWidget.routeName,
           path: ExibirGaleriaWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => ExibirGaleriaWidget(
             listaGaleria: params.getParam<FFUploadedFile>(
               'listaGaleria',
@@ -259,12 +257,14 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: VideoWidget.routeName,
           path: VideoWidget.routePath,
+          requireAuth: true,
           builder: (context, params) =>
               params.isEmpty ? NavBarPage(initialPage: 'Video') : VideoWidget(),
         ),
         FFRoute(
           name: GravarVideoWidget.routeName,
           path: GravarVideoWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => GravarVideoWidget(
             codProp: params.getParam(
               'codProp',

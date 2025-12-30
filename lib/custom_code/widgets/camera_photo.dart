@@ -144,7 +144,7 @@ class _CameraPhotoState extends State<CameraPhoto> {
       // 2. Initialize the controller with the selected camera
       controller = CameraController(
         selectedCamera,
-        ResolutionPreset.max,
+        ResolutionPreset.low,
         enableAudio: false, // Generally recommended for photo widgets
       );
 

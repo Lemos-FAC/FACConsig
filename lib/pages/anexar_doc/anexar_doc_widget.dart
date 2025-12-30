@@ -5,7 +5,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/pages/modal/modal_widget.dart';
 import '/pages/modal_prova_video/modal_prova_video_widget.dart';
-import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
 import 'package:flutter/material.dart';
@@ -676,13 +675,6 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                         FFAppState()
                                             .arquivosObrigatorios
                                             .toList())) {
-                                      _model.custom =
-                                          await actions.montarCorpoJson(
-                                        FFAppState()
-                                            .listaArquivos
-                                            .map((e) => e.toMap())
-                                            .toList(),
-                                      );
                                       _model.enviaDocumento = await FACConsigGroup
                                           .atualizaMultiplosDocumentosCodigoCall
                                           .call(
@@ -947,20 +939,17 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                         FFAppState().proposta = 0;
                                         safeSetState(() {});
                                       } else {
-                                        _model.teste = await actions.teste(
-                                          _model.custom!,
-                                        );
                                         await showDialog(
                                           context: context,
                                           builder: (alertDialogContext) {
                                             return WebViewAware(
                                               child: AlertDialog(
-                                                content: Text(getJsonField(
-                                                  (_model.enviaDocumento
-                                                          ?.jsonBody ??
-                                                      ''),
-                                                  r'''$..message''',
-                                                ).toString()),
+                                                title: Text('Atenção!'),
+                                                content: Text((_model
+                                                            .enviaDocumento
+                                                            ?.statusCode ??
+                                                        200)
+                                                    .toString()),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () =>

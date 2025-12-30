@@ -763,7 +763,10 @@ class FFAppState extends ChangeNotifier {
     _fileBase64 = value;
   }
 
-  List<ItemArquivoStruct> _listaArquivos = [];
+  List<ItemArquivoStruct> _listaArquivos = [
+    ItemArquivoStruct.fromSerializableMap(jsonDecode(
+        '{\"codigoArquivo\":\"0\",\"nomeArquivo\":\"Hello World\",\"extensaoArquivo\":\"Hello World\",\"arquivo\":\"Hello World\"}'))
+  ];
   List<ItemArquivoStruct> get listaArquivos => _listaArquivos;
   set listaArquivos(List<ItemArquivoStruct> value) {
     _listaArquivos = value;

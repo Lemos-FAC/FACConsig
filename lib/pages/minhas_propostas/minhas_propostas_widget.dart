@@ -337,6 +337,15 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                                 return FlutterFlowTheme.of(
                                                         context)
                                                     .secondaryText;
+                                              } else if ((String var1) {
+                                                return var1 == "Reprovada";
+                                              }(getJsonField(
+                                                propostasItem,
+                                                r'''$.statusProposta''',
+                                              ).toString())) {
+                                                return FlutterFlowTheme.of(
+                                                        context)
+                                                    .error;
                                               } else {
                                                 return FlutterFlowTheme.of(
                                                         context)

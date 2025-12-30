@@ -501,7 +501,7 @@ class _ContaWidgetState extends State<ContaWidget> {
                                                   child: AlertDialog(
                                                     title: Text('ATENÇÃO!'),
                                                     content: Text(
-                                                        'Deseja realmente excluir sua conta?'),
+                                                        'Deseja realmente bloquear essa matrícula?'),
                                                     actions: [
                                                       TextButton(
                                                         onPressed: () =>
@@ -591,7 +591,7 @@ class _ContaWidgetState extends State<ContaWidget> {
 
                                     safeSetState(() {});
                                   },
-                                  text: 'Excluir Conta',
+                                  text: 'Bloquear Matrícula',
                                   options: FFButtonOptions(
                                     width:
                                         MediaQuery.sizeOf(context).width * 0.8,

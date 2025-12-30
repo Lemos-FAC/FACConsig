@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import '/pages/image/image_widget.dart';
 import '/index.dart';
 import 'camera_widget.dart' show CameraWidget;
 import 'package:flutter/material.dart';
@@ -21,14 +22,18 @@ class CameraModel extends FlutterFlowModel<CameraWidget> {
 
   // State field(s) for Row widget.
   ScrollController? rowController;
+  // Models for image dynamic component.
+  late FlutterFlowDynamicModels<ImageModel> imageModels;
 
   @override
   void initState(BuildContext context) {
     rowController = ScrollController();
+    imageModels = FlutterFlowDynamicModels(() => ImageModel());
   }
 
   @override
   void dispose() {
     rowController?.dispose();
+    imageModels.dispose();
   }
 }

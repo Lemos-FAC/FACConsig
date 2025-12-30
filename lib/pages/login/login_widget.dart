@@ -911,16 +911,18 @@ class _LoginWidgetState extends State<LoginWidget> {
                                             );
                                           }
                                         } else {
-                                          context.pushNamedAuth(
-                                              HomePageWidget.routeName,
-                                              context.mounted);
+                                          if (currentUserUid != '') {
+                                            context.pushNamedAuth(
+                                                HomePageWidget.routeName,
+                                                context.mounted);
 
-                                          FFAppState().cpf = getJsonField(
-                                            (_model.login?.jsonBody ?? ''),
-                                            r'''$.data[0].C2000_CPF''',
-                                          ).toString();
-                                          FFAppState().canLoad = true;
-                                          safeSetState(() {});
+                                            FFAppState().cpf = getJsonField(
+                                              (_model.login?.jsonBody ?? ''),
+                                              r'''$.data[0].C2000_CPF''',
+                                            ).toString();
+                                            FFAppState().canLoad = true;
+                                            safeSetState(() {});
+                                          }
                                         }
                                       } else {
                                         await showDialog(

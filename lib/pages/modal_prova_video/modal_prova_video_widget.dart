@@ -196,8 +196,6 @@ class _ModalProvaVideoWidgetState extends State<ModalProvaVideoWidget> {
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(8.0),
-                          hoverColor: Color(0xFF2B16ED),
-                          hoverTextColor: Colors.white,
                         ),
                       ),
                       Builder(
@@ -284,7 +282,7 @@ class _ModalProvaVideoWidgetState extends State<ModalProvaVideoWidget> {
                                       child: Container(
                                         height:
                                             MediaQuery.sizeOf(context).height *
-                                                0.3,
+                                                0.34,
                                         child:
                                             ModalConfirmaDataNascimentoWidget(),
                                       ),
@@ -352,8 +350,6 @@ class _ModalProvaVideoWidgetState extends State<ModalProvaVideoWidget> {
                               width: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(8.0),
-                            hoverColor: Color(0xFF2B16ED),
-                            hoverTextColor: Colors.white,
                           ),
                         ),
                       ),

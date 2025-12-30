@@ -65,20 +65,19 @@ class _CameraVideoState extends State<CameraVideo> {
 
   Future<void> _stopVideo() async {
     if (controller != null && controller!.value.isRecordingVideo) {
-      // 1. Capture the XFile from the camera
       XFile videoFile = await controller!.stopVideoRecording();
-      setState(() => isRecording = false);
 
-      // 2. Read the file as bytes (This is the "actual file" data)
+      // Atualiza o estado de gravação ANTES de processar os bytes
+      if (mounted) setState(() => isRecording = false);
+
+      // Se o arquivo for muito grande, o crash acontece AQUI:
       Uint8List videoBytes = await videoFile.readAsBytes();
 
-      // 3. Create the FFUploadedFile object
       FFUploadedFile ffFile = FFUploadedFile(
         name: videoFile.name,
         bytes: videoBytes,
       );
 
-      // 4. Return the FFUploadedFile object to FlutterFlow
       await widget.onVideoCaptured(ffFile);
     }
   }
@@ -97,7 +96,7 @@ class _CameraVideoState extends State<CameraVideo> {
     }
 
     await controller?.dispose();
-    controller = CameraController(selectedCamera, ResolutionPreset.high,
+    controller = CameraController(selectedCamera, ResolutionPreset.low,
         enableAudio: true);
 
     await controller!.initialize();
@@ -117,9 +116,13 @@ class _CameraVideoState extends State<CameraVideo> {
                   width: widget.width,
                   height: widget.height,
                   child: CameraPreview(controller!))
-              : Center(child: CircularProgressIndicator());
+              : Center(
+                  child: CircularProgressIndicator(
+                      color: FlutterFlowTheme.of(context).primary));
         }
-        return Center(child: CircularProgressIndicator());
+        return Center(
+            child: CircularProgressIndicator(
+                color: FlutterFlowTheme.of(context).primary));
       },
     );
   }

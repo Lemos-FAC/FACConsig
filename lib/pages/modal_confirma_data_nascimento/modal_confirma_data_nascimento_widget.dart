@@ -366,8 +366,6 @@ class _ModalConfirmaDataNascimentoWidgetState
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(8.0),
-                          hoverColor: Color(0xFF2B16ED),
-                          hoverTextColor: Colors.white,
                         ),
                       ),
                     ],

@@ -212,18 +212,6 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
             top: true,
             child: Stack(
               children: [
-                if (FFAppState().isLoading == true)
-                  Align(
-                    alignment: AlignmentDirectional(0.0, 0.0),
-                    child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      child: custom_widgets.LoadingIndicator(
-                        width: 100.0,
-                        height: 100.0,
-                      ),
-                    ),
-                  ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                   child: Row(
@@ -456,6 +444,15 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                               return FlutterFlowTheme.of(
                                                       context)
                                                   .secondaryText;
+                                            } else if ((String var1) {
+                                              return var1 == "Reprovado";
+                                            }(getJsonField(
+                                              emprestimosItem,
+                                              r'''$.StatusContrato''',
+                                            ).toString())) {
+                                              return FlutterFlowTheme.of(
+                                                      context)
+                                                  .error;
                                             } else {
                                               return FlutterFlowTheme.of(
                                                       context)
@@ -922,6 +919,72 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
+                                        'Taxa de juros:',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              font: GoogleFonts.inter(
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                              letterSpacing: 0.0,
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                      ),
+                                      Text(
+                                        getJsonField(
+                                          emprestimosItem,
+                                          r'''$.TxJuros''',
+                                        ).toString(),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              font: GoogleFonts.inter(
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                              letterSpacing: 0.0,
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(
+                                    thickness: 2.0,
+                                    color: Color(0x5E57636C),
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
                                         'Data Finalização:',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -1118,6 +1181,29 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                           );
                         },
                       );
+                    },
+                  ),
+                ),
+                if (FFAppState().isLoading == true)
+                  Align(
+                    alignment: AlignmentDirectional(0.0, 0.0),
+                    child: Container(
+                      width: 100.0,
+                      height: 100.0,
+                      child: custom_widgets.LoadingIndicator(
+                        width: 100.0,
+                        height: 100.0,
+                      ),
+                    ),
+                  ),
+                Container(
+                  width: 100.0,
+                  height: 100.0,
+                  child: custom_widgets.BackButtonOverrider(
+                    width: 100.0,
+                    height: 100.0,
+                    onBack: () async {
+                      context.pushNamed(HomePageWidget.routeName);
                     },
                   ),
                 ),
