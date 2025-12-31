@@ -132,6 +132,8 @@ class _CameraWidgetState extends State<CameraWidget> {
                           onPhotoCaptured: (capturedPhotoBase64) async {
                             _model.addToImageList(capturedPhotoBase64!);
                             safeSetState(() {});
+                            FFAppState().isLoading = false;
+                            safeSetState(() {});
                           },
                         ),
                       ),
@@ -142,6 +144,8 @@ class _CameraWidgetState extends State<CameraWidget> {
                       children: [
                         FFButtonWidget(
                           onPressed: () async {
+                            FFAppState().isLoading = true;
+                            safeSetState(() {});
                             FFAppState().makePhoto = true;
                             safeSetState(() {});
                             await Future.delayed(

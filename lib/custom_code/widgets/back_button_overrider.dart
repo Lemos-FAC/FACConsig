@@ -16,14 +16,12 @@ class BackButtonOverrider extends StatefulWidget {
     super.key,
     this.width,
     this.height,
-    this.child, // Add a child so you can wrap your UI
-    required this.onBack,
+    this.onBack, // Optional now, since we hardcode home
   });
 
   final double? width;
   final double? height;
-  final Widget? child;
-  final Future Function() onBack;
+  final Future Function()? onBack;
 
   @override
   State<BackButtonOverrider> createState() => _BackButtonOverriderState();
@@ -33,16 +31,17 @@ class _BackButtonOverriderState extends State<BackButtonOverrider> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // Disables system back
+      canPop: false, // Disables the physical back button
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
         if (didPop) return;
-        // Trigger the FlutterFlow Action assigned to 'onBack'
-        await widget.onBack();
+
+        // Force navigation to Home Page
+        // Replace 'homePage' with the exact "Page Name" from FlutterFlow
+        context.goNamed('homePage');
       },
-      child: Container(
-        width: widget.width,
-        height: widget.height,
-        child: widget.child ?? Container(), // Displays your page content
+      child: SizedBox(
+        width: widget.width ?? 1.0,
+        height: widget.height ?? 1.0,
       ),
     );
   }

@@ -1,5 +1,4 @@
 import '/backend/api_requests/api_calls.dart';
-import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -106,21 +105,6 @@ class _ModalConfirmaDataNascimentoWidgetState
                               ),
                         ),
                       ),
-                    ),
-                    FlutterFlowIconButton(
-                      borderColor:
-                          FlutterFlowTheme.of(context).primaryBackground,
-                      borderRadius: 30.0,
-                      borderWidth: 2.0,
-                      buttonSize: 44.0,
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: FlutterFlowTheme.of(context).secondaryText,
-                        size: 24.0,
-                      ),
-                      onPressed: () {
-                        print('IconButton pressed ...');
-                      },
                     ),
                   ],
                 ),
@@ -312,10 +296,8 @@ class _ModalConfirmaDataNascimentoWidgetState
                                   return WebViewAware(
                                     child: AlertDialog(
                                       title: Text('Atenção!'),
-                                      content: Text(getJsonField(
-                                        (_model.apiResulth9b?.jsonBody ?? ''),
-                                        r'''$..message''',
-                                      ).toString()),
+                                      content: Text(
+                                          'Data de nascimento incorreta. Favor conferir!'),
                                       actions: [
                                         TextButton(
                                           onPressed: () =>

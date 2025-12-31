@@ -898,6 +898,7 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                           }
 
                                           await showDialog(
+                                            barrierDismissible: false,
                                             context: context,
                                             builder: (dialogContext) {
                                               return Dialog(

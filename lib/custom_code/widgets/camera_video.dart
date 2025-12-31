@@ -33,20 +33,33 @@ class CameraVideo extends StatefulWidget {
 
 class _CameraVideoState extends State<CameraVideo> {
   CameraController? controller;
-  late Future<List<CameraDescription>> _cameras;
+  List<CameraDescription>? cameras;
   bool isRecording = false;
+  bool isInitializing = false; // Proteção extra
 
   @override
   void initState() {
     super.initState();
-    _cameras = availableCameras();
+    _loadCameras();
+  }
+
+  Future<void> _loadCameras() async {
+    cameras = await availableCameras();
+    if (mounted) {
+      _initializeCamera();
+    }
   }
 
   @override
   void didUpdateWidget(covariant CameraVideo oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Toggle recording based on the App State variable you created
+    // 1. Verifica se o usuário solicitou trocar de câmera (Frente/Trás)
+    if (oldWidget.front != widget.front) {
+      _initializeCamera();
+    }
+
+    // 2. Verifica a mudança de estado de gravação (Timer)
     if (FFAppState().isRecording != isRecording) {
       if (FFAppState().isRecording) {
         _startVideo();
@@ -58,31 +71,41 @@ class _CameraVideoState extends State<CameraVideo> {
 
   Future<void> _startVideo() async {
     if (controller != null && controller!.value.isInitialized && !isRecording) {
-      await controller!.startVideoRecording();
-      setState(() => isRecording = true);
+      try {
+        await controller!.startVideoRecording();
+        setState(() => isRecording = true);
+      } catch (e) {
+        print("Erro ao iniciar: $e");
+      }
     }
   }
 
   Future<void> _stopVideo() async {
     if (controller != null && controller!.value.isRecordingVideo) {
-      XFile videoFile = await controller!.stopVideoRecording();
+      try {
+        XFile videoFile = await controller!.stopVideoRecording();
+        if (mounted) setState(() => isRecording = false);
 
-      // Atualiza o estado de gravação ANTES de processar os bytes
-      if (mounted) setState(() => isRecording = false);
+        // Lendo bytes de forma segura
+        final Uint8List videoBytes = await videoFile.readAsBytes();
 
-      // Se o arquivo for muito grande, o crash acontece AQUI:
-      Uint8List videoBytes = await videoFile.readAsBytes();
+        FFUploadedFile ffFile = FFUploadedFile(
+          name: videoFile.name,
+          bytes: videoBytes,
+        );
 
-      FFUploadedFile ffFile = FFUploadedFile(
-        name: videoFile.name,
-        bytes: videoBytes,
-      );
-
-      await widget.onVideoCaptured(ffFile);
+        await widget.onVideoCaptured(ffFile);
+      } catch (e) {
+        print("Erro ao parar: $e");
+      }
     }
   }
 
-  Future<void> _initializeCamera(List<CameraDescription> cameras) async {
+  Future<void> _initializeCamera() async {
+    if (cameras == null || cameras!.isEmpty || isInitializing) return;
+
+    setState(() => isInitializing = true);
+
     CameraDescription? selectedCamera;
     var direction = (widget.front == true)
         ? CameraLensDirection.front
@@ -90,40 +113,47 @@ class _CameraVideoState extends State<CameraVideo> {
 
     try {
       selectedCamera =
-          cameras.firstWhere((camera) => camera.lensDirection == direction);
+          cameras!.firstWhere((camera) => camera.lensDirection == direction);
     } catch (e) {
-      selectedCamera = cameras.first;
+      selectedCamera = cameras!.first;
     }
 
     await controller?.dispose();
-    controller = CameraController(selectedCamera, ResolutionPreset.low,
-        enableAudio: true);
+    controller = CameraController(
+      selectedCamera,
+      ResolutionPreset.low, // Mantido low para evitar crash de memória
+      enableAudio: true,
+    );
 
-    await controller!.initialize();
-    if (mounted) setState(() {});
+    try {
+      await controller!.initialize();
+    } catch (e) {
+      print("Erro inicialização: $e");
+    }
+
+    if (mounted) {
+      setState(() => isInitializing = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<CameraDescription>>(
-      future: _cameras,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData) {
-          if (controller == null) _initializeCamera(snapshot.data!);
-          return controller != null && controller!.value.isInitialized
-              ? Container(
-                  width: widget.width,
-                  height: widget.height,
-                  child: CameraPreview(controller!))
-              : Center(
-                  child: CircularProgressIndicator(
-                      color: FlutterFlowTheme.of(context).primary));
-        }
-        return Center(
-            child: CircularProgressIndicator(
-                color: FlutterFlowTheme.of(context).primary));
-      },
+    // Interface simplificada sem FutureBuilder dentro do build para evitar loops
+    if (controller == null || !controller!.value.isInitialized) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: FlutterFlowTheme.of(context).primary,
+        ),
+      );
+    }
+
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      child: AspectRatio(
+        aspectRatio: controller!.value.aspectRatio,
+        child: CameraPreview(controller!),
+      ),
     );
   }
 

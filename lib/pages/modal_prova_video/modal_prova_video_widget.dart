@@ -270,6 +270,7 @@ class _ModalProvaVideoWidgetState extends State<ModalProvaVideoWidget> {
                                 },
                               );
                               await showDialog(
+                                barrierDismissible: false,
                                 context: context,
                                 builder: (dialogContext) {
                                   return Dialog(

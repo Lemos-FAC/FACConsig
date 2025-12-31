@@ -1196,17 +1196,6 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                       ),
                     ),
                   ),
-                Container(
-                  width: 100.0,
-                  height: 100.0,
-                  child: custom_widgets.BackButtonOverrider(
-                    width: 100.0,
-                    height: 100.0,
-                    onBack: () async {
-                      context.pushNamed(HomePageWidget.routeName);
-                    },
-                  ),
-                ),
               ],
             ),
           ),

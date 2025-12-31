@@ -9,9 +9,11 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import 'dart:convert';
+import 'dart:io';
 
 String uploadedFileToBase64(FFUploadedFile file) {
   final base64Codec = Base64Codec();
+
   return base64Codec.encode(file.bytes!);
 }
 // Set your action name, define your arguments and return parameter,

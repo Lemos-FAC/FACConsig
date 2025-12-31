@@ -3,6 +3,7 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_youtube_player.dart';
+import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -62,99 +63,104 @@ class _VideoWidgetState extends State<VideoWidget> {
           FocusScope.of(context).unfocus();
           FocusManager.instance.primaryFocus?.unfocus();
         },
-        child: Scaffold(
-          key: scaffoldKey,
-          backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-          appBar: AppBar(
-            backgroundColor: FlutterFlowTheme.of(context).primary,
-            automaticallyImplyLeading: false,
-            leading: FlutterFlowIconButton(
-              borderColor: Colors.transparent,
-              borderRadius: 30.0,
-              borderWidth: 1.0,
-              buttonSize: 60.0,
-              icon: Icon(
-                Icons.arrow_back_rounded,
-                color: Colors.white,
-                size: 30.0,
+        child: PopScope(
+          canPop: false,
+          child: Scaffold(
+            key: scaffoldKey,
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            appBar: AppBar(
+              backgroundColor: FlutterFlowTheme.of(context).primary,
+              automaticallyImplyLeading: false,
+              leading: FlutterFlowIconButton(
+                borderColor: Colors.transparent,
+                borderRadius: 30.0,
+                borderWidth: 1.0,
+                buttonSize: 60.0,
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: Colors.white,
+                  size: 30.0,
+                ),
+                onPressed: () async {
+                  context.pushNamed(HomePageWidget.routeName);
+                },
               ),
-              onPressed: () async {
-                context.pop();
-              },
-            ),
-            title: Text(
-              'Educação Financeira',
-              style: FlutterFlowTheme.of(context).headlineMedium.override(
-                    font: GoogleFonts.interTight(
+              title: Text(
+                'Educação Financeira',
+                style: FlutterFlowTheme.of(context).headlineMedium.override(
+                      font: GoogleFonts.interTight(
+                        fontWeight: FlutterFlowTheme.of(context)
+                            .headlineMedium
+                            .fontWeight,
+                        fontStyle: FlutterFlowTheme.of(context)
+                            .headlineMedium
+                            .fontStyle,
+                      ),
+                      color: Colors.white,
+                      fontSize: 22.0,
+                      letterSpacing: 0.0,
                       fontWeight: FlutterFlowTheme.of(context)
                           .headlineMedium
                           .fontWeight,
                       fontStyle:
                           FlutterFlowTheme.of(context).headlineMedium.fontStyle,
                     ),
-                    color: Colors.white,
-                    fontSize: 22.0,
-                    letterSpacing: 0.0,
-                    fontWeight:
-                        FlutterFlowTheme.of(context).headlineMedium.fontWeight,
-                    fontStyle:
-                        FlutterFlowTheme.of(context).headlineMedium.fontStyle,
-                  ),
+              ),
+              actions: [],
+              centerTitle: false,
+              elevation: 2.0,
             ),
-            actions: [],
-            centerTitle: false,
-            elevation: 2.0,
-          ),
-          body: SafeArea(
-            top: true,
-            child: SingleChildScrollView(
-              controller: _model.columnController,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
-                    child: Builder(
-                      builder: (context) {
-                        final url = _model.videos.toList();
+            body: SafeArea(
+              top: true,
+              child: SingleChildScrollView(
+                controller: _model.columnController,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
+                      child: Builder(
+                        builder: (context) {
+                          final url = _model.videos.toList();
 
-                        return ListView.separated(
-                          padding: EdgeInsets.fromLTRB(
-                            0,
-                            20.0,
-                            0,
-                            0,
-                          ),
-                          primary: false,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: url.length,
-                          separatorBuilder: (_, __) => SizedBox(height: 20.0),
-                          itemBuilder: (context, urlIndex) {
-                            final urlItem = url[urlIndex];
-                            return FlutterFlowYoutubePlayer(
-                              url: getJsonField(
-                                urlItem,
-                                r'''$..link''',
-                              ).toString(),
-                              autoPlay: false,
-                              looping: true,
-                              mute: false,
-                              showControls: true,
-                              showFullScreen: true,
-                              strictRelatedVideos: true,
-                            );
-                          },
-                        );
-                      },
+                          return ListView.separated(
+                            padding: EdgeInsets.fromLTRB(
+                              0,
+                              20.0,
+                              0,
+                              0,
+                            ),
+                            primary: false,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: url.length,
+                            separatorBuilder: (_, __) => SizedBox(height: 20.0),
+                            itemBuilder: (context, urlIndex) {
+                              final urlItem = url[urlIndex];
+                              return FlutterFlowYoutubePlayer(
+                                url: getJsonField(
+                                  urlItem,
+                                  r'''$..link''',
+                                ).toString(),
+                                autoPlay: false,
+                                looping: true,
+                                mute: false,
+                                showControls: true,
+                                showFullScreen: true,
+                                strictRelatedVideos: true,
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ]
-                    .divide(SizedBox(height: 20.0))
-                    .addToStart(SizedBox(height: 20.0))
-                    .addToEnd(SizedBox(height: 20.0)),
+                  ]
+                      .divide(SizedBox(height: 20.0))
+                      .addToStart(SizedBox(height: 20.0))
+                      .addToEnd(SizedBox(height: 20.0)),
+                ),
               ),
             ),
           ),
