@@ -3,10 +3,12 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_youtube_player.dart';
+import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'video_model.dart';
 export 'video_model.dart';
 
@@ -32,6 +34,8 @@ class _VideoWidgetState extends State<VideoWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      FFAppState().isLoading = true;
+      safeSetState(() {});
       _model.videosLista =
           await FACConsigGroup.buscaVideosEducacaoFinanceiraCall.call();
 
@@ -42,6 +46,8 @@ class _VideoWidgetState extends State<VideoWidget> {
       )!
           .toList()
           .cast<dynamic>();
+      safeSetState(() {});
+      FFAppState().isLoading = false;
       safeSetState(() {});
     });
 
@@ -57,6 +63,8 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return YoutubeFullScreenWrapper(
       child: GestureDetector(
         onTap: () {
@@ -112,55 +120,72 @@ class _VideoWidgetState extends State<VideoWidget> {
             ),
             body: SafeArea(
               top: true,
-              child: SingleChildScrollView(
-                controller: _model.columnController,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
-                      child: Builder(
-                        builder: (context) {
-                          final url = _model.videos.toList();
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: _model.columnController,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              20.0, 0.0, 20.0, 0.0),
+                          child: Builder(
+                            builder: (context) {
+                              final url = _model.videos.toList();
 
-                          return ListView.separated(
-                            padding: EdgeInsets.fromLTRB(
-                              0,
-                              20.0,
-                              0,
-                              0,
-                            ),
-                            primary: false,
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemCount: url.length,
-                            separatorBuilder: (_, __) => SizedBox(height: 20.0),
-                            itemBuilder: (context, urlIndex) {
-                              final urlItem = url[urlIndex];
-                              return FlutterFlowYoutubePlayer(
-                                url: getJsonField(
-                                  urlItem,
-                                  r'''$..link''',
-                                ).toString(),
-                                autoPlay: false,
-                                looping: true,
-                                mute: false,
-                                showControls: true,
-                                showFullScreen: true,
-                                strictRelatedVideos: true,
+                              return ListView.separated(
+                                padding: EdgeInsets.fromLTRB(
+                                  0,
+                                  20.0,
+                                  0,
+                                  0,
+                                ),
+                                primary: false,
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemCount: url.length,
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(height: 20.0),
+                                itemBuilder: (context, urlIndex) {
+                                  final urlItem = url[urlIndex];
+                                  return FlutterFlowYoutubePlayer(
+                                    url: getJsonField(
+                                      urlItem,
+                                      r'''$..link''',
+                                    ).toString(),
+                                    autoPlay: false,
+                                    looping: true,
+                                    mute: false,
+                                    showControls: true,
+                                    showFullScreen: true,
+                                    strictRelatedVideos: true,
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
+                          ),
+                        ),
+                      ]
+                          .divide(SizedBox(height: 20.0))
+                          .addToStart(SizedBox(height: 20.0))
+                          .addToEnd(SizedBox(height: 20.0)),
+                    ),
+                  ),
+                  if (FFAppState().isLoading == true)
+                    Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: custom_widgets.LoadingIndicator(
+                          width: 100.0,
+                          height: 100.0,
+                        ),
                       ),
                     ),
-                  ]
-                      .divide(SizedBox(height: 20.0))
-                      .addToStart(SizedBox(height: 20.0))
-                      .addToEnd(SizedBox(height: 20.0)),
-                ),
+                ],
               ),
             ),
           ),

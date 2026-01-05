@@ -215,3 +215,24 @@ List<dynamic> filterByStatus(
     return status.toLowerCase().contains(searchTerm.toLowerCase());
   }).toList();
 }
+
+Color? getDocColor(
+  List<ItemArquivoStruct> listaArquivos,
+  String? codigoDocumento,
+  Color corPrimaria,
+  Color corSecundaria,
+) {
+// 1. Verifica se o código é nulo ou a lista está vazia
+  if (codigoDocumento == null || listaArquivos.isEmpty) {
+    return corSecundaria;
+  }
+
+  // 2. Extrai apenas os códigos e verifica se contém o código buscado
+  // Convertemos para String para garantir que a comparação funcione mesmo se vierem tipos diferentes
+  final existeNaLista = listaArquivos
+      .map((e) => e.codigoArquivo.toString())
+      .toList()
+      .contains(codigoDocumento.toString());
+
+  return existeNaLista ? corPrimaria : corSecundaria;
+}

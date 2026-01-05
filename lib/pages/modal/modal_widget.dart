@@ -263,9 +263,6 @@ class _ModalWidgetState extends State<ModalWidget>
                                       ),
                                     }.withoutNulls,
                                   );
-
-                                  FFAppState().isLoading = false;
-                                  safeSetState(() {});
                                 },
                                 child: Container(
                                   width: double.infinity,
@@ -369,9 +366,6 @@ class _ModalWidgetState extends State<ModalWidget>
                                       ),
                                     }.withoutNulls,
                                   );
-
-                                  FFAppState().isLoading = false;
-                                  safeSetState(() {});
                                 },
                                 child: Container(
                                   width: double.infinity,
@@ -521,9 +515,6 @@ class _ModalWidgetState extends State<ModalWidget>
                                           ),
                                         }.withoutNulls,
                                       );
-
-                                      FFAppState().isLoading = false;
-                                      safeSetState(() {});
                                     },
                                     child: Container(
                                       width: double.infinity,

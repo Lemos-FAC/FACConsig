@@ -279,6 +279,9 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                 size: 30.0,
               ),
               onPressed: () async {
+                FFAppState().canLoad = true;
+                safeSetState(() {});
+
                 context.pushNamed(ContaWidget.routeName);
               },
             ),
@@ -2823,7 +2826,7 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                                                                           alertDialogContext,
                                                                           false),
                                                                   child: Text(
-                                                                      'Cancel'),
+                                                                      'Cancelar'),
                                                                 ),
                                                                 TextButton(
                                                                   onPressed: () =>
@@ -2831,7 +2834,7 @@ class _AlterarDadosWidgetState extends State<AlterarDadosWidget> {
                                                                           alertDialogContext,
                                                                           true),
                                                                   child: Text(
-                                                                      'Confirm'),
+                                                                      'Confirmar'),
                                                                 ),
                                                               ],
                                                             ),

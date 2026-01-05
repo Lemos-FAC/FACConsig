@@ -593,10 +593,27 @@ class _AnexarDocWidgetState extends State<AnexarDocWidget> {
                                                   borderRadius: 8.0,
                                                   buttonSize: 40.0,
                                                   icon: Icon(
-                                                    Icons.upload,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .primary,
+                                                    Icons.upload_sharp,
+                                                    color:
+                                                        valueOrDefault<Color>(
+                                                      functions.getDocColor(
+                                                          FFAppState()
+                                                              .listaArquivos
+                                                              .toList(),
+                                                          getJsonField(
+                                                            docsPendentesItem,
+                                                            r'''$.codigo_documento''',
+                                                          ).toString(),
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primary,
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .secondaryText),
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .secondaryText,
+                                                    ),
                                                     size: 24.0,
                                                   ),
                                                   onPressed: () async {

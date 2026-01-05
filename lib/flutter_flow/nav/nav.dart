@@ -122,6 +122,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: PrimeiroAcessoWidget.routeName,
           path: PrimeiroAcessoWidget.routePath,
+          requireAuth: true,
           builder: (context, params) => PrimeiroAcessoWidget(),
         ),
         FFRoute(

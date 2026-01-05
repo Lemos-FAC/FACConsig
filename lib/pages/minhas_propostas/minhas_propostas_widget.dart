@@ -76,6 +76,8 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
           );
           context.safePop();
         } else {
+          FFAppState().isLoading = false;
+          safeSetState(() {});
           _model.dados = getJsonField(
             (_model.proposta?.jsonBody ?? ''),
             r'''$.dados''',
@@ -280,10 +282,13 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                               style: TextStyle(),
                                             ),
                                             TextSpan(
-                                              text: getJsonField(
-                                                propostasItem,
-                                                r'''$.CodigoProposta''',
-                                              ).toString(),
+                                              text: valueOrDefault<String>(
+                                                getJsonField(
+                                                  propostasItem,
+                                                  r'''$.CodigoProposta''',
+                                                )?.toString(),
+                                                '-',
+                                              ),
                                               style: TextStyle(
                                                 color:
                                                     FlutterFlowTheme.of(context)
@@ -338,7 +343,8 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                                         context)
                                                     .secondaryText;
                                               } else if ((String var1) {
-                                                return var1 == "Reprovada";
+                                                return var1 == "Reprovada" ||
+                                                    var1 == "Cancelada";
                                               }(getJsonField(
                                                 propostasItem,
                                                 r'''$.statusProposta''',
@@ -368,10 +374,13 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                                 EdgeInsetsDirectional.fromSTEB(
                                                     3.0, 3.0, 3.0, 3.0),
                                             child: Text(
-                                              getJsonField(
-                                                propostasItem,
-                                                r'''$.statusProposta''',
-                                              ).toString(),
+                                              valueOrDefault<String>(
+                                                getJsonField(
+                                                  propostasItem,
+                                                  r'''$.statusProposta''',
+                                                )?.toString(),
+                                                '-',
+                                              ),
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
@@ -442,10 +451,13 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          propostasItem,
-                                          r'''$.DataProposta''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            propostasItem,
+                                            r'''$.DataProposta''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -508,10 +520,13 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          propostasItem,
-                                          r'''$.ValorEmprestimo''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            propostasItem,
+                                            r'''$.ValorEmprestimo''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -574,13 +589,16 @@ class _MinhasPropostasWidgetState extends State<MinhasPropostasWidget> {
                                             ),
                                       ),
                                       Text(
-                                        '${getJsonField(
-                                          propostasItem,
-                                          r'''$.NumeroParcelas''',
-                                        ).toString()} de ${getJsonField(
-                                          propostasItem,
-                                          r'''$.ValorParcelas''',
-                                        ).toString()}',
+                                        valueOrDefault<String>(
+                                          '${getJsonField(
+                                            propostasItem,
+                                            r'''$.NumeroParcelas''',
+                                          ).toString()} de ${getJsonField(
+                                            propostasItem,
+                                            r'''$.ValorParcelas''',
+                                          ).toString()}',
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(

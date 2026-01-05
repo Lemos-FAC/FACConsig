@@ -71,7 +71,7 @@ class _ContaWidgetState extends State<ContaWidget> {
                 size: 30.0,
               ),
               onPressed: () async {
-                FFAppState().canLoad = false;
+                FFAppState().canLoad = true;
                 safeSetState(() {});
 
                 context.pushNamed(HomePageWidget.routeName);
@@ -300,7 +300,7 @@ class _ContaWidgetState extends State<ContaWidget> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              'Celular:',
+                                              'Telefone:',
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium

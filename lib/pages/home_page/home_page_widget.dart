@@ -76,6 +76,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
             (_model.contratante?.jsonBody ?? ''),
             r'''$.dados[0].Cpf''',
           ).toString();
+          FFAppState().celular = getJsonField(
+            (_model.contratante?.jsonBody ?? ''),
+            r'''$.dados[0].Telefone''',
+          ).toString();
           FFAppState().update(() {});
           FFAppState().contratante = FFAppState()
               .matriculaDataList
@@ -106,13 +110,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
             getJsonField(
               FFAppState().matriculaDataList.firstOrNull,
               r'''$..Email''',
-            )?.toString(),
-            '-',
-          );
-          FFAppState().celular = valueOrDefault<String>(
-            getJsonField(
-              FFAppState().matriculaDataList.firstOrNull,
-              r'''$..Telefone''',
             )?.toString(),
             '-',
           );
@@ -185,7 +182,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
           FFAppState().margemDisponivel = formatNumber(
             functions.stringDoubleSFomart(getJsonField(
               (_model.home?.jsonBody ?? ''),
-              r'''$..valorEmprestimo''',
+              r'''$..valorMargem''',
             ).toString()),
             formatType: FormatType.custom,
             format: '#,##0.00',
@@ -385,7 +382,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                 CrossAxisAlignment.stretch,
                                             children: [
                                               Text(
-                                                'Valor disponível',
+                                                'Margem disponível',
                                                 style:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
@@ -1642,7 +1639,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                 CrossAxisAlignment.stretch,
                                             children: [
                                               Text(
-                                                'Valor total',
+                                                'Margem total',
                                                 style:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium

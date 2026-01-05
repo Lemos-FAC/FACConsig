@@ -395,10 +395,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                               style: TextStyle(),
                                             ),
                                             TextSpan(
-                                              text: getJsonField(
-                                                emprestimosItem,
-                                                r'''$.CodigoContrato''',
-                                              ).toString(),
+                                              text: valueOrDefault<String>(
+                                                getJsonField(
+                                                  emprestimosItem,
+                                                  r'''$.CodigoContrato''',
+                                                )?.toString(),
+                                                '-',
+                                              ),
                                               style: TextStyle(),
                                             )
                                           ],
@@ -445,7 +448,8 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                                       context)
                                                   .secondaryText;
                                             } else if ((String var1) {
-                                              return var1 == "Reprovado";
+                                              return var1 == "Reprovado" ||
+                                                  var1 == "Cancelado";
                                             }(getJsonField(
                                               emprestimosItem,
                                               r'''$.StatusContrato''',
@@ -474,10 +478,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                               EdgeInsetsDirectional.fromSTEB(
                                                   3.0, 3.0, 3.0, 3.0),
                                           child: Text(
-                                            getJsonField(
-                                              emprestimosItem,
-                                              r'''$.StatusContrato''',
-                                            ).toString(),
+                                            valueOrDefault<String>(
+                                              getJsonField(
+                                                emprestimosItem,
+                                                r'''$.StatusContrato''',
+                                              )?.toString(),
+                                              '-',
+                                            ),
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
@@ -546,10 +553,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          emprestimosItem,
-                                          r'''$.DataContrato''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.DataContrato''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -612,10 +622,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          emprestimosItem,
-                                          r'''$.ValorLiquidoCreditar''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.ValorLiquidoCreditar''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -678,10 +691,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          emprestimosItem,
-                                          r'''$.ValorEmprestimo''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.ValorEmprestimo''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -747,10 +763,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          emprestimosItem,
-                                          r'''$.ValorParcelas''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.ValorParcelas''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -813,10 +832,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          emprestimosItem,
-                                          r'''$.DataVencimentoPrimeiraParcela''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.DataVencimentoPrimeiraParcela''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -879,10 +901,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          emprestimosItem,
-                                          r'''$.DataVencimentoUltimaParcela''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.DataVencimentoUltimaParcela''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -945,10 +970,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          emprestimosItem,
-                                          r'''$.TxJuros''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.TxJuros''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -1011,10 +1039,13 @@ class _MeusEmprestimosWidgetState extends State<MeusEmprestimosWidget> {
                                             ),
                                       ),
                                       Text(
-                                        getJsonField(
-                                          emprestimosItem,
-                                          r'''$.DataFinalizacao''',
-                                        ).toString(),
+                                        valueOrDefault<String>(
+                                          getJsonField(
+                                            emprestimosItem,
+                                            r'''$.DataFinalizacao''',
+                                          )?.toString(),
+                                          '-',
+                                        ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
